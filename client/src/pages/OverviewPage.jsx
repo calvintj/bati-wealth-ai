@@ -1,40 +1,37 @@
-"use client";
-import type { NextPage } from "next";
+// COMPONENTS
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
+
+// OVERVIEW COMPONENTS
+import TotalCustomer from "../components/overview-components/TotalCustomerGauge";
+import AUMTotal from "../components/overview-components/AUMTotalGauge";
+import FBITotal from "../components/overview-components/FBITotalGauge";
+import FUMBar from "../components/overview-components/FUMBar";
+import FBIBar from "../components/overview-components/FBIBar";
+import CustomerOverview from "../components/overview-components/CustomerOverviewPie";
+import TopProducts from "../components/overview-components/TopProducts";
+import CustomerListTable from "../components/overview-components/CustomerListTable";
+
+// HOOKS
 import { useState } from "react";
+import { useTotalCustomer } from "../hooks/overview-hooks/totalCustomer";
+import { useTotalAUM } from "../hooks/overview-hooks/totalAUM";
+import { useTotalFBI } from "../hooks/overview-hooks/totalFBI";
+import { useQuarterlyFBI } from "../hooks/overview-hooks/quarterlyFBI";
+import { useQuarterlyFUM } from "../hooks/overview-hooks/quarterlyFUM";
+import { useTopProducts } from "../hooks/overview-hooks/topProducts";
 
-// Shared Components
-import Sidebar from "@/components/shared/sidebar";
-import Navbar from "@/components/shared/navbar";
-
-// Overview Components
-import TotalCustomer from "@/components/overview/total-customers";
-import TotalAUM from "@/components/overview/total-aum";
-import TotalFBI from "@/components/overview/total-fbi";
-import QuarterlyFUM from "@/components/overview/quarterly-fum";
-import QuarterlyFBI from "@/components/overview/quarterly-fbi";
-import CustomerRiskProfile from "@/components/overview/customer-risk-profile";
-import TopProducts from "@/components/overview/top-products";
-import CustomerList from "@/components/overview/customer-list";
-
-// Hooks
-import { useTotalCustomer } from "@/hooks/overview/use-total-customer";
-import { useTotalAUM } from "@/hooks/overview/use-total-aum";
-import { useTotalFBI } from "@/hooks/overview/use-total-fbi";
-import { useQuarterlyFBI } from "@/hooks/overview/use-quarterly-fbi";
-import { useQuarterlyFUM } from "@/hooks/overview/use-quarterly-fum";
-import { useTopProducts } from "@/hooks/overview/use-top-products";
-
-const OverviewPage: NextPage = () => {
+export default function OverviewPage() {
   // STATE
-  const [customerRisk, setCustomerRisk] = useState<string>("All");
+  const [customerRisk, setCustomerRisk] = useState("All");
 
   // HOOKS
-  const customerData = useTotalCustomer(customerRisk);
-  const aumData = useTotalAUM(customerRisk);
-  const fbiData = useTotalFBI(customerRisk);
-  const quarterlyFUM = useQuarterlyFUM(customerRisk);
-  const quarterlyFBI = useQuarterlyFBI(customerRisk);
-  const topProducts = useTopProducts(customerRisk);
+  const [customerData] = useTotalCustomer(customerRisk);
+  const [aumData] = useTotalAUM(customerRisk);
+  const [fbiData] = useTotalFBI(customerRisk);
+  const [quarterlyFUM] = useQuarterlyFUM(customerRisk);
+  const [quarterlyFBI] = useQuarterlyFBI(customerRisk);
+  const [topProducts] = useTopProducts(customerRisk);
 
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200">
@@ -44,7 +41,7 @@ const OverviewPage: NextPage = () => {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col">
         {/* NAVBAR */}
-        <Navbar setCustomerRisk={setCustomerRisk} />
+        <Navbar customerRisk={customerRisk} setCustomerRisk={setCustomerRisk} />
 
         {/* DASHBOARD CONTENT */}
         <main className="flex flex-col gap-2 flex-1 overflow-y-scroll mr-2 my-2 overscroll-contain">
@@ -64,14 +61,14 @@ const OverviewPage: NextPage = () => {
               className="flex-1 rounded-2xl bg-[#1D283A]"
               aria-label="Total AUM"
             >
-              <TotalAUM customerRisk={customerRisk} aumData={aumData} />
+              <AUMTotal customerRisk={customerRisk} aumData={aumData} />
             </section>
 
             <section
               className="flex-1 rounded-2xl bg-[#1D283A]"
               aria-label="Total FBI"
             >
-              <TotalFBI customerRisk={customerRisk} fbiData={fbiData} />
+              <FBITotal customerRisk={customerRisk} fbiData={fbiData} />
             </section>
           </div>
 
@@ -81,18 +78,14 @@ const OverviewPage: NextPage = () => {
               className="flex-[2] rounded-2xl bg-[#1D283A]"
               aria-label="Quarterly FUM"
             >
-              <QuarterlyFUM
-                customerRisk={customerRisk}
-                quarterlyFUM={quarterlyFUM}
-                setCustomerRisk={setCustomerRisk}
-              />
+              <FUMBar customerRisk={customerRisk} quarterlyFUM={quarterlyFUM} />
             </section>
 
             <section
               className="flex-1 rounded-2xl bg-[#1D283A]"
               aria-label="Customer Overview"
             >
-              <CustomerRiskProfile
+              <CustomerOverview
                 setCustomerRisk={setCustomerRisk}
                 customerData={customerData}
                 customerRisk={customerRisk}
@@ -106,11 +99,10 @@ const OverviewPage: NextPage = () => {
               className="flex-[2] rounded-2xl bg-[#1D283A]"
               aria-label="Quarterly FBI"
             >
-              <QuarterlyFBI
+              <FBIBar
                 customerRisk={customerRisk}
                 quarterlyFBI={quarterlyFBI}
                 quarterlyFUM={quarterlyFUM}
-                setCustomerRisk={setCustomerRisk}
               />
             </section>
 
@@ -124,19 +116,16 @@ const OverviewPage: NextPage = () => {
               />
             </section>
           </div>
-
           <div>
             <p className="text-2xl font-bold text-center">Customer List</p>
           </div>
           <div>
             <section className="w-[1410px]">
-              <CustomerList customerRisk={customerRisk} />
+              <CustomerListTable customerRisk={customerRisk} />
             </section>
           </div>
         </main>
       </div>
     </div>
   );
-};
-
-export default OverviewPage;
+}

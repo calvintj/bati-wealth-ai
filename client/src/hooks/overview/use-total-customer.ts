@@ -1,22 +1,17 @@
 import { useState, useEffect } from "react";
-import fetchTotalCustomer from "../../services/overview/total-customer-api";
+import fetchTotalCustomer from "@/services/overview/total-customer-api";
+import { DataEntry } from "@/types/overview";
 
-export function useTotalCustomer(customerRisk) {
-  const [chartData, setChartData] = useState([]);
+export function useTotalCustomer(customerRisk: string): DataEntry[] {
+  const [chartData, setChartData] = useState<DataEntry[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const result = await fetchTotalCustomer(customerRisk);
-        const formattedData = [
-          {
-            name: "All",
-            value: result.all || 0,
-          },
-          {
-            name: "Conservative",
-            value: result.conservative || 0,
-          },
+        const result = await fetchTotalCustomer();
+        const formattedData: DataEntry[] = [
+          { name: "All", value: result.all || 0 },
+          { name: "Conservative", value: result.conservative || 0 },
           { name: "Balanced", value: result.balanced || 0 },
           { name: "Moderate", value: result.moderate || 0 },
           { name: "Growth", value: result.growth || 0 },
@@ -32,5 +27,5 @@ export function useTotalCustomer(customerRisk) {
     loadData();
   }, [customerRisk]);
 
-  return [chartData, setChartData];
+  return chartData;
 }

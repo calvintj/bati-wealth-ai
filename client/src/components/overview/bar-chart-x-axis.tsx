@@ -1,6 +1,9 @@
-import PropTypes from "prop-types";
-
-export default function XAxisInformation(props) {
+export default function XAxisInformation(props: {
+  x: number;
+  y: number;
+  payload: { value: string };
+  index: number;
+}) {
   const { x, y, payload, index } = props;
   // Split the payload value assuming format: "Risk Year Quarter"
   const parts = payload.value.split(" ");
@@ -8,8 +11,8 @@ export default function XAxisInformation(props) {
   const quarter = parts[2]; // e.g. "Q1"
 
   // Show year if it's Q1 or if it's the first item in the chart
-  let showYear = quarter === "Q1" || index === 0;
-  let displayYear = year;
+  const showYear = quarter === "Q1" || index === 0;
+  const displayYear = year;
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -36,10 +39,3 @@ export default function XAxisInformation(props) {
     </g>
   );
 }
-
-XAxisInformation.propTypes = {
-  x: PropTypes.number.isRequired,
-  y: PropTypes.number.isRequired,
-  index: PropTypes.number.isRequired,
-  payload: PropTypes.object.isRequired,
-};

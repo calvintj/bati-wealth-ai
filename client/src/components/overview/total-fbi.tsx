@@ -1,7 +1,12 @@
 import { PieChart as RePieChart, Pie, Cell, Label, Tooltip } from "recharts";
-import PropTypes from "prop-types";
+import { DataEntry } from "@/types/overview";
 
-export default function GaugeChart({ customerRisk, fbiData }) {
+interface GaugeChartProps {
+  fbiData: DataEntry[];
+  customerRisk: string;
+}
+
+export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
   const currentValue = (() => {
     const fbiValue =
       customerRisk === "All"
@@ -103,18 +108,3 @@ export default function GaugeChart({ customerRisk, fbiData }) {
     </div>
   );
 }
-
-GaugeChart.propTypes = {
-  customerRisk: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.shape({
-      name: PropTypes.string,
-    }),
-  ]),
-  fbiData: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string,
-      value: PropTypes.number,
-    })
-  ).isRequired,
-};

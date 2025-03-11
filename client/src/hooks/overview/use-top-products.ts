@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import fetchTopProducts from "../../services/overview/top-products-api";
+import type { TopProduct } from "@/types/overview";
 
-export function useTopProducts(customerRisk) {
-  const [chartData, setChartData] = useState([]);
+export function useTopProducts(customerRisk: string): TopProduct[] {
+  const [chartData, setChartData] = useState<TopProduct[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await fetchTopProducts(customerRisk);
-        let filteredData = [];
+        const data = await fetchTopProducts();
+        let filteredData: TopProduct[] = [];
 
         // Filter data based on customerRisk
         if (customerRisk === "All") {
@@ -34,5 +35,5 @@ export function useTopProducts(customerRisk) {
     loadData();
   }, [customerRisk]);
 
-  return [chartData, setChartData];
+  return chartData;
 }

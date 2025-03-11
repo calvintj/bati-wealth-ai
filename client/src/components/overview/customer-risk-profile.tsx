@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import {
   PieChart,
@@ -18,6 +17,13 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
+}: {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent: number;
 }) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -45,17 +51,35 @@ const defaultColors = [
   "#F0FF1B",
 ];
 
+interface DataEntry {
+  name: string;
+  value: number;
+}
+
+interface RiskProfilePieProps {
+  colors?: string[];
+  customerData: DataEntry[];
+  setCustomerRisk: (risk: string) => void;
+  customerRisk: string;
+}
+
 export default function RiskProfilePie({
   colors = defaultColors,
   customerData,
   setCustomerRisk,
   customerRisk,
-}) {
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+}: RiskProfilePieProps) {
+  // Use a fallback value for SSR safety
+  const [windowWidth, setWindowWidth] = React.useState<number>(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  );
+
   React.useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    if (typeof window !== "undefined") {
+      const handleResize = () => setWindowWidth(window.innerWidth);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
   }, []);
 
   const isMobile = windowWidth < 768;
@@ -63,7 +87,7 @@ export default function RiskProfilePie({
   const outerRadius = isMobile ? 70 : 100;
   const chartAspect = isMobile ? 1 : 1.6;
 
-  const [selectedIndex, setSelectedIndex] = React.useState(() => {
+  const [selectedIndex, setSelectedIndex] = React.useState<number | null>(() => {
     const riskIndex = customerData
       .filter((entry) => entry.name !== "All")
       .findIndex((entry) => entry.name === customerRisk);
@@ -111,9 +135,7 @@ export default function RiskProfilePie({
                   }
                   stroke="none"
                   opacity={
-                    selectedIndex === null || selectedIndex === index
-                      ? 1
-                      : 0.3
+                    selectedIndex === null || selectedIndex === index ? 1 : 0.3
                   }
                   onClick={(e) => {
                     e.stopPropagation();
@@ -147,17 +169,3 @@ export default function RiskProfilePie({
     </div>
   );
 }
-
-RiskProfilePie.propTypes = {
-  colors: PropTypes.arrayOf(PropTypes.string),
-  title: PropTypes.string,
-  setCustomerRisk: PropTypes.func,
-  customerData: PropTypes.arrayOf(PropTypes.object),
-  customerRisk: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.shape({
-      name: PropTypes.string,
-      value: PropTypes.number,
-    }),
-  ]),
-};

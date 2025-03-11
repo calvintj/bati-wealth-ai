@@ -1,7 +1,29 @@
+import { useState, useEffect } from "react";
 import { PieChart as RePieChart, Pie, Cell, Label, Tooltip } from "recharts";
-import PropTypes from "prop-types";
+import { DataEntry } from "@/types/overview";
 
-export default function GaugeChart({ customerData, customerRisk }) {
+interface GaugeChartProps {
+  customerData: DataEntry[];
+  customerRisk: string;
+}
+
+export default function GaugeChart({ customerData, customerRisk }: GaugeChartProps) {
+  // Use state to store chart width to avoid SSR issues with window
+  const [chartWidth, setChartWidth] = useState(300);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setChartWidth(Math.min(300, window.innerWidth * 0.8));
+    }
+  }, []);
+
+  const chartHeight = chartWidth * 0.5;
+  const cx = chartWidth / 2;
+  const cy = chartHeight * 0.7;
+  const innerRadius = chartWidth * 0.25;
+  const outerRadius = chartWidth * 0.32;
+
+  // Determine the current value based on customerRisk
   const currentValue = (() => {
     const customerValue =
       customerRisk === "All"
@@ -9,6 +31,7 @@ export default function GaugeChart({ customerData, customerRisk }) {
         : customerData.find((item) => item.name === customerRisk);
     return customerValue ? customerValue.value : 0;
   })();
+
   const targetValue = 500;
 
   const data = [
@@ -23,15 +46,6 @@ export default function GaugeChart({ customerData, customerRisk }) {
       color: "#FFFFFF",
     },
   ];
-
-  const chartWidth = Math.min(300, window.innerWidth * 0.8);
-  const chartHeight = chartWidth * 0.5;
-
-  const cx = chartWidth / 2;
-  const cy = chartHeight * 0.7;
-
-  const innerRadius = chartWidth * 0.25;
-  const outerRadius = chartWidth * 0.32;
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -100,21 +114,3 @@ export default function GaugeChart({ customerData, customerRisk }) {
     </div>
   );
 }
-
-GaugeChart.propTypes = {
-  customerRisk: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.shape({
-      name: PropTypes.string,
-      value: PropTypes.shape({
-        all: PropTypes.number,
-      }),
-    }),
-  ]),
-  customerData: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string,
-      value: PropTypes.number,
-    })
-  ),
-};

@@ -1,8 +1,8 @@
-// ROUTER
-import { NavLink, useNavigate } from "react-router-dom";
-
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 // ASSETS
-import Logo from "../assets/Persen White.png";
+import Logo from "@/assets/bati-percentage-white.png";
 
 // ICONS
 import { RxDashboard } from "react-icons/rx";
@@ -47,35 +47,37 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
   const linkClass = "text-white hover:text-white p-4 mt-2 rounded-full";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/");
+    router.push("/");
   };
 
   return (
     <aside className="w-20 m-2 flex flex-col rounded-2xl items-center bg-[#1D283A]">
       {/* LOGO OR BRAND */}
       <div>
-        <img src={Logo} alt="Bati Logo" className="w-10 h-10 mt-6" />
+        <Image src={Logo} alt="Bati Logo" className="w-10 h-10 mt-6" />
       </div>
 
       {/* NAV ITEMS */}
       <nav className="flex flex-col">
-        {navItems.map(({ to, icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            aria-label={label}
-            className={({ isActive }) =>
-              `${linkClass} ${isActive ? "bg-gray-700" : ""}`
-            }
-          >
-            {icon}
-          </NavLink>
-        ))}
+        {navItems.map(({ to, icon, label }) => {
+          const isActive = pathname === to;
+          return (
+            <Link
+              key={to}
+              href={to}
+              aria-label={label}
+              className={`${linkClass} ${isActive ? "bg-gray-700" : ""}`}
+            >
+              {icon}
+            </Link>
+          );
+        })}
       </nav>
 
       {/* LOGOUT */}

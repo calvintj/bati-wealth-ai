@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -7,15 +7,20 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import type { TopProduct } from "@/types/overview";
 
-export default function TopProducts({ topProducts, customerRisk }) {
-  // Determine the risk category name to filter data
-  const riskCategory =
-    typeof customerRisk === "string" ? customerRisk : customerRisk.name;
+interface TopProductsProps {
+  topProducts: TopProduct[];
+  customerRisk: string;
+}
+
+export default function TopProducts({ topProducts, customerRisk }: TopProductsProps) {
+  // Simply use customerRisk since it's a string.
+  const riskCategory = customerRisk;
 
   const data = topProducts
     .filter((item) => {
-      // For "all", we filter items with the "All" category.
+      // For "All", filter items with the "All" category.
       if (riskCategory === "All") {
         return item.category === "All";
       }
@@ -63,19 +68,3 @@ export default function TopProducts({ topProducts, customerRisk }) {
     </div>
   );
 }
-
-TopProducts.propTypes = {
-  topProducts: PropTypes.arrayOf(
-    PropTypes.shape({
-      product: PropTypes.string,
-      amount: PropTypes.number,
-      category: PropTypes.string,
-    })
-  ).isRequired,
-  customerRisk: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-    }),
-  ]).isRequired,
-};

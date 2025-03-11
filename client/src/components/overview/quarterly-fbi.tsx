@@ -11,24 +11,33 @@ import {
   Line,
 } from "recharts";
 import XAxisInformation from "./bar-chart-x-axis";
-import PropTypes from "prop-types";
 
-export default class FBIBar extends PureComponent {
+export interface DataEntry {
+  name: string;
+  value: number;
+}
+
+interface FBIBarProps {
+  quarterlyFBI: DataEntry[];
+  quarterlyFUM: DataEntry[];
+  customerRisk: string;
+  setCustomerRisk: (risk: string) => void;
+}
+
+export default class FBIBar extends PureComponent<FBIBarProps> {
   render() {
     const { quarterlyFBI, quarterlyFUM, customerRisk } = this.props;
     const filterKey = customerRisk === "All" ? "All" : customerRisk;
 
     // Filter FBI data
-    const filteredFBI =
-      quarterlyFBI && quarterlyFBI.length
-        ? quarterlyFBI.filter((entry) => entry.name.startsWith(filterKey))
-        : [];
+    const filteredFBI = quarterlyFBI.filter((entry) =>
+      entry.name.startsWith(filterKey)
+    );
 
     // Filter FUM data
-    const filteredFUM =
-      quarterlyFUM && quarterlyFUM.length
-        ? quarterlyFUM.filter((entry) => entry.name.startsWith(filterKey))
-        : [];
+    const filteredFUM = quarterlyFUM.filter((entry) =>
+      entry.name.startsWith(filterKey)
+    );
 
     // Merge the two datasets: compute ratio for each FBI entry by matching FUM entry
     const mergedData = filteredFBI.map((fbiEntry) => {
@@ -43,15 +52,7 @@ export default class FBIBar extends PureComponent {
     });
 
     return (
-      <div
-        style={{
-          backgroundColor: "#1D283A",
-          borderRadius: "8px",
-          padding: "1rem",
-          color: "#fff",
-          width: "100%",
-        }}
-      >
+      <div className="p-4">
         <h3 className="text-white text-2xl font-bold mb-4 text-center">
           FBI per Kuartal
         </h3>
@@ -65,7 +66,9 @@ export default class FBIBar extends PureComponent {
               dataKey="name"
               axisLine
               tickLine
-              tick={<XAxisInformation data={mergedData} />}
+              tick={(props) => (
+                <XAxisInformation {...props} data={mergedData} />
+              )}
               stroke="#FFFFFF"
               interval={0}
             />
@@ -101,9 +104,15 @@ export default class FBIBar extends PureComponent {
               itemStyle={{ color: "black" }}
               formatter={(val, name) => {
                 if (name === "ratio") {
-                  return [val.toFixed(4), "FBI / FUM dalam %"];
+                  return [
+                    typeof val === "number" ? val.toFixed(4) : val,
+                    "FBI / FUM dalam %",
+                  ];
                 }
-                return [val.toLocaleString(), name === "value" ? "FBI" : name];
+                return [
+                  typeof val === "number" ? val.toLocaleString() : val,
+                  name === "value" ? "FBI" : name,
+                ];
               }}
               labelFormatter={() => ""}
             />
@@ -131,10 +140,3 @@ export default class FBIBar extends PureComponent {
     );
   }
 }
-
-FBIBar.propTypes = {
-  quarterlyFBI: PropTypes.array.isRequired,
-  quarterlyFUM: PropTypes.array.isRequired,
-  customerRisk: PropTypes.string.isRequired,
-  setCustomerRisk: PropTypes.func.isRequired,
-};

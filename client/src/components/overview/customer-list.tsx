@@ -1,9 +1,13 @@
 import { useCertainCustomerList } from "../../hooks/overview/use-certain-customer-list";
 import { useCustomerList } from "../../hooks/customer-list/use-customer-list";
 
-import PropTypes from "prop-types";
+interface CustomerListTableProps {
+  customerRisk: string;
+}
 
-const CustomerListTable = ({ customerRisk }) => {
+const CustomerListTable: React.FC<CustomerListTableProps> = ({
+  customerRisk,
+}) => {
   // Always call both hooks so the hooks order is consistent.
   const fullCustomerList = useCustomerList();
   const certainCustomerList = useCertainCustomerList(customerRisk);
@@ -96,10 +100,6 @@ const CustomerListTable = ({ customerRisk }) => {
       </table>
     </div>
   );
-};
-
-CustomerListTable.propTypes = {
-  customerRisk: PropTypes.string.isRequired,
 };
 
 export default CustomerListTable;

@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import fetchTotalFBI from "../../services/overview/total-fbi-api";
+import { DataEntry } from "@/types/overview";
 
-export function useTotalFBI(customerRisk) {
-  const [chartData, setChartData] = useState([]);
+export function useTotalFBI(customerRisk: string): DataEntry[] {
+  const [chartData, setChartData] = useState<DataEntry[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const result = await fetchTotalFBI(customerRisk);
-        const formattedData = [
+        const result = await fetchTotalFBI();
+        const formattedData: DataEntry[] = [
           {
             name: "All",
             value: result.all || 0,
@@ -32,5 +33,5 @@ export function useTotalFBI(customerRisk) {
     loadData();
   }, [customerRisk]);
 
-  return [chartData, setChartData];
+  return chartData;
 }
