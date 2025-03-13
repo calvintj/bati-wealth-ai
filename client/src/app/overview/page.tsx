@@ -1,5 +1,4 @@
 "use client";
-import type { NextPage } from "next";
 import { useState } from "react";
 
 // Shared Components
@@ -24,7 +23,7 @@ import { useQuarterlyFBI } from "@/hooks/overview/use-quarterly-fbi";
 import { useQuarterlyFUM } from "@/hooks/overview/use-quarterly-fum";
 import { useTopProducts } from "@/hooks/overview/use-top-products";
 
-const OverviewPage: NextPage = () => {
+const OverviewPage = () => {
   // STATE
   const [customerRisk, setCustomerRisk] = useState<string>("All");
 

@@ -24,13 +24,7 @@ interface ReturnPercentage {
 }
 
 interface CustomerDetails {
-  AUM_Label: string;
-  Annual_Income: string;
-  Customer_Type: string;
-  ID: string;
-  Pekerjaan: string;
   Priority_Private: string;
-  Propensity: string;
   Risk_Profile: string;
   Status_Nikah: string;
   Total_AUM: string;
