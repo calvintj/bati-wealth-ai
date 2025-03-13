@@ -1,7 +1,9 @@
+import { Activity } from "@/types/customer-details";
+
 const BASE_URL = 'http://localhost:5000/api/customer-details'; // Replace with your API's base URL
 
 // Helper to process responses
-const handleResponse = async (response) => {
+const handleResponse = async (response: Response) => {
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'An error occurred while fetching data');
@@ -9,7 +11,7 @@ const handleResponse = async (response) => {
   return response.json();
 };
 
-const getActivity = async (bp_number_wm_core) => {
+const getActivity = async (bp_number_wm_core: string) => {
   // Include bp_number_wm_core as a query parameter
   const response = await fetch(`${BASE_URL}/get-activity?bp_number_wm_core=${bp_number_wm_core}`, {
     method: 'GET',
@@ -20,7 +22,7 @@ const getActivity = async (bp_number_wm_core) => {
   return handleResponse(response);
 };
 
-const postActivity = async (data) => {
+const postActivity = async (data: Activity) => {
   const response = await fetch(`${BASE_URL}/post-activity`, {
     method: 'POST',
     headers: {

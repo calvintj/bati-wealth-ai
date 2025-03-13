@@ -1,10 +1,24 @@
-import { NavLink } from "react-router-dom";
 import useOfferProductRisk from "../../hooks/task-manager/use-offer-product-risk";
 import { CiShare1 } from "react-icons/ci";
+import Link from "next/link";
+
+export interface OfferProductRisk {
+  bp_number_wm_core: string;
+  risk_profile: string;
+  offer_product_risk_1: string;
+  offer_product_risk_2: string;
+  offer_product_risk_3: string;
+  offer_product_risk_4: string;
+  offer_product_risk_5: string;
+}
 
 export default function OfferProductRisk() {
   // Hook
-  const { offerProductRisk, loading, error } = useOfferProductRisk();
+  const { offerProductRisk, loading, error } = useOfferProductRisk() as {
+    offerProductRisk: OfferProductRisk[];
+    loading: boolean;
+    error: Error | null;
+  };
 
   if (loading) {
     return <div>Loading offer product risk data...</div>;
@@ -60,13 +74,13 @@ export default function OfferProductRisk() {
                   )}
                 </td>
                 <td className="flex justify-center items-center">
-                  <NavLink
-                    to={`/customer-details?customerID=${product.bp_number_wm_core}`}
+                  <Link
+                    href={`/customer-details?customerID=${product.bp_number_wm_core}`}
                     className="text-white p-2 bg-[#01ACD2] rounded-md my-2 w-20 flex justify-center items-center gap-2 cursor-pointer"
                   >
                     Profil
                     <CiShare1 />
-                  </NavLink>
+                  </Link>
                 </td>
               </tr>
             ))}

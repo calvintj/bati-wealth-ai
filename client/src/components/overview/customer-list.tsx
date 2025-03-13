@@ -5,16 +5,41 @@ interface CustomerListTableProps {
   customerRisk: string;
 }
 
+// Add a type definition for the customer data
+interface CustomerData {
+  "Customer ID": string;
+  "Risk Profile": string;
+  "AUM Label": string;
+  Propensity: string;
+  "Priority / Private": string;
+  "Customer Type": string;
+  Pekerjaan: string;
+  "Status Nikah": string;
+  Usia: string | number;
+  "Annual Income": string | number;
+  "Total FUM": string | number;
+  "Total AUM": string | number;
+  "Total FBI": string | number;
+  [key: string]: string | number | undefined;
+}
+
 const CustomerListTable: React.FC<CustomerListTableProps> = ({
   customerRisk,
 }) => {
   // Always call both hooks so the hooks order is consistent.
-  const fullCustomerList = useCustomerList();
-  const certainCustomerList = useCertainCustomerList(customerRisk);
+  const fullCustomerList = useCustomerList() as unknown as CustomerData[];
+  const certainCustomerList = useCertainCustomerList(
+    customerRisk
+  ) as unknown as CustomerData[];
 
   // Select the customer list based on the customerRisk prop.
   const customerList =
     customerRisk === "All" ? fullCustomerList : certainCustomerList;
+
+  // Add loading and error handling
+  if (!customerList || customerList.length === 0) {
+    return <div className="p-4">Loading customer data...</div>;
+  }
 
   // Update the header labels to match the keys in the data rows.
   const header = [

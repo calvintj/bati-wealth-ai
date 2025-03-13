@@ -1,11 +1,19 @@
 import { useCustomerList } from "../../hooks/customer-list/use-customer-list";
 import { useCertainCustomerList } from "../../hooks/customer-list/use-certain-customer-list";
-import PropTypes from "prop-types";
+import { CustomerRecord } from "@/types/customer-list";
 
-const CustomerListTable = ({ propensity, aum }) => {
+interface CustomerListTableProps {
+  propensity: string;
+  aum: string;
+}
+
+const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
   // Hooks
-  const customerList = useCustomerList();
-  const certainCustomerList = useCertainCustomerList(propensity, aum);
+  const customerList = useCustomerList() as unknown as CustomerRecord[];
+  const certainCustomerList = useCertainCustomerList(
+    propensity,
+    aum
+  ) as unknown as CustomerRecord[];
   const header = [
     "Customer ID",
     "Profil Resiko",
@@ -96,8 +104,3 @@ const CustomerListTable = ({ propensity, aum }) => {
 };
 
 export default CustomerListTable;
-
-CustomerListTable.propTypes = {
-  propensity: PropTypes.string.isRequired,
-  aum: PropTypes.string.isRequired,
-};

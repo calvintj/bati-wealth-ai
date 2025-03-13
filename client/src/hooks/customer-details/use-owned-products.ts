@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import fetchOwnedProduct from "../../services/customer-details/owned-products-api";
 
-const useOwnedProduct = (customerID) => {
+const useOwnedProduct = (customerID: string) => {
   const [ownedProduct, setOwnedProduct] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,7 +18,7 @@ const useOwnedProduct = (customerID) => {
         setOwnedProduct(data);
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
         setLoading(false);
       }
     };

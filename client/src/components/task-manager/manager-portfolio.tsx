@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import {
   PieChart,
@@ -19,6 +18,13 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
+}: {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent: number;
 }) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -125,10 +131,3 @@ export default function PortfolioPie({ colors = defaultColors }) {
     </div>
   );
 }
-
-PortfolioPie.propTypes = {
-  colors: PropTypes.arrayOf(PropTypes.string),
-  title: PropTypes.string,
-  customerData: PropTypes.arrayOf(PropTypes.object),
-  customerID: PropTypes.string,
-};

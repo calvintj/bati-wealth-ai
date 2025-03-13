@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { format, addMonths, subMonths } from "date-fns";
-import id from "date-fns/locale/id";
-import PropTypes from "prop-types";
+import { id } from "date-fns/locale/id";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
-const Calendar = ({ setSelectedDate, selectedDate }) => {
+const Calendar = ({ setSelectedDate, selectedDate }: { setSelectedDate: (date: Date) => void, selectedDate: Date }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const today = new Date();
   // const todayStyle = { color: 'red' };
@@ -25,7 +24,7 @@ const Calendar = ({ setSelectedDate, selectedDate }) => {
   );
 
   // Utility to check if two dates are the same day
-  const isSameDay = (d1, d2) =>
+  const isSameDay = (d1: Date, d2: Date) =>
     d1?.getFullYear() === d2?.getFullYear() &&
     d1?.getMonth() === d2?.getMonth() &&
     d1?.getDate() === d2?.getDate();
@@ -66,7 +65,7 @@ const Calendar = ({ setSelectedDate, selectedDate }) => {
           const isToday = isSameDay(date, today);
           return (
             <div
-              key={date}
+              key={date.toISOString()}
               className={`cursor-pointer p-2 rounded-full 
                 ${isSelected ? "bg-blue-900 text-blue-400" : ""}
                 ${isToday && !isSelected ? "text-blue-400" : ""}
@@ -83,8 +82,3 @@ const Calendar = ({ setSelectedDate, selectedDate }) => {
 };
 
 export default Calendar;
-
-Calendar.propTypes = {
-  setSelectedDate: PropTypes.func.isRequired,
-  selectedDate: PropTypes.instanceOf(Date).isRequired,
-};

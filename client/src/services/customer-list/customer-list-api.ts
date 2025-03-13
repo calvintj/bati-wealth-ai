@@ -1,5 +1,10 @@
-const fetchCustomerList = (setCustomerList) => {
+import { Customer } from "@/types/customer-list";
+
+const fetchCustomerList = (setCustomerList: (data: Customer[]) => void) => {
     const token = localStorage.getItem("token");
+    if (!token) {
+        throw new Error("No token found");
+    }
     const tokenPayload = JSON.parse(atob(token.split(".")[1]));
     const rm_number = tokenPayload.rm_number;
 

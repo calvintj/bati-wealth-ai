@@ -19,7 +19,7 @@ const useIncreasedNumbers = () => {
     },
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const getIncreasedNumbers = async () => {
@@ -43,7 +43,7 @@ const useIncreasedNumbers = () => {
         });
         setLoading(false);
       } catch (error) {
-        setError(error);
+        setError(error as Error);
         setLoading(false);
       }
     };

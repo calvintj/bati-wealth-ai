@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import fetchReturnPercentage from "../../services/customer-details/return-percentage-api";
 
-const useGetReturnPercentage = (customerID) => {
+const useGetReturnPercentage = (customerID: string) => {
   const [returnPercentage, setReturnPercentage] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -12,7 +12,7 @@ const useGetReturnPercentage = (customerID) => {
         const data = await fetchReturnPercentage(customerID);
         setReturnPercentage(data);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
       } finally {
         setLoading(false);
       }

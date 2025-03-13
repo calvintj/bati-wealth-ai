@@ -1,38 +1,50 @@
-import { useState, useRef, useEffect } from "react";
-import PropTypes from "prop-types";
-import { useCustomerIDList } from "../../hooks/customer-details/use-customer-id-list";
+import { useCustomerIDList } from "@/hooks/customer-details/use-customer-id-list";
+import { useEffect, useState, useRef } from "react";
 
-const CustomerInput = ({ setCustomerID }) => {
-  const { data: customers, loading } = useCustomerIDList();
-  const [query, setQuery] = useState("");
+import { Customer } from "@/types/customer-list";
+
+interface CustomerInputProps {
+  customerID: string;
+  setCustomerID: (customerID: string) => void;
+}
+
+const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
+  const { data: customers = [], loading } = useCustomerIDList() as {
+    data: Customer[];
+    loading: boolean;
+  };
+
+  const [query, setQuery] = useState(customerID || "");
+
+  useEffect(() => {
+    setQuery(customerID || "");
+  }, [customerID]);
+
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
-  const suggestionRefs = useRef([]);
+  const suggestionRefs = useRef<Array<HTMLLIElement | null>>([]);
 
-  // Filter customers based on the input query (case-insensitive)
-  const filteredCustomers = query
-    ? customers.filter((cust) =>
-        cust.ID.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  const trimmedQuery = query.trim().toLowerCase();
+  const filteredCustomers = customers.filter((cust) => {
+    const id =
+      cust.ID && cust.ID.toString().toLowerCase();
+    return id && id.includes(trimmedQuery);
+  });
 
-  // When a customer is selected, update the input and hide suggestions.
-  const handleSelect = (customer) => {
-    setCustomerID(customer.ID);
-    setQuery(customer.ID);
+  const handleSelect = (customer: Customer) => {
+    setCustomerID(customer.ID?.toString() || "");
+    setQuery(customer.ID?.toString() || "");
     setShowSuggestions(false);
     setActiveSuggestion(-1);
   };
 
-  // Update query and reset active suggestion.
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
     setShowSuggestions(true);
     setActiveSuggestion(-1);
   };
 
-  // Handle keyboard navigation and allow direct input acceptance.
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (activeSuggestion < filteredCustomers.length - 1) {
@@ -49,10 +61,8 @@ const CustomerInput = ({ setCustomerID }) => {
         activeSuggestion >= 0 &&
         activeSuggestion < filteredCustomers.length
       ) {
-        // If a suggestion is highlighted, select it.
         handleSelect(filteredCustomers[activeSuggestion]);
       } else if (query.trim() !== "") {
-        // Otherwise, accept the typed value directly.
         setCustomerID(query);
         setShowSuggestions(false);
         setActiveSuggestion(-1);
@@ -62,17 +72,6 @@ const CustomerInput = ({ setCustomerID }) => {
     }
   };
 
-  // Auto-scroll the active suggestion into view when it changes.
-  useEffect(() => {
-    if (activeSuggestion >= 0 && suggestionRefs.current[activeSuggestion]) {
-      suggestionRefs.current[activeSuggestion].scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
-    }
-  }, [activeSuggestion]);
-
-  // Hide suggestions on blur (using a timeout to allow click events to process)
   const handleBlur = () => {
     setTimeout(() => {
       setShowSuggestions(false);
@@ -97,7 +96,10 @@ const CustomerInput = ({ setCustomerID }) => {
           {filteredCustomers.map((customer, index) => (
             <li
               key={customer.ID}
-              ref={(el) => (suggestionRefs.current[index] = el)}
+              ref={(el) => {
+                suggestionRefs.current[index] = el;
+                return undefined;
+              }}
               onMouseDown={() => handleSelect(customer)}
               className={`cursor-pointer px-4 py-2 text-sm text-white hover:bg-gray-700 ${
                 index === activeSuggestion ? "bg-gray-700" : ""
@@ -115,11 +117,6 @@ const CustomerInput = ({ setCustomerID }) => {
       )}
     </div>
   );
-};
-
-CustomerInput.propTypes = {
-  customerID: PropTypes.string.isRequired,
-  setCustomerID: PropTypes.func.isRequired,
 };
 
 export default CustomerInput;

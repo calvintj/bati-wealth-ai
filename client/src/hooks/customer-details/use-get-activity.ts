@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { getActivity } from "../../services/customer-details/activity-manager-api";
 
-const useGetActivity = (customerID) => {
+const useGetActivity = (customerID: string) => {
   const [activity, setActivity] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!customerID) return;
@@ -13,7 +13,7 @@ const useGetActivity = (customerID) => {
         const data = await getActivity(customerID);
         setActivity(data);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
       } finally {
         setLoading(false);
       }

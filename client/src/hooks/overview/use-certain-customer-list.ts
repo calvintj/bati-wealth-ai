@@ -1,8 +1,17 @@
 import { useState, useEffect } from "react";
 import fetchCertainCustomerList from "../../services/overview/customer-list-api";
 
-export function useCertainCustomerList(customerRisk) {
-  const [customerList, setCustomerList] = useState([]);
+// Use the Customer type from the API service
+interface Customer {
+  id: string;
+  name: string;
+  risk_profile: string;
+  total_investment: number;
+  last_transaction_date: string;
+}
+
+export function useCertainCustomerList(customerRisk: string) {
+  const [customerList, setCustomerList] = useState<Customer[]>([]);
 
   useEffect(() => {
     // Map the customerRisk to the format expected by the backend

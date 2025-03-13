@@ -3,9 +3,9 @@ import fetchPortfolio from "../../services/task-manager/manager-portfolio-api";
 
 const usePortfolio = () => {
   const [portfolio, setPortfolio] = useState([]);
-  const [transformedData, setTransformedData] = useState([]);
+  const [transformedData, setTransformedData] = useState<{ name: string; value: number }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const getPortfolio = async () => {
@@ -32,7 +32,7 @@ const usePortfolio = () => {
 
         setLoading(false);
       } catch (error) {
-        setError(error);
+        setError(error as Error);
         setLoading(false);
       }
     };

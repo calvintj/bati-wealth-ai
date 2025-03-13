@@ -4,7 +4,7 @@ import fetchPotentialTransaction from "../../services/task-manager/potential-tra
 const usePotentialTransaction = () => {
   const [potentialTransaction, setPotentialTransaction] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,7 +13,7 @@ const usePotentialTransaction = () => {
         setPotentialTransaction(data);
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
         setLoading(false);
       }
     };

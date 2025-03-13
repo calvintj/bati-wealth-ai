@@ -4,7 +4,7 @@ import { getTask } from "../../services/task-manager/task-manager-api";
 const useGetTask = () => {
   const [task, setTask] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,7 +13,7 @@ const useGetTask = () => {
         setTask(data);
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
         setLoading(false);
       }
     };

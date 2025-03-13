@@ -1,8 +1,22 @@
-import PropTypes from "prop-types";
 import useOwnedProduct from "../../hooks/customer-details/use-owned-products";
-const OwnedProductTable = ({ customerID }) => {
+
+interface OwnedProduct {
+  nama_produk: string;
+  keterangan: string;
+  jumlah_amount: number;
+  price_bought: number;
+  jumlah_transaksi: number;
+  profit: number;
+  return_value: number;
+}
+
+const OwnedProductTable = ({ customerID }: { customerID: string }) => {
   // Hook
-  const { ownedProduct, loading, error } = useOwnedProduct(customerID);
+  const { ownedProduct, loading, error } = useOwnedProduct(customerID) as {
+    ownedProduct: OwnedProduct[];
+    loading: boolean;
+    error: Error | null;
+  };
 
   if (loading) {
     return (
@@ -99,7 +113,3 @@ const OwnedProductTable = ({ customerID }) => {
 };
 
 export default OwnedProductTable;
-
-OwnedProductTable.propTypes = {
-  customerID: PropTypes.string.isRequired,
-};

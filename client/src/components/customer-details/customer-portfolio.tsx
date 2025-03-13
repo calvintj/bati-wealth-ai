@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import {
   PieChart,
@@ -19,6 +18,13 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
+}: {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent: number;
 }) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -40,8 +46,14 @@ const renderCustomizedLabel = ({
 
 const defaultColors = ["#F52720", "#01ACD2", "#2ABC36", "#FBB716", "#F0FF1B"];
 
-export default function PortfolioPie({ colors = defaultColors, customerID }) {
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+export default function PortfolioPie({
+  colors = defaultColors,
+  customerID,
+}: {
+  colors?: string[];
+  customerID: string;
+}) {
+  const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 768);
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -128,10 +140,3 @@ export default function PortfolioPie({ colors = defaultColors, customerID }) {
     </div>
   );
 }
-
-PortfolioPie.propTypes = {
-  colors: PropTypes.arrayOf(PropTypes.string),
-  title: PropTypes.string,
-  customerData: PropTypes.arrayOf(PropTypes.object),
-  customerID: PropTypes.string,
-};

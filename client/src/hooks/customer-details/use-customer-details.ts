@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import fetchCustomerDetails from "../../services/customer-details/customer-details-api";
 
-export function useCustomerDetails(customerID) {
-  const [data, setData] = useState([]);
+interface CustomerDetails {
+    Priority_Private: string;
+    Usia: string;
+    Status_Nikah: string;
+    Risk_Profile: string;
+    Vintage: string;
+}
+
+export function useCustomerDetails(customerID: string) {
+  const [data, setData] = useState<CustomerDetails[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

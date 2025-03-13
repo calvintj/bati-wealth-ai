@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import fetchCustomerPortfolio from "../../services/customer-details/customer-portfolio-api";
 
-const useCustomerPortfolio = (customerID) => {
-  const [customerPortfolio, setCustomerPortfolio] = useState([]);
-  const [transformedData, setTransformedData] = useState([]);
+interface customerPortfolio {
+  asset_type: string;
+  recommended_allocation: string;
+}
+
+const useCustomerPortfolio = (customerID: string) => {
+  const [customerPortfolio, setCustomerPortfolio] = useState<customerPortfolio[]>([]);
+  const [transformedData, setTransformedData] = useState<{ name: string; value: number }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const getCustomerPortfolio = async () => {
@@ -32,7 +37,7 @@ const useCustomerPortfolio = (customerID) => {
 
         setLoading(false);
       } catch (error) {
-        setError(error);
+        setError(error as Error);
         setLoading(false);
       }
     };

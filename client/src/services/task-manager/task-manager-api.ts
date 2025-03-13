@@ -1,9 +1,9 @@
-const BASE_URL = 'http://localhost:5000/api/task-manager'; // Replace with your API's base URL
+const BASE_URL = 'http://localhost:5000/api/task-manager';
+import { Task } from '@/types/task-manager';
 
 // Helper to process responses
-const handleResponse = async (response) => {
+const handleResponse = async (response: Response) => {
   if (!response.ok) {
-    // Optionally extract error message from response
     const errorData = await response.json();
     throw new Error(errorData.message || 'An error occurred while fetching data');
   }
@@ -16,6 +16,9 @@ const getToken = () => localStorage.getItem("token");
 // GET request including token (if available)
 const getTask = async () => {
   const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Token not found");
+  }
   const tokenPayload = JSON.parse(atob(token.split(".")[1]));
   const rm_number = tokenPayload.rm_number;
 
@@ -28,7 +31,7 @@ const getTask = async () => {
   return handleResponse(response);
 };
 
-const postTask = async (data) => {
+const postTask = async (data: Task) => {
   const token = getToken();
   const response = await fetch(`${BASE_URL}/post-task`, {
     method: 'POST',
@@ -42,9 +45,3 @@ const postTask = async (data) => {
 };
 
 export { getTask, postTask };
-
-// Example usage:
-// getRequest().then(data => console.log(data));
-// postRequest({ description: "New task", invitee: "Alice", dueDate: "2023-12-31" })
-//   .then(data => console.log(data))
-//   .catch(err => console.error(err));

@@ -1,10 +1,20 @@
-import { NavLink } from "react-router-dom";
+import Link from "next/link";
 import useReprofileRiskTarget from "../../hooks/task-manager/use-reprofile-risk-target";
 import { CiShare1 } from "react-icons/ci";
 
+interface ReprofileRiskTarget {
+  bp_number_wm_core: string;
+  risk_profile: string;
+  offer_reprofile_risk_target: string;
+}
+
 export default function ReprofileRiskTarget() {
   // Hook
-  const { reProfileRiskTarget, loading, error } = useReprofileRiskTarget();
+  const { reProfileRiskTarget, loading, error } = useReprofileRiskTarget() as {
+    reProfileRiskTarget: ReprofileRiskTarget[];
+    loading: boolean;
+    error: Error | null;
+  };
 
   if (loading) {
     return <div>Loading reprofile risk target data...</div>;
@@ -50,13 +60,13 @@ export default function ReprofileRiskTarget() {
                   )}
                 </td>
                 <td className="flex justify-center items-center">
-                  <NavLink
-                    to={`/customer-details?customerID=${product.bp_number_wm_core}`}
+                  <Link
+                    href={`/customer-details?customerID=${product.bp_number_wm_core}`}
                     className="text-white p-2 bg-[#01ACD2] rounded-md my-2 w-20 flex justify-center items-center gap-2 cursor-pointer"
                   >
                     Profil
                     <CiShare1 />
-                  </NavLink>
+                  </Link>
                 </td>
               </tr>
             ))}

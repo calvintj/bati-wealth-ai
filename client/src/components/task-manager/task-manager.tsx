@@ -1,21 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { format } from "date-fns";
-import id from "date-fns/locale/id";
-import PropTypes from "prop-types";
+import { id } from "date-fns/locale/id";
 import { CiCirclePlus } from "react-icons/ci";
 // import { IoTrashOutline } from "react-icons/io5";
 // import { FaRegEdit } from "react-icons/fa";
 import useFetchTasks from "../../hooks/task-manager/use-get-task"; // Custom hook to fetch tasks
 import usePostTask from "../../hooks/task-manager/use-post-task"; // Custom hook to post a new task
+import { Task } from "@/types/task-manager";
 
-const TaskManager = ({ selectedDate }) => {
+const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   // Get tasks from hook; rename "task" to "tasks"
   const { task: tasksFromHook, error, loading } = useFetchTasks();
   const { postData, loading: posting } = usePostTask();
 
   // Local state for tasks to update immediately without a full refetch.
-  const [localTasks, setLocalTasks] = useState([]);
+  const [localTasks, setLocalTasks] = useState<Task[]>([]);
   // Sync localTasks with hook data.
   useEffect(() => {
     if (tasksFromHook) {
@@ -48,7 +48,7 @@ const TaskManager = ({ selectedDate }) => {
   // Toggle the popup position.
   const togglePopup = () => {
     if (!showPopup && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
+      const rect = (buttonRef.current as HTMLElement).getBoundingClientRect();
       setPopupPosition({
         top: rect.bottom + window.scrollY,
         left: rect.left + window.scrollX - 120,
@@ -174,10 +174,6 @@ const TaskManager = ({ selectedDate }) => {
         )}
     </div>
   );
-};
-
-TaskManager.propTypes = {
-  selectedDate: PropTypes.instanceOf(Date).isRequired,
 };
 
 export default TaskManager;

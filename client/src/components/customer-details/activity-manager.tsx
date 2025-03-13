@@ -1,11 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CiCirclePlus } from "react-icons/ci";
-import PropTypes from "prop-types";
 import useGetActivity from "../../hooks/customer-details/use-get-activity"; // Custom hook to fetch tasks
 import usePostActivity from "../../hooks/customer-details/use-post-activity"; // Custom hook to post a new task
 
-const ActivityManager = ({ customerID }) => {
+interface Activity {
+  title: string;
+  description: string;
+  date: string;
+}
+
+interface ActivityWithCustomerId extends Activity {
+  bp_number_wm_core: string;
+}
+
+const ActivityManager = ({ customerID }: { customerID: string }) => {
   // Fetch tasks using the provided customerID (as bp_number_wm_core).
   console.log("customerID", customerID);
   const {
@@ -16,7 +25,7 @@ const ActivityManager = ({ customerID }) => {
   const { postData, loading: posting } = usePostActivity();
 
   // Local state for tasks to update immediately without a full refetch.
-  const [localActivity, setLocalActivity] = useState([]);
+  const [localActivity, setLocalActivity] = useState<Activity[]>([]);
   useEffect(() => {
     if (activityFromHook) {
       setLocalActivity(activityFromHook);
@@ -26,7 +35,7 @@ const ActivityManager = ({ customerID }) => {
   // Popup state and positioning.
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const buttonRef = useRef(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Form fields for adding a new activity.
   const [newActivity, setNewActivity] = useState("");
@@ -60,7 +69,7 @@ const ActivityManager = ({ customerID }) => {
         title: newActivity,
         description: newDescription,
         date: newDate,
-      });
+      } as ActivityWithCustomerId);
       setLocalActivity((prev) => [...prev, newActivityObj]);
       // Reset form and close popup.
       setNewActivity("");
@@ -173,10 +182,6 @@ const ActivityManager = ({ customerID }) => {
         )}
     </div>
   );
-};
-
-ActivityManager.propTypes = {
-  customerID: PropTypes.string.isRequired,
 };
 
 export default ActivityManager;

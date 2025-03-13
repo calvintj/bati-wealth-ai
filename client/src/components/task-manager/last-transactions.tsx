@@ -1,11 +1,32 @@
 import { useLastTransaction } from "../../hooks/task-manager/use-last-transactions";
 
+interface LastTransaction {
+  transaction_id: string;
+  bp_number_wm_core: string;
+  jumlah_amount: number;
+}
+
 export default function LastTransaction() {
-  const lastTransaction = useLastTransaction();
+  const { lastTransaction = [], loading, error } = useLastTransaction() as unknown as {
+    lastTransaction: LastTransaction[];
+    loading: boolean;
+    error: Error | null;
+  };
   const today = new Date();
-  const options = { day: "numeric", month: "long", year: "numeric" };
+  const options: Intl.DateTimeFormatOptions = { 
+    day: "numeric", 
+    month: "long", 
+    year: "numeric" 
+  };
   const currentDate = today.toLocaleDateString("id-ID", options);
 
+  if (loading) {
+    return <div>Loading last transaction data...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading last transaction data: {error.message}</div>;
+  }
   return (
     <div className="p-4">
       <h1 className="font-bold text-2xl">Transaksi Terakhir</h1>
@@ -20,7 +41,7 @@ export default function LastTransaction() {
           </tr>
         </thead>
         <tbody>
-          {lastTransaction.map((transaction) => (
+          {lastTransaction.map((transaction: LastTransaction) => (
             <tr key={transaction.transaction_id}>
               <td>{transaction.bp_number_wm_core}</td>
               <td>{transaction.transaction_id}</td>

@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import fetchOptimizedPortfolio from "../../services/customer-details/optimized-portfolio-api";
 
-const useOptimizedPortfolio = (customerID) => {
-  const [optimizedPortfolio, setOptimizedPortfolio] = useState([]);
-  const [transformedData, setTransformedData] = useState([]);
+interface OptimizedPortfolio {
+  asset_type: string;
+  recommended_allocation: string;
+}
+
+const useOptimizedPortfolio = (customerID: string) => {
+  const [optimizedPortfolio, setOptimizedPortfolio] = useState<OptimizedPortfolio[]>([]);
+  const [transformedData, setTransformedData] = useState<{ name: string; value: number }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const getOptimizedPortfolio = async () => {
@@ -20,7 +25,7 @@ const useOptimizedPortfolio = (customerID) => {
         if (data && data.length > 0) {
           console.log("Data exists and has length > 0");
           const transformed = data
-            .map((item) => {
+            .map((item: OptimizedPortfolio) => {
               console.log("Processing item:", item);
               console.log("asset_type:", item.asset_type);
               console.log(
@@ -32,7 +37,7 @@ const useOptimizedPortfolio = (customerID) => {
                 value: parseFloat(item.recommended_allocation) || 0,
               };
             })
-            .filter((item) => item.value > 0);
+            .filter((item: { value: number }) => item.value > 0);
 
           console.log("Final transformed data:", transformed);
           setTransformedData(transformed);
@@ -43,7 +48,7 @@ const useOptimizedPortfolio = (customerID) => {
 
         setLoading(false);
       } catch (error) {
-        setError(error);
+        setError(error as Error);
         setLoading(false);
       }
     };

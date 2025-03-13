@@ -1,8 +1,18 @@
 import usePotentialTransaction from "../../hooks/task-manager/use-potential-transaction";
 
+interface PotentialTransaction {
+  id_nasabah: string;
+  nama_produk: string;
+  profit: number;
+}
+
 export default function OwnedProductTable() {
   // Hook
-  const { potentialTransaction, loading, error } = usePotentialTransaction();
+  const { potentialTransaction, loading, error } = usePotentialTransaction() as {
+    potentialTransaction: PotentialTransaction[];
+    loading: boolean;
+    error: Error | null;
+  };
 
   if (loading) {
     return <div>Loading potential transaction data...</div>;

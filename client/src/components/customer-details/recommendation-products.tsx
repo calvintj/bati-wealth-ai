@@ -1,9 +1,28 @@
 import useGetRecommendationProduct from "../../hooks/customer-details/use-recommendation-products";
-import PropTypes from "prop-types";
 
-export default function RecommendationProduct({ customerID }) {
-  const { recommendationProduct, loading, error } =
-    useGetRecommendationProduct(customerID);
+interface RecommendationProduct {
+  nama_produk: string;
+  profit: number;
+  offer_product_risk_1: string;
+  offer_product_risk_2: string;
+  offer_product_risk_3: string;
+  offer_product_risk_4: string;
+  offer_product_risk_5: string;
+  offer_reprofile_risk_target: string;
+}
+
+export default function RecommendationProduct({
+  customerID,
+}: {
+  customerID: string;
+}) {
+  const { recommendationProduct, loading, error } = useGetRecommendationProduct(
+    customerID
+  ) as {
+    recommendationProduct: RecommendationProduct[];
+    loading: boolean;
+    error: Error | null;
+  };
 
   if (loading)
     return (
@@ -23,7 +42,7 @@ export default function RecommendationProduct({ customerID }) {
       <ul>
         {recommendationProduct.map((product, index) => (
           <li key={index} className="text-md p-4">
-            <li className="py-2">
+            <div className="py-2">
               <p className="uppercase font-bold underline">Aksi Potensial</p>
               <div className="flex justify-between items-center">
                 <div>
@@ -42,12 +61,11 @@ export default function RecommendationProduct({ customerID }) {
                   </button>
                 </div>
               </div>
-            </li>
-            <li className="py-2">
+            </div>
+            <div className="py-2">
               <p className="uppercase font-bold underline">
                 Produk Resiko Rekomendasi
               </p>
-
               {product.offer_product_risk_1 === "TRUE" && (
                 <span className="bg-[#2ABC36] text-white px-2 py-1 rounded mr-1">
                   1
@@ -73,8 +91,8 @@ export default function RecommendationProduct({ customerID }) {
                   5
                 </span>
               )}
-            </li>
-            <li className="py-2">
+            </div>
+            <div className="py-2">
               <p className="uppercase font-bold underline">
                 Reprofil Rekomendasi
               </p>
@@ -96,14 +114,10 @@ export default function RecommendationProduct({ customerID }) {
               {product.offer_reprofile_risk_target === "5" && (
                 <span className="text-white">5 - Aggressive</span>
               )}
-            </li>
+            </div>
           </li>
         ))}
       </ul>
     </div>
   );
 }
-
-RecommendationProduct.propTypes = {
-  customerID: PropTypes.string.isRequired,
-};

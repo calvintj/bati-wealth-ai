@@ -4,7 +4,7 @@ import fetchOfferProductList from "../../services/task-manager/offer-products-li
 const useOfferProductRisk = () => {
   const [offerProductRisk, setOfferProductRisk] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,7 +13,7 @@ const useOfferProductRisk = () => {
         setOfferProductRisk(data);
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(err as Error);
         setLoading(false);
       }
     };

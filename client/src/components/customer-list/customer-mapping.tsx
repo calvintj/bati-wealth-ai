@@ -5,6 +5,9 @@ import {
   LinearScale,
   BarElement,
   Title,
+  ChartEvent,
+  ActiveElement,
+  ChartOptions,
   // Tooltip,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
@@ -25,21 +28,52 @@ ChartJS.register(
 // HOOKS
 import { useCustomerList } from "../../hooks/customer-list/use-customer-list";
 import { useState } from "react";
-import PropTypes from "prop-types";
+import { CustomerRecord } from "@/types/customer-list";
 
-const StackedBarChart = ({ setPropensity, setAum }) => {
+interface StackedBarChartProps {
+  setPropensity: (propensity: string) => void;
+  setAum: (aum: string) => void;
+}
+
+interface SelectedBar {
+  aumIndex: number;
+  propIndex: number;
+}
+
+// Add proper typing for chart data
+interface ChartDataPoint {
+  x: string;
+  y: number;
+  actualCount: number;
+}
+
+// Add interfaces for Chart.js types
+interface ChartContext {
+  chart: {
+    data: {
+      labels: string[];
+    };
+  };
+  dataset: {
+    data: ChartDataPoint[];
+    label: string;
+  };
+  dataIndex: number;
+}
+
+const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
   // Fetch customer data using a custom hook
-  const customerList = useCustomerList();
+  const customerList = useCustomerList() as unknown as CustomerRecord[];
 
   // Add state to track selected bar
-  const [selectedBar, setSelectedBar] = useState(null);
+  const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
 
   // Define categories for AUM (x-axis) and Propensity (y-axis)
   const aumCategories = ["Zero", "Low", "Medium", "High"];
   const propensityCategories = ["Low", "Medium", "High", "Qualified"];
 
   // -- MAPPING FUNCTIONS ------------------------------------------------------
-  const mapAumToCategory = (aumLabel) => {
+  const mapAumToCategory = (aumLabel: string) => {
     if (!aumLabel) return "Low";
     if (aumLabel.includes("Zero")) return "Zero";
     if (aumLabel.includes("Low")) return "Low";
@@ -48,7 +82,7 @@ const StackedBarChart = ({ setPropensity, setAum }) => {
     return "Low";
   };
 
-  const mapPropensityToCategory = (propensity) => {
+  const mapPropensityToCategory = (propensity: string) => {
     if (!propensity) return "Low";
     if (propensity.includes("Low")) return "Low";
     if (propensity.includes("Medium")) return "Medium";
@@ -60,7 +94,7 @@ const StackedBarChart = ({ setPropensity, setAum }) => {
 
   // Build a 4x4 matrix of raw counts: countMatrix[aum][propensity]
   const generateHeatmapData = () => {
-    const countMatrix = {};
+    const countMatrix: Record<string, Record<string, number>> = {};
     // Build matrix with raw counts
     aumCategories.forEach((aum) => {
       countMatrix[aum] = {};
@@ -70,8 +104,8 @@ const StackedBarChart = ({ setPropensity, setAum }) => {
     });
 
     customerList.forEach((customer) => {
-      const aumCat = mapAumToCategory(customer["AUM Label"]);
-      const propCat = mapPropensityToCategory(customer.Propensity);
+      const aumCat = mapAumToCategory(customer["AUM Label"] || "");
+      const propCat = mapPropensityToCategory(customer.Propensity || "");
       countMatrix[aumCat][propCat] += 1;
     });
 
@@ -120,7 +154,7 @@ const StackedBarChart = ({ setPropensity, setAum }) => {
 
   // Chart configuration
   const options = {
-    onClick: (event, elements) => {
+    onClick: (event: ChartEvent, elements: ActiveElement[]) => {
       if (elements.length > 0) {
         const { index: aumIndex, datasetIndex: propIndex } = elements[0];
         const aumCategory = aumCategories[aumIndex];
@@ -157,7 +191,7 @@ const StackedBarChart = ({ setPropensity, setAum }) => {
       },
       datalabels: {
         // Only show the label if the bar > 0
-        display: (context) => {
+        display: (context: ChartContext) => {
           const { y } = context.dataset.data[context.dataIndex];
           return y > 0; // show label only if there's a nonzero segment
         },
@@ -170,7 +204,7 @@ const StackedBarChart = ({ setPropensity, setAum }) => {
           size: 11,
         },
         // Format what the label displays
-        formatter: (value, context) => {
+        formatter: (value: unknown, context: ChartContext) => {
           // Get the actual count
           const actualCount =
             context.dataset.data[context.dataIndex].actualCount || 0;
@@ -208,7 +242,7 @@ const StackedBarChart = ({ setPropensity, setAum }) => {
           },
         },
         ticks: {
-          callback: function (value) {
+          callback: function (value: number) {
             // Show text labels at 1,2,3,4 if desired
             switch (value) {
               case 1:
@@ -253,14 +287,13 @@ const StackedBarChart = ({ setPropensity, setAum }) => {
 
   return (
     <div className="w-full h-full p-4">
-      <Bar data={data} options={options} className="cursor-pointer" />
+      <Bar
+        data={data}
+        options={options as unknown as ChartOptions<"bar">}
+        className="cursor-pointer"
+      />
     </div>
   );
 };
 
 export default StackedBarChart;
-
-StackedBarChart.propTypes = {
-  setPropensity: PropTypes.func.isRequired,
-  setAum: PropTypes.func.isRequired,
-};

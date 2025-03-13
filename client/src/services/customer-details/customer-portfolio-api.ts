@@ -1,5 +1,8 @@
-const fetchCustomerPortfolio = async (customerID) => {
+const fetchCustomerPortfolio = async (customerID: string) => {
   const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Token not found");
+  }
   const tokenPayload = JSON.parse(atob(token.split(".")[1]));
   const rm_number = tokenPayload.rm_number;
 

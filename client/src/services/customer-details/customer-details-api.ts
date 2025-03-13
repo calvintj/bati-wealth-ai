@@ -1,4 +1,4 @@
-const fetchCustomerDetails = async (customerID) => {
+const fetchCustomerDetails = async (customerID: string) => {
   try {
     // Don't proceed if customerID is empty
     if (!customerID) {

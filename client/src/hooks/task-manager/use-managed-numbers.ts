@@ -4,7 +4,7 @@ import fetchManagedNumbers from "../../services/task-manager/managed-numbers-api
 const useManagedNumbers = () => {
   const [managedNumbers, setManagedNumbers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const getManagedNumbers = async () => {
@@ -13,7 +13,7 @@ const useManagedNumbers = () => {
         setManagedNumbers(data);
         setLoading(false);
       } catch (error) {
-        setError(error);
+        setError(error as Error);
         setLoading(false);
       }
     };
