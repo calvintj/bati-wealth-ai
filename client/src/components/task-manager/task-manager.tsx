@@ -1,56 +1,48 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { format } from "date-fns";
 import { id } from "date-fns/locale/id";
 import { CiCirclePlus } from "react-icons/ci";
-// import { IoTrashOutline } from "react-icons/io5";
-// import { FaRegEdit } from "react-icons/fa";
-import useFetchTasks from "../../hooks/task-manager/use-get-task"; // Custom hook to fetch tasks
-import usePostTask from "../../hooks/task-manager/use-post-task"; // Custom hook to post a new task
-import { Task } from "@/types/task-manager";
+import { TaskResponse } from "@/types/task-manager";
+import { usePostTask, useGetTask } from "@/hooks/task-manager/use-task-manager";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
-  // Get tasks from hook; rename "task" to "tasks"
-  const { task: tasksFromHook, error, loading } = useFetchTasks();
-  const { postData, loading: posting } = usePostTask();
+  // React Query hook for tasks
+  const { data: taskResponse, error, isLoading } = useGetTask();
+  const { mutateAsync: postData, isPending: posting } = usePostTask();
+  const queryClient = useQueryClient();
 
-  // Local state for tasks to update immediately without a full refetch.
-  const [localTasks, setLocalTasks] = useState<Task[]>([]);
-  // Sync localTasks with hook data.
-  useEffect(() => {
-    if (tasksFromHook) {
-      setLocalTasks(tasksFromHook);
-    }
-  }, [tasksFromHook]);
-
-  // Local state for popup and new task inputs.
+  // Popup state and positioning
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-  const buttonRef = useRef(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
+  // New task form state
   const [newTask, setNewTask] = useState("");
   const [newInvitee, setNewInvitee] = useState("");
-  const [newDueDate, setNewDueDate] = useState(
-    format(selectedDate, "yyyy-MM-dd")
-  );
+  const [newDueDate, setNewDueDate] = useState(format(selectedDate, "yyyy-MM-dd"));
 
-  // Update default due date when selectedDate changes.
+  // Update due date when selectedDate changes.
   useEffect(() => {
     setNewDueDate(format(selectedDate, "yyyy-MM-dd"));
   }, [selectedDate]);
 
-  // Filter tasks for the selected date.
+  // Filter tasks for the selected date using query data
   const dateKey = format(selectedDate, "yyyy-MM-dd");
-  const tasksForSelectedDate = localTasks.filter(
-    (task) => format(new Date(task.due_date), "yyyy-MM-dd") === dateKey
-  );
+  const tasksForSelectedDate = useMemo(() => {
+    if (!taskResponse) return [];
+    return taskResponse.task.filter(
+      (task) => format(new Date(task.due_date), "yyyy-MM-dd") === dateKey
+    );
+  }, [taskResponse, dateKey]);
 
-  // Toggle the popup position.
+  // Toggle popup position based on the add button's location.
   const togglePopup = () => {
     if (!showPopup && buttonRef.current) {
-      const rect = (buttonRef.current as HTMLElement).getBoundingClientRect();
+      const rect = buttonRef.current.getBoundingClientRect();
       setPopupPosition({
         top: rect.bottom + window.scrollY,
         left: rect.left + window.scrollX - 120,
@@ -59,25 +51,28 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
     setShowPopup((prev) => !prev);
   };
 
-  // Add a new task and update local state.
+  // Add a new task using optimistic update on React Query cache.
   const addTask = async () => {
     if (!newTask.trim() || !newInvitee.trim() || !newDueDate.trim()) return;
     try {
-      // Post new task and get the new task object from the API.
-      const newTaskObj = await postData({
+      const newTaskResponse = await postData({
         description: newTask,
         invitee: newInvitee,
         due_date: newDueDate,
       });
-      // Optimistically update localTasks by appending the new task.
-      setLocalTasks((prevTasks) => [...prevTasks, newTaskObj]);
-      // Reset inputs and hide popup.
+      // Update the query cache with the newly added task(s)
+      queryClient.setQueryData<TaskResponse>(["task"], (oldData) => {
+        if (!oldData) return newTaskResponse;
+        return {
+          task: [...oldData.task, ...newTaskResponse.task],
+        };
+      });
+
+      // Reset form inputs and hide popup.
       setNewTask("");
       setNewInvitee("");
       setNewDueDate(format(selectedDate, "yyyy-MM-dd"));
       setShowPopup(false);
-      // Optionally, you can call refetch() here to re-sync with the server.
-      // refetch();
     } catch (err) {
       console.error("Failed to add task:", err);
     }
@@ -85,7 +80,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
 
   return (
     <div className="relative p-4 rounded-lg text-white w-full bg-[#1D283A] h-[500px]">
-      {/* Header with date and plus icon */}
+      {/* Header with date and add button */}
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-bold">
           {format(selectedDate, "d MMMM yyyy", { locale: id })}
@@ -100,14 +95,14 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
         </button>
       </div>
 
-      {/* Display loading or error messages */}
-      {loading && <p>Loading tasks...</p>}
+      {/* Display loading or error states */}
+      {isLoading && <p>Loading tasks...</p>}
       {error && <p>Error: {error.message}</p>}
 
-      {/* Task list with scroll enabled */}
+      {/* Task list */}
       {tasksForSelectedDate.length === 0 ? (
         <p className="text-center bg-gray-700 p-4 rounded-2xl">
-          Tidak ada tugas di tanggal ini !
+          Tidak ada tugas di tanggal ini!
         </p>
       ) : (
         <ul className="mb-4 max-h-80 overflow-y-auto rounded-md">

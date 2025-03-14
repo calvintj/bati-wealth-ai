@@ -2,25 +2,11 @@ import useOfferProductRisk from "../../hooks/task-manager/use-offer-product-risk
 import { CiShare1 } from "react-icons/ci";
 import Link from "next/link";
 
-export interface OfferProductRisk {
-  bp_number_wm_core: string;
-  risk_profile: string;
-  offer_product_risk_1: string;
-  offer_product_risk_2: string;
-  offer_product_risk_3: string;
-  offer_product_risk_4: string;
-  offer_product_risk_5: string;
-}
-
 export default function OfferProductRisk() {
-  // Hook
-  const { offerProductRisk, loading, error } = useOfferProductRisk() as {
-    offerProductRisk: OfferProductRisk[];
-    loading: boolean;
-    error: Error | null;
-  };
+  const { data, isLoading, error } = useOfferProductRisk();
+  const offerProductRisk = data?.offer_product_risk || [];
 
-  if (loading) {
+  if (isLoading) {
     return <div>Loading offer product risk data...</div>;
   }
 
@@ -42,7 +28,7 @@ export default function OfferProductRisk() {
             </tr>
           </thead>
           <tbody className="divide-y-2 divide-gray-900">
-            {offerProductRisk.map((product, index) => (
+            {offerProductRisk?.map((product, index) => (
               <tr key={index}>
                 <td className="py-2">{product.bp_number_wm_core}</td>
                 <td>{product.risk_profile}</td>

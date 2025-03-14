@@ -1,20 +1,11 @@
 import usePotentialTransaction from "../../hooks/task-manager/use-potential-transaction";
 
-interface PotentialTransaction {
-  id_nasabah: string;
-  nama_produk: string;
-  profit: number;
-}
-
 export default function OwnedProductTable() {
   // Hook
-  const { potentialTransaction, loading, error } = usePotentialTransaction() as {
-    potentialTransaction: PotentialTransaction[];
-    loading: boolean;
-    error: Error | null;
-  };
+  const { data, isLoading, error } = usePotentialTransaction();
+  const potentialTransactions = data?.potential_transaction || [];
 
-  if (loading) {
+  if (isLoading) {
     return <div>Loading potential transaction data...</div>;
   }
 
@@ -36,7 +27,7 @@ export default function OwnedProductTable() {
             </tr>
           </thead>
           <tbody className="divide-y-2 divide-gray-900">
-            {potentialTransaction.map((product, index) => (
+            {potentialTransactions?.map((product, index) => (
               <tr key={index}>
                 <td className="py-2">{product.id_nasabah}</td>
                 <td>{product.nama_produk}</td>

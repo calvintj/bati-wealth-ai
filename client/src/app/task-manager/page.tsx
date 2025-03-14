@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, FC } from "react";
+import { useState, Dispatch, SetStateAction, FC, useCallback } from "react";
 import useManagedNumbers from "@/hooks/task-manager/use-managed-numbers";
 import useIncreasedNumbers from "@/hooks/task-manager/use-increased-numbers";
 
@@ -18,12 +18,6 @@ import ReprofileRiskTarget from "@/components/task-manager/reprofile-risk-target
 // ASSETS
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-
-interface ManagedNumbers {
-  all_aum: number;
-  all_fbi: number;
-  all_customers: number;
-}
 
 // Pagination props interface
 interface PaginationProps {
@@ -49,12 +43,8 @@ export default function TaskManagerPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [, setCustomerRisk] = useState<string>("All");
   // Removed unused state variable customerRisk
-  const { managedNumbers } = useManagedNumbers() as unknown as {
-    managedNumbers: ManagedNumbers;
-    loading: boolean;
-    error: Error | null;
-  };
-  const { increasedNumbers } = useIncreasedNumbers();
+  const { data: managedNumbers } = useManagedNumbers();
+  const { data: increasedNumbers } = useIncreasedNumbers();
 
   const aumIncrease =
     increasedNumbers?.lastQuarter?.all_aum !== 0
@@ -91,23 +81,23 @@ export default function TaskManagerPage() {
   ];
 
   // Pagination handlers
-  const handlePrevPage = () => {
+  const handlePrevPage = useCallback(() => {
     if (activeComponentIndex > 0) {
       setActiveComponentIndex((prev) => prev - 1);
-      setCurrentPage(0); // Reset page when switching components
+      setCurrentPage(0);
     } else {
       setCurrentPage((prev) => Math.max(0, prev - 1));
     }
-  };
+  }, [activeComponentIndex]);
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     if (activeComponentIndex < components.length - 1) {
       setActiveComponentIndex((prev) => prev + 1);
-      setCurrentPage(0); // Reset page when switching components
+      setCurrentPage(0);
     } else if (currentPage < pageCount - 1) {
       setCurrentPage((prev) => prev + 1);
     }
-  };
+  }, [activeComponentIndex, currentPage, pageCount, components.length]);
 
   // Get current component
   const ActiveComponent = components[activeComponentIndex].component;

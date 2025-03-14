@@ -1,22 +1,13 @@
 import Link from "next/link";
-import useReprofileRiskTarget from "../../hooks/task-manager/use-reprofile-risk-target";
+import useReprofileRiskTarget from "@/hooks/task-manager/use-reprofile-risk-target";
 import { CiShare1 } from "react-icons/ci";
-
-interface ReprofileRiskTarget {
-  bp_number_wm_core: string;
-  risk_profile: string;
-  offer_reprofile_risk_target: string;
-}
 
 export default function ReprofileRiskTarget() {
   // Hook
-  const { reProfileRiskTarget, loading, error } = useReprofileRiskTarget() as {
-    reProfileRiskTarget: ReprofileRiskTarget[];
-    loading: boolean;
-    error: Error | null;
-  };
+  const { data, isLoading, error } = useReprofileRiskTarget();
+  const reProfileRiskTarget = data?.reprofile_risk_target || [];
 
-  if (loading) {
+  if (isLoading) {
     return <div>Loading reprofile risk target data...</div>;
   }
 
@@ -38,7 +29,7 @@ export default function ReprofileRiskTarget() {
             </tr>
           </thead>
           <tbody className="divide-y-2 divide-gray-900">
-            {reProfileRiskTarget.map((product, index) => (
+            {reProfileRiskTarget?.map((product, index) => (
               <tr key={index}>
                 <td className="py-2">{product.bp_number_wm_core}</td>
                 <td>{product.risk_profile}</td>

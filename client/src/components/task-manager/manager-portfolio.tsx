@@ -1,14 +1,7 @@
 "use client";
 
-import React from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Legend,
-  Tooltip,
-} from "recharts";
+import React, { useState, useEffect, useMemo } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import usePortfolio from "../../hooks/task-manager/use-manager-portfolio";
 
 const RADIAN = Math.PI / 180;
@@ -48,22 +41,41 @@ const renderCustomizedLabel = ({
 
 const defaultColors = ["#F52720", "#01ACD2", "#2ABC36", "#FBB716", "#F0FF1B"];
 
-export default function PortfolioPie({ colors = defaultColors }) {
-  const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 768);
-  React.useEffect(() => {
+// Custom hook for window size
+function useWindowSize() {
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 768
+  );
+  useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  return windowWidth;
+}
 
+export default function PortfolioPie({ colors = defaultColors }) {
+  const windowWidth = useWindowSize();
   const isMobile = windowWidth < 768;
   const innerRadius = isMobile ? 40 : 60;
   const outerRadius = isMobile ? 70 : 100;
   const chartAspect = isMobile ? 1 : 1.8;
 
-  const { transformedData, loading, error } = usePortfolio();
+  // Always call hooks unconditionally
+  const { data, isLoading, error } = usePortfolio();
 
-  if (loading) {
+  // Wrap data extraction in a useMemo hook to stabilize dependencies
+  const portfolioData = useMemo(() => {
+    return data?.transformedData || [];
+  }, [data]);
+
+  // Memoize filteredData (even if trivial) to satisfy the linter
+  const filteredData = useMemo(() => {
+    return portfolioData;
+  }, [portfolioData]);
+
+  // Conditional rendering happens AFTER all hooks have been called
+  if (isLoading) {
     return (
       <div className="p-4 flex justify-center items-center h-full">
         <p>Loading portfolio data...</p>
@@ -79,7 +91,7 @@ export default function PortfolioPie({ colors = defaultColors }) {
     );
   }
 
-  if (transformedData.length === 0) {
+  if (portfolioData.length === 0) {
     return (
       <div className="p-4 flex justify-center items-center h-full">
         <p>No portfolio data available</p>
@@ -93,7 +105,7 @@ export default function PortfolioPie({ colors = defaultColors }) {
       <ResponsiveContainer width="100%" aspect={chartAspect}>
         <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
           <Pie
-            data={transformedData}
+            data={filteredData}
             innerRadius={innerRadius}
             outerRadius={outerRadius}
             labelLine={false}
@@ -101,9 +113,9 @@ export default function PortfolioPie({ colors = defaultColors }) {
             dataKey="value"
             paddingAngle={2}
           >
-            {transformedData.map((entry, index) => (
+            {filteredData.map((entry, index) => (
               <Cell
-                key={`cell-${index}`}
+                key={entry.name || `cell-${index}`}
                 fill={colors[index % colors.length]}
                 stroke="none"
               />

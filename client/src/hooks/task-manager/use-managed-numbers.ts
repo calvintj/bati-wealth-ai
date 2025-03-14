@@ -1,27 +1,13 @@
-import { useState, useEffect } from "react";
-import fetchManagedNumbers from "../../services/task-manager/managed-numbers-api";
+import { useQuery } from "@tanstack/react-query";
+import fetchManagedNumbers from "@/services/task-manager/managed-numbers-api";
+import { ManagedNumbersResponse } from "@/types/task-manager";
 
 const useManagedNumbers = () => {
-  const [managedNumbers, setManagedNumbers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const getManagedNumbers = async () => {
-      try {
-        const data = await fetchManagedNumbers();
-        setManagedNumbers(data);
-        setLoading(false);
-      } catch (error) {
-        setError(error as Error);
-        setLoading(false);
-      }
-    };
-
-    getManagedNumbers();
-  }, []);
-
-  return { managedNumbers, loading, error };
+  return useQuery<ManagedNumbersResponse, Error>({
+    queryKey: ["managedNumbers"],
+    queryFn: fetchManagedNumbers,
+    staleTime: 5 * 60 * 1000,
+  });
 };
 
 export default useManagedNumbers;

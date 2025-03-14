@@ -1,26 +1,38 @@
-const fetchLastTransaction = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        throw new Error("Token not found");
-    }
-    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-    const rm_number = tokenPayload.rm_number;
+import axios from "axios";
+import api from "@/services/api";
+import { LastTransactionResponse } from "@/types/task-manager";
 
-    const response = await fetch(
-        `http://localhost:5000/api/task-manager/last-transaction?rm_number=${rm_number}`,
-        {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
-        }
-    );
-    
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
+const fetchLastTransaction = async (): Promise<LastTransactionResponse> => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Token not found");
+  }
+  let tokenPayload;
+  try {
+    tokenPayload = JSON.parse(atob(token.split(".")[1]));
+  } catch {
+    throw new Error("Invalid token format");
+  }
+  const { rm_number } = tokenPayload;
+
+  try {
+    const response = await api.get("/task-manager/last-transaction", {
+      params: { rm_number },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // Ensure your backend wraps the rows in an object with a last_transaction property,
+    // for example: { last_transaction: result.rows }
+    return response.data as LastTransactionResponse;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
     }
-    
-    return response.json();
-}
+    throw new Error("An unexpected error occurred");
+  }
+};
 
 export default fetchLastTransaction;

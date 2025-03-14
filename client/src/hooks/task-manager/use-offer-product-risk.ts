@@ -1,26 +1,13 @@
-import { useState, useEffect } from "react";
 import fetchOfferProductList from "../../services/task-manager/offer-products-list-api";
+import { useQuery } from "@tanstack/react-query";
+import { OfferProductRiskResponse } from "@/types/task-manager";
 
 const useOfferProductRisk = () => {
-  const [offerProductRisk, setOfferProductRisk] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchOfferProductList();
-        setOfferProductRisk(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err as Error);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  return { offerProductRisk, loading, error };
+  return useQuery<OfferProductRiskResponse, Error>({
+    queryKey: ["offerProductRisk"],
+    queryFn: fetchOfferProductList,
+    staleTime: 5 * 60 * 1000,
+  });
 };
 
 export default useOfferProductRisk;

@@ -91,9 +91,8 @@ export const getTaskController = async (req: Request, res: Response): Promise<vo
 
 export const postTaskController = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Destructure task properties from req.body (not wrapped in a "task" object)
     const { description, invitee, due_date } = req.body;
-    // Get rm_number from the token payload attached by authMiddleware (using a type assertion)
+    // Optionally validate input fields here.
     const rm_number = (req as any).user?.rm_number;
 
     if (!rm_number) {
@@ -101,18 +100,11 @@ export const postTaskController = async (req: Request, res: Response): Promise<v
       return;
     }
 
-    const newTask = await postTask({
-      description,
-      invitee,
-      due_date,
-      rm_number,
-    });
-    res.json(newTask);
-    return;
+    const newTask = await postTask(description, invitee, due_date, rm_number);
+    res.status(201).json(newTask); // 201 Created status code
   } catch (error) {
     console.error("Error posting task:", error);
     res.status(500).json({ error: "Failed to add task" });
-    return;
   }
 };
 

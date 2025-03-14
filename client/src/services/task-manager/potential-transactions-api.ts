@@ -1,25 +1,33 @@
-const fetchPotentialTransaction = async () => {
+import api from "@/services/api";
+import { PotentialTransactionResponse } from "@/types/task-manager";
+import axios from "axios";
+
+const fetchPotentialTransaction = async (): Promise<PotentialTransactionResponse> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("Token not found");
   }
-  const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+
+  let tokenPayload;
+  try {
+    tokenPayload = JSON.parse(atob(token.split(".")[1]));
+  } catch {
+    throw new Error("Invalid token format");
+  }
   const rm_number = tokenPayload.rm_number;
 
-  const response = await fetch(
-    `http://localhost:5000/api/task-manager/potential-transaction?rm_number=${rm_number}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  try {
+    const response = await api.get("/task-manager/potential-transaction", {
+      params: { rm_number },
+    });
+    return response.data as PotentialTransactionResponse;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
     }
-  );
-
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
+    throw new Error("An unexpected error occurred");
   }
-
-  return response.json();
 };
 
 export default fetchPotentialTransaction;

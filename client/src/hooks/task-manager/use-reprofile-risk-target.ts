@@ -1,26 +1,13 @@
-import { useState, useEffect } from "react";
 import fetchReprofileRiskTarget from "../../services/task-manager/reprofile-risk-target-api";
+import { useQuery } from "@tanstack/react-query";
+import { ReProfileRiskTargetResponse } from "@/types/task-manager";
 
 const useReprofileRiskTarget = () => {
-  const [reProfileRiskTarget, setReProfileRiskTarget] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchReprofileRiskTarget();
-        setReProfileRiskTarget(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err as Error);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  return { reProfileRiskTarget, loading, error };
+  return useQuery<ReProfileRiskTargetResponse, Error>({
+    queryKey: ["reProfileRiskTarget"],
+    queryFn: fetchReprofileRiskTarget,
+    staleTime: 5 * 60 * 1000,
+  })
 };
 
 export default useReprofileRiskTarget;

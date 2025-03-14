@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { format, addMonths, subMonths } from "date-fns";
 import { id } from "date-fns/locale/id";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
@@ -10,18 +10,18 @@ const Calendar = ({ setSelectedDate, selectedDate }: { setSelectedDate: (date: D
 
   const daysShort = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 
-  const endOfMonth = new Date(
-    currentMonth.getFullYear(),
-    currentMonth.getMonth() + 1,
-    0
-  );
-
-  // Move this into a useEffect or useMemo if needed
-  const daysInMonth = Array.from(
-    { length: endOfMonth.getDate() },
-    (_, i) =>
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i + 1)
-  );
+  const daysInMonth = useMemo(() => {
+    const endOfMonth = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() + 1,
+      0
+    );
+    return Array.from(
+      { length: endOfMonth.getDate() },
+      (_, i) => new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i + 1)
+    );
+  }, [currentMonth]);
+  
 
   // Utility to check if two dates are the same day
   const isSameDay = (d1: Date, d2: Date) =>
