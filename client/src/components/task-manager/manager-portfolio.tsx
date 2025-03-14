@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   PieChart,
@@ -47,7 +49,7 @@ const renderCustomizedLabel = ({
 const defaultColors = ["#F52720", "#01ACD2", "#2ABC36", "#FBB716", "#F0FF1B"];
 
 export default function PortfolioPie({ colors = defaultColors }) {
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 768);
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);

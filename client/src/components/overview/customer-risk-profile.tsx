@@ -76,7 +76,7 @@ export default function RiskProfilePie({
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      const handleResize = () => setWindowWidth(window.innerWidth);
+      const handleResize = () => setWindowWidth(0);
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }

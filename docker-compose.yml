@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://calvintj:280603@postgres:5432/bati_crm_db
+      - JWT_SECRET=my_super_secret_key
+    depends_on:
+      - postgres
+    networks:
+      - app_net
+
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: calvintj
+      POSTGRES_PASSWORD: 280603
+      POSTGRES_DB: bati_crm_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - app_net
+
+volumes:
+  pgdata:
+
+networks:
+  app_net:
+    driver: bridge
