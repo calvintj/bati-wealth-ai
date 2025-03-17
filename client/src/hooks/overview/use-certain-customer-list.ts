@@ -1,46 +1,38 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { CertainCustomerList } from "@/types/overview";
 import fetchCertainCustomerList from "../../services/overview/customer-list-api";
 
-// Use the Customer type from the API service
-interface Customer {
-  id: string;
-  name: string;
-  risk_profile: string;
-  total_investment: number;
-  last_transaction_date: string;
+// Helper function to map the customerRisk to the format expected by the backend
+function mapCustomerRiskToAPI(customerRisk: string): string {
+  switch (customerRisk) {
+    case "Conservative":
+      return "1 - Conservative";
+    case "Balanced":
+      return "2 - Balanced";
+    case "Moderate":
+      return "3 - Moderate";
+    case "Growth":
+      return "4 - Growth";
+    case "Aggressive":
+      return "5 - Aggressive";
+    default:
+      return customerRisk;
+  }
 }
 
 export function useCertainCustomerList(customerRisk: string) {
-  const [customerList, setCustomerList] = useState<Customer[]>([]);
+  // Map the customerRisk to the format expected by the backend
+  const formattedRisk = mapCustomerRiskToAPI(customerRisk);
 
-  useEffect(() => {
-    // Map the customerRisk to the format expected by the backend
-    let formattedRisk;
-    switch (customerRisk) {
-      case "Conservative":
-        formattedRisk = "1 - Conservative";
-        break;
-      case "Balanced":
-        formattedRisk = "2 - Balanced";
-        break;
-      case "Moderate":
-        formattedRisk = "3 - Moderate";
-        break;
-      case "Growth":
-        formattedRisk = "4 - Growth";
-        break;
-      case "Aggressive":
-        formattedRisk = "5 - Aggressive";
-        break;
-      default:
-        formattedRisk = customerRisk;
-    }
+  // useQuery to fetch customer list based on risk profile and rm_number
+  const { data, isLoading, error } = useQuery<CertainCustomerList[], Error>({
+    queryKey: ["customerList", formattedRisk],
+    queryFn: () => fetchCertainCustomerList(formattedRisk),
+    enabled: customerRisk !== "All", // Only fetch data if the customerRisk is valid
+  });
 
-    // Only fetch if we have a valid risk profile
-    if (customerRisk !== "All") {
-      fetchCertainCustomerList(setCustomerList, formattedRisk);
-    }
-  }, [customerRisk]);
+  if (isLoading) return { customerList: [], isLoading, error };
+  if (error) return { customerList: [], error, isLoading };
 
-  return customerList;
+  return { customerList: data ?? [], isLoading, error };
 }

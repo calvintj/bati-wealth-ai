@@ -1,47 +1,37 @@
-// Define a proper interface for the customer data
-interface Customer {
-  id: string;
-  name: string;
-  risk_profile: string;
-  total_investment: number;
-  last_transaction_date: string;
-  // Add other properties as needed
-}
+import { CertainCustomerList } from "@/types/overview";
+import api from "@/services/api";
+import axios from "axios";
 
-const fetchCertainCustomerList = (
-  setCustomerList: (data: Customer[]) => void,
-  customerRisk: string
-) => {
+const fetchCertainCustomerList = async (customerRisk: string): Promise<CertainCustomerList[]> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("Token not found");
   }
-  const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+
+  let tokenPayload;
+  try {
+    tokenPayload = JSON.parse(atob(token.split(".")[1]));
+  } catch {
+    throw new Error("Invalid token format");
+  }
+  
   const rm_number = tokenPayload.rm_number;
-
-  console.log("Fetching with customerRisk:", customerRisk);
-
-  fetch(
-    `http://localhost:5000/api/overview/certain-customer-list?rm_number=${rm_number}&customerRisk=${customerRisk}`,
-    {
+  try {
+    const response = await api.get("/overview/certain-customer-list", {
+      params: { rm_number, customerRisk },
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    }
-  )
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return res.json();
-    })
-    .then((data: Customer[]) => {
-      console.log("Received data:", data);
-      setCustomerList(data);
-    })
-    .catch((err) => {
-      console.error("Error fetching customer list:", err);
     });
+    return response.data; // directly return the data
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
 };
 
 export default fetchCertainCustomerList;

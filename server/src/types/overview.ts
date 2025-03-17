@@ -1,8 +1,3 @@
-export interface DataEntry {
-  name: string;
-  value: number;
-}
-
 export interface TotalCustomer {
   all: number;
   conservative: number;
@@ -31,7 +26,7 @@ export interface TotalFBI {
 }
 
 export interface QuarterlyFUM {
-  year: number; // or string if your DB returns a string
+  year: number | string;
   quarters: {
     all: {
       q1: number;
@@ -73,7 +68,7 @@ export interface QuarterlyFUM {
 }
 
 export interface QuarterlyFBI {
-  year: number; // or string if your DB returns a string
+  year: number | string;
   quarters: {
     all: {
       q1: number;
@@ -113,7 +108,6 @@ export interface QuarterlyFBI {
     };
   };
 }
-
 
 export interface TopProduct {
   product: string;

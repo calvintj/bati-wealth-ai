@@ -1,14 +1,13 @@
-import { useState, useEffect } from "react";
 import fetchTotalCustomer from "@/services/overview/total-customer-api";
-import { DataEntry } from "@/types/overview";
+import { DataEntry, TotalCustomer } from "@/types/overview";
+import { useQuery } from "@tanstack/react-query";
 
 export function useTotalCustomer(customerRisk: string): DataEntry[] {
-  const [chartData, setChartData] = useState<DataEntry[]>([]);
-
-  useEffect(() => {
-    const loadData = async () => {
+  const { data: chartData = [] } = useQuery({
+    queryKey: ["totalCustomer", customerRisk],
+    queryFn: async () => {
       try {
-        const result = await fetchTotalCustomer();
+        const result: TotalCustomer = await fetchTotalCustomer();
         const formattedData: DataEntry[] = [
           { name: "All", value: result.all || 0 },
           { name: "Conservative", value: result.conservative || 0 },
@@ -18,14 +17,13 @@ export function useTotalCustomer(customerRisk: string): DataEntry[] {
           { name: "Aggressive", value: result.aggressive || 0 },
         ];
         console.log("Formatted data:", formattedData);
-        setChartData(formattedData);
+        return formattedData;
       } catch (error) {
         console.error("Error fetching customer data:", error);
+        return [];
       }
-    };
-
-    loadData();
-  }, [customerRisk]);
+    },
+  });
 
   return chartData;
 }

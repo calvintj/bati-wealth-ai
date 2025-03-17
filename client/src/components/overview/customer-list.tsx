@@ -1,44 +1,37 @@
 import { useCertainCustomerList } from "../../hooks/overview/use-certain-customer-list";
 import { useCustomerList } from "../../hooks/customer-list/use-customer-list";
 
-interface CustomerListTableProps {
-  customerRisk: string;
-}
-
-// Add a type definition for the customer data
-interface CustomerData {
-  "Customer ID": string;
-  "Risk Profile": string;
-  "AUM Label": string;
-  Propensity: string;
-  "Priority / Private": string;
-  "Customer Type": string;
-  Pekerjaan: string;
-  "Status Nikah": string;
-  Usia: string | number;
-  "Annual Income": string | number;
-  "Total FUM": string | number;
-  "Total AUM": string | number;
-  "Total FBI": string | number;
-  [key: string]: string | number | undefined;
-}
-
-const CustomerListTable: React.FC<CustomerListTableProps> = ({
+const CustomerListTable = ({
   customerRisk,
+}: {
+  customerRisk: string;
 }) => {
   // Always call both hooks so the hooks order is consistent.
-  const fullCustomerList = useCustomerList() as unknown as CustomerData[];
+  const fullCustomerList = useCustomerList();
   const certainCustomerList = useCertainCustomerList(
     customerRisk
-  ) as unknown as CustomerData[];
+  );
 
   // Select the customer list based on the customerRisk prop.
   const customerList =
     customerRisk === "All" ? fullCustomerList : certainCustomerList;
-
   // Add loading and error handling
-  if (!customerList || customerList.length === 0) {
+  if (!customerList) {
     return <div className="p-4">Loading customer data...</div>;
+  }
+  
+  if ('isLoading' in customerList && customerList.isLoading) {
+    return <div className="p-4">Loading customer data...</div>;
+  }
+  
+  if ('error' in customerList && customerList.error) {
+    return <div className="p-4">Error loading customer data: {customerList.error.message}</div>;
+  }
+  
+  const customers = 'customerList' in customerList ? customerList.customerList : customerList;
+  
+  if (customers.length === 0) {
+    return <div className="p-4">No customer data available.</div>;
   }
 
   // Update the header labels to match the keys in the data rows.
@@ -78,7 +71,7 @@ const CustomerListTable: React.FC<CustomerListTableProps> = ({
           </tr>
         </thead>
         <tbody className="divide-y-2 divide-gray-900">
-          {customerList.map((row, index) => (
+          {customers.map((row, index) => (
             <tr key={index}>
               <td className="sticky left-0 z-10 whitespace-nowrap px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-[#1D283A] min-w-[150px]">
                 {row["Customer ID"]}

@@ -1,7 +1,17 @@
 import db from "../config/db";
+import {
+  TotalCustomer,
+  TotalAUM,
+  TotalFBI,
+  QuarterlyFUM,
+  QuarterlyFBI,
+  TopProductsResult,
+  CertainCustomerList,
+} from "../types/overview";
 
-const getTotalCustomer = async (rm_number: string) => {
-    const result = await db.query(`
+const getTotalCustomer = async (rm_number: string): Promise<TotalCustomer> => {
+  const result = await db.query(
+    `
       SELECT 
         ra.rm_number,
         COUNT(DISTINCT CASE WHEN ci.risk_profile != '0' THEN ci.bp_number_wm_core END) AS all,
@@ -14,20 +24,23 @@ const getTotalCustomer = async (rm_number: string) => {
       JOIN customer_info AS ci ON ci.assigned_rm = ra.rm_number
       WHERE ra.rm_number = $1
       GROUP BY ra.rm_number
-    `, [rm_number]);
+    `,
+    [rm_number]
+  );
 
-    return {
-      all: parseInt(result.rows[0]?.all || 0, 10),
-      conservative: parseInt(result.rows[0]?.conservative || 0, 10),
-      balanced: parseInt(result.rows[0]?.balanced || 0, 10),
-      moderate: parseInt(result.rows[0]?.moderate || 0, 10),
-      growth: parseInt(result.rows[0]?.growth || 0, 10),
-      aggressive: parseInt(result.rows[0]?.aggressive || 0, 10),
-    };
+  return {
+    all: parseInt(result.rows[0]?.all || 0, 10),
+    conservative: parseInt(result.rows[0]?.conservative || 0, 10),
+    balanced: parseInt(result.rows[0]?.balanced || 0, 10),
+    moderate: parseInt(result.rows[0]?.moderate || 0, 10),
+    growth: parseInt(result.rows[0]?.growth || 0, 10),
+    aggressive: parseInt(result.rows[0]?.aggressive || 0, 10),
+  };
 };
 
-const getTotalAUM = async (rm_number: string) => {
-    const result = await db.query(`
+const getTotalAUM = async (rm_number: string): Promise<TotalAUM> => {
+  const result = await db.query(
+    `
       SELECT 
         ra.rm_number,
         SUM(CASE WHEN ci.risk_profile != '0' THEN ca.aum ELSE 0 END) AS all_aum,
@@ -41,20 +54,23 @@ const getTotalAUM = async (rm_number: string) => {
       LEFT JOIN current_allocation AS ca ON ca.bp_number_wm_core = ci.bp_number_wm_core
       WHERE ra.rm_number = $1
       GROUP BY ra.rm_number
-    `, [rm_number]);
+    `,
+    [rm_number]
+  );
 
-    return {
-      all: parseFloat(result.rows[0]?.all_aum || 0),
-      conservative: parseFloat(result.rows[0]?.conservative_aum || 0),
-      balanced: parseFloat(result.rows[0]?.balanced_aum || 0),
-      moderate: parseFloat(result.rows[0]?.moderate_aum || 0),
-      growth: parseFloat(result.rows[0]?.growth_aum || 0),
-      aggressive: parseFloat(result.rows[0]?.aggressive_aum || 0),
-    };
+  return {
+    all: parseFloat(result.rows[0]?.all_aum || 0),
+    conservative: parseFloat(result.rows[0]?.conservative_aum || 0),
+    balanced: parseFloat(result.rows[0]?.balanced_aum || 0),
+    moderate: parseFloat(result.rows[0]?.moderate_aum || 0),
+    growth: parseFloat(result.rows[0]?.growth_aum || 0),
+    aggressive: parseFloat(result.rows[0]?.aggressive_aum || 0),
+  };
 };
 
-const getTotalFBI = async (rm_number: string) => {
-    const result = await db.query(`
+const getTotalFBI = async (rm_number: string): Promise<TotalFBI> => {
+  const result = await db.query(
+    `
     SELECT 
       ra.rm_number,
       SUM(CASE WHEN ci.risk_profile IS NOT NULL
@@ -74,20 +90,23 @@ const getTotalFBI = async (rm_number: string) => {
     LEFT JOIN current_allocation AS ca ON ca.bp_number_wm_core = ci.bp_number_wm_core
     WHERE ra.rm_number = $1
     GROUP BY ra.rm_number;
-    `, [rm_number]);
+    `,
+    [rm_number]
+  );
 
-    return {
-      all: parseFloat(result.rows[0]?.all_fbi || 0),
-      conservative: parseFloat(result.rows[0]?.conservative_fbi || 0),
-      balanced: parseFloat(result.rows[0]?.balanced_fbi || 0),
-      moderate: parseFloat(result.rows[0]?.moderate_fbi || 0),
-      growth: parseFloat(result.rows[0]?.growth_fbi || 0),
-      aggressive: parseFloat(result.rows[0]?.aggressive_fbi || 0),
-    };
+  return {
+    all: parseFloat(result.rows[0]?.all_fbi || 0),
+    conservative: parseFloat(result.rows[0]?.conservative_fbi || 0),
+    balanced: parseFloat(result.rows[0]?.balanced_fbi || 0),
+    moderate: parseFloat(result.rows[0]?.moderate_fbi || 0),
+    growth: parseFloat(result.rows[0]?.growth_fbi || 0),
+    aggressive: parseFloat(result.rows[0]?.aggressive_fbi || 0),
+  };
 };
 
-const getQuarterlyFUM = async (rm_number: string) => {
-    const result = await db.query(`
+const getQuarterlyFUM = async (rm_number: string): Promise<QuarterlyFUM[]> => {
+  const result = await db.query(
+    `
     WITH quarterly_fum AS (
     SELECT 
         ra.rm_number,
@@ -144,52 +163,55 @@ const getQuarterlyFUM = async (rm_number: string) => {
     FROM quarterly_fum
     GROUP BY rm_number, year
     ORDER BY year ASC;
-    `, [rm_number]);
-    return result.rows.map((row) => ({
-      year: row.year,
-      quarters: {
-        all: {
-          q1: parseFloat(row.q1_all || 0),
-          q2: parseFloat(row.q2_all || 0),
-          q3: parseFloat(row.q3_all || 0),
-          q4: parseFloat(row.q4_all || 0),
-        },
-        conservative: {
-          q1: parseFloat(row.q1_conservative || 0),
-          q2: parseFloat(row.q2_conservative || 0),
-          q3: parseFloat(row.q3_conservative || 0),
-          q4: parseFloat(row.q4_conservative || 0),
-        },
-        balanced: {
-          q1: parseFloat(row.q1_balanced || 0),
-          q2: parseFloat(row.q2_balanced || 0),
-          q3: parseFloat(row.q3_balanced || 0),
-          q4: parseFloat(row.q4_balanced || 0),
-        },
-        moderate: {
-          q1: parseFloat(row.q1_moderate || 0),
-          q2: parseFloat(row.q2_moderate || 0),
-          q3: parseFloat(row.q3_moderate || 0),
-          q4: parseFloat(row.q4_moderate || 0),
-        },
-        growth: {
-          q1: parseFloat(row.q1_growth || 0),
-          q2: parseFloat(row.q2_growth || 0),
-          q3: parseFloat(row.q3_growth || 0),
-          q4: parseFloat(row.q4_growth || 0),
-        },
-        aggressive: {
-          q1: parseFloat(row.q1_aggressive || 0),
-          q2: parseFloat(row.q2_aggressive || 0),
-          q3: parseFloat(row.q3_aggressive || 0),
-          q4: parseFloat(row.q4_aggressive || 0),
-        },
+    `,
+    [rm_number]
+  );
+  return result.rows.map((row) => ({
+    year: row.year,
+    quarters: {
+      all: {
+        q1: parseFloat(row.q1_all || 0),
+        q2: parseFloat(row.q2_all || 0),
+        q3: parseFloat(row.q3_all || 0),
+        q4: parseFloat(row.q4_all || 0),
       },
-    }));
+      conservative: {
+        q1: parseFloat(row.q1_conservative || 0),
+        q2: parseFloat(row.q2_conservative || 0),
+        q3: parseFloat(row.q3_conservative || 0),
+        q4: parseFloat(row.q4_conservative || 0),
+      },
+      balanced: {
+        q1: parseFloat(row.q1_balanced || 0),
+        q2: parseFloat(row.q2_balanced || 0),
+        q3: parseFloat(row.q3_balanced || 0),
+        q4: parseFloat(row.q4_balanced || 0),
+      },
+      moderate: {
+        q1: parseFloat(row.q1_moderate || 0),
+        q2: parseFloat(row.q2_moderate || 0),
+        q3: parseFloat(row.q3_moderate || 0),
+        q4: parseFloat(row.q4_moderate || 0),
+      },
+      growth: {
+        q1: parseFloat(row.q1_growth || 0),
+        q2: parseFloat(row.q2_growth || 0),
+        q3: parseFloat(row.q3_growth || 0),
+        q4: parseFloat(row.q4_growth || 0),
+      },
+      aggressive: {
+        q1: parseFloat(row.q1_aggressive || 0),
+        q2: parseFloat(row.q2_aggressive || 0),
+        q3: parseFloat(row.q3_aggressive || 0),
+        q4: parseFloat(row.q4_aggressive || 0),
+      },
+    },
+  }));
 };
 
-const getQuarterlyFBI = async (rm_number: string) => {
-    const result = await db.query(`
+const getQuarterlyFBI = async (rm_number: string): Promise<QuarterlyFBI[]> => {
+  const result = await db.query(
+    `
     WITH quarterly_fbi AS (
     SELECT 
         ra.rm_number,
@@ -246,54 +268,58 @@ const getQuarterlyFBI = async (rm_number: string) => {
     FROM quarterly_fbi
     GROUP BY rm_number, year
     ORDER BY year ASC;
-    `, [rm_number]);
+    `,
+    [rm_number]
+  );
 
-    return result.rows.map((row) => ({
-      year: row.year,
-      quarters: {
-        all: {
-          q1: parseFloat(row.q1_all || 0),
-          q2: parseFloat(row.q2_all || 0),
-          q3: parseFloat(row.q3_all || 0),
-          q4: parseFloat(row.q4_all || 0),
-        },
-        conservative: {
-          q1: parseFloat(row.q1_conservative || 0),
-          q2: parseFloat(row.q2_conservative || 0),
-          q3: parseFloat(row.q3_conservative || 0),
-          q4: parseFloat(row.q4_conservative || 0),
-        },
-        balanced: {
-          q1: parseFloat(row.q1_balanced || 0),
-          q2: parseFloat(row.q2_balanced || 0),
-          q3: parseFloat(row.q3_balanced || 0),
-          q4: parseFloat(row.q4_balanced || 0),
-        },
-        moderate: {
-          q1: parseFloat(row.q1_moderate || 0),
-          q2: parseFloat(row.q2_moderate || 0),
-          q3: parseFloat(row.q3_moderate || 0),
-          q4: parseFloat(row.q4_moderate || 0),
-        },
-        growth: {
-          q1: parseFloat(row.q1_growth || 0),
-          q2: parseFloat(row.q2_growth || 0),
-          q3: parseFloat(row.q3_growth || 0),
-          q4: parseFloat(row.q4_growth || 0),
-        },
-        aggressive: {
-          q1: parseFloat(row.q1_aggressive || 0),
-          q2: parseFloat(row.q2_aggressive || 0),
-          q3: parseFloat(row.q3_aggressive || 0),
-          q4: parseFloat(row.q4_aggressive || 0),
-        },
+  return result.rows.map((row) => ({
+    year: row.year,
+    quarters: {
+      all: {
+        q1: parseFloat(row.q1_all || 0),
+        q2: parseFloat(row.q2_all || 0),
+        q3: parseFloat(row.q3_all || 0),
+        q4: parseFloat(row.q4_all || 0),
       },
-    }));
+      conservative: {
+        q1: parseFloat(row.q1_conservative || 0),
+        q2: parseFloat(row.q2_conservative || 0),
+        q3: parseFloat(row.q3_conservative || 0),
+        q4: parseFloat(row.q4_conservative || 0),
+      },
+      balanced: {
+        q1: parseFloat(row.q1_balanced || 0),
+        q2: parseFloat(row.q2_balanced || 0),
+        q3: parseFloat(row.q3_balanced || 0),
+        q4: parseFloat(row.q4_balanced || 0),
+      },
+      moderate: {
+        q1: parseFloat(row.q1_moderate || 0),
+        q2: parseFloat(row.q2_moderate || 0),
+        q3: parseFloat(row.q3_moderate || 0),
+        q4: parseFloat(row.q4_moderate || 0),
+      },
+      growth: {
+        q1: parseFloat(row.q1_growth || 0),
+        q2: parseFloat(row.q2_growth || 0),
+        q3: parseFloat(row.q3_growth || 0),
+        q4: parseFloat(row.q4_growth || 0),
+      },
+      aggressive: {
+        q1: parseFloat(row.q1_aggressive || 0),
+        q2: parseFloat(row.q2_aggressive || 0),
+        q3: parseFloat(row.q3_aggressive || 0),
+        q4: parseFloat(row.q4_aggressive || 0),
+      },
+    },
+  }));
 };
 
-const getTopProducts = async (rm_number: string) => {
-    const result = await db.query(
-      `
+const getTopProducts = async (
+  rm_number: string
+): Promise<TopProductsResult> => {
+  const result = await db.query(
+    `
       WITH all_products AS (
         SELECT
           ra.rm_number,
@@ -359,55 +385,61 @@ const getTopProducts = async (rm_number: string) => {
       WHERE rn <= 5
 
       ORDER BY rm_number, category, total_amount DESC;
-      `, [rm_number]);
-    return {
-      all: result.rows
-        .filter((row) => row.category === "All")
-        .map((row) => ({
-          product: row.nama_produk,
-          amount: parseFloat(row.total_amount || 0),
-          category: "All",
-        })),
-      conservative: result.rows
-        .filter((row) => row.category === "1 - Conservative")
-        .map((row) => ({
-          product: row.nama_produk,
-          amount: parseFloat(row.total_amount || 0),
-          category: "Conservative",
-        })),
-      balanced: result.rows
-        .filter((row) => row.category === "2 - Balanced")
-        .map((row) => ({
-          product: row.nama_produk,
-          amount: parseFloat(row.total_amount || 0),
-          category: "Balanced",
-        })),
-      moderate: result.rows
-        .filter((row) => row.category === "3 - Moderate")
-        .map((row) => ({
-          product: row.nama_produk,
-          amount: parseFloat(row.total_amount || 0),
-          category: "Moderate",
-        })),
-      growth: result.rows
-        .filter((row) => row.category === "4 - Growth")
-        .map((row) => ({
-          product: row.nama_produk,
-          amount: parseFloat(row.total_amount || 0),
-          category: "Growth",
-        })),
-      aggressive: result.rows
-        .filter((row) => row.category === "5 - Aggressive")
-        .map((row) => ({
-          product: row.nama_produk,
-          amount: parseFloat(row.total_amount || 0),
-          category: "Aggressive",
-        })),
-    };
+      `,
+    [rm_number]
+  );
+  return {
+    all: result.rows
+      .filter((row) => row.category === "All")
+      .map((row) => ({
+        product: row.nama_produk,
+        amount: parseFloat(row.total_amount || 0),
+        category: "All",
+      })),
+    conservative: result.rows
+      .filter((row) => row.category === "1 - Conservative")
+      .map((row) => ({
+        product: row.nama_produk,
+        amount: parseFloat(row.total_amount || 0),
+        category: "Conservative",
+      })),
+    balanced: result.rows
+      .filter((row) => row.category === "2 - Balanced")
+      .map((row) => ({
+        product: row.nama_produk,
+        amount: parseFloat(row.total_amount || 0),
+        category: "Balanced",
+      })),
+    moderate: result.rows
+      .filter((row) => row.category === "3 - Moderate")
+      .map((row) => ({
+        product: row.nama_produk,
+        amount: parseFloat(row.total_amount || 0),
+        category: "Moderate",
+      })),
+    growth: result.rows
+      .filter((row) => row.category === "4 - Growth")
+      .map((row) => ({
+        product: row.nama_produk,
+        amount: parseFloat(row.total_amount || 0),
+        category: "Growth",
+      })),
+    aggressive: result.rows
+      .filter((row) => row.category === "5 - Aggressive")
+      .map((row) => ({
+        product: row.nama_produk,
+        amount: parseFloat(row.total_amount || 0),
+        category: "Aggressive",
+      })),
+  };
 };
 
-const getCertainCustomerList = async (rm_number: string, customerRisk: string) => {
-  const result = await db.query(`SELECT 
+const getCertainCustomerList = async (
+  rm_number: string,
+  customerRisk: string
+): Promise<CertainCustomerList[]> => {
+  const result = await db.query(
+    `SELECT 
     ci.bp_number_wm_core AS "Customer ID",
     ci.risk_profile AS "Risk Profile",
     ci.aum_label AS "AUM Label",
@@ -437,8 +469,10 @@ GROUP BY
     ci.usia,
     ci.annual_income
 ORDER BY CAST(ci.bp_number_wm_core AS INTEGER) ASC;
-`, [rm_number, customerRisk]);
-  return result.rows;
+`,
+    [rm_number, customerRisk]
+  );
+  return result.rows as CertainCustomerList[];
 };
 
 export {
