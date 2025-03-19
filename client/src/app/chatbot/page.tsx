@@ -1,7 +1,9 @@
 "use client";
 import Sidebar from "@/components/shared/sidebar";
-import Navbar from "@/components/shared/navbar";
+// import Navbar from "@/components/shared/navbar";
 import { useState } from "react";
+// import InputPrompt from "./_components/prompt/input-prompt";
+import Navbar from "@/components/shared/navbar";
 
 export default function ChatbotPage() {
   const [, setCustomerRisk] = useState<string>("All");
@@ -11,49 +13,13 @@ export default function ChatbotPage() {
       <Sidebar />
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative">
         {/* NAVBAR */}
         <Navbar setCustomerRisk={setCustomerRisk} />
-
         {/* DASHBOARD CONTENT */}
-        <main className="grid grid-rows-3 gap-2 flex-1 overflow-y-auto mr-2 my-2">
-          <div className="grid grid-cols-3 gap-2">
-            <div
-              className="rounded-2xl"
-              style={{ backgroundColor: "#1D283A" }}
-            ></div>
-            <div
-              className="rounded-2xl"
-              style={{ backgroundColor: "#1D283A" }}
-            ></div>
-            <div
-              className="rounded-2xl"
-              style={{ backgroundColor: "#1D283A" }}
-            ></div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2">
-            <div
-              className="rounded-2xl col-span-2"
-              style={{ backgroundColor: "#1D283A" }}
-            ></div>
-            <div
-              className="rounded-2xl"
-              style={{ backgroundColor: "#1D283A" }}
-            ></div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2">
-            <div
-              className="rounded-2xl col-span-2"
-              style={{ backgroundColor: "#1D283A" }}
-            ></div>
-            <div
-              className="rounded-2xl"
-              style={{ backgroundColor: "#1D283A" }}
-            ></div>
-          </div>
-        </main>
+        {/* <main> */}
+          {/* <InputPrompt /> */}
+        {/* </main> */}
       </div>
     </div>
   );

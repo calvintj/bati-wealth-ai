@@ -23,7 +23,9 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   // New task form state
   const [newTask, setNewTask] = useState("");
   const [newInvitee, setNewInvitee] = useState("");
-  const [newDueDate, setNewDueDate] = useState(format(selectedDate, "yyyy-MM-dd"));
+  const [newDueDate, setNewDueDate] = useState(
+    format(selectedDate, "yyyy-MM-dd")
+  );
 
   // Update due date when selectedDate changes.
   useEffect(() => {

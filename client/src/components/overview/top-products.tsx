@@ -14,7 +14,10 @@ interface TopProductsProps {
   customerRisk: string;
 }
 
-export default function TopProducts({ topProducts, customerRisk }: TopProductsProps) {
+export default function TopProducts({
+  topProducts,
+  customerRisk,
+}: TopProductsProps) {
   // Simply use customerRisk since it's a string.
   const riskCategory = customerRisk;
 

@@ -2,7 +2,9 @@ import { CertainCustomerList } from "@/types/overview";
 import api from "@/services/api";
 import axios from "axios";
 
-const fetchCertainCustomerList = async (customerRisk: string): Promise<CertainCustomerList[]> => {
+const fetchCertainCustomerList = async (
+  customerRisk: string
+): Promise<CertainCustomerList[]> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("Token not found");
@@ -14,7 +16,7 @@ const fetchCertainCustomerList = async (customerRisk: string): Promise<CertainCu
   } catch {
     throw new Error("Invalid token format");
   }
-  
+
   const rm_number = tokenPayload.rm_number;
   try {
     const response = await api.get("/overview/certain-customer-list", {

@@ -99,7 +99,7 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
             return `Rp ${(targetValue - currentValue).toLocaleString()}`;
           }}
           contentStyle={{
-            background: "white", 
+            background: "white",
             border: "none",
             borderRadius: "4px",
             color: "black",

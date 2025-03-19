@@ -26,8 +26,7 @@ const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
 
   const trimmedQuery = query.trim().toLowerCase();
   const filteredCustomers = customers.filter((cust) => {
-    const id =
-      cust.ID && cust.ID.toString().toLowerCase();
+    const id = cust.ID && cust.ID.toString().toLowerCase();
     return id && id.includes(trimmedQuery);
   });
 

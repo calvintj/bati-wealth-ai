@@ -7,7 +7,10 @@ interface GaugeChartProps {
   customerRisk: string;
 }
 
-export default function GaugeChart({ customerData, customerRisk }: GaugeChartProps) {
+export default function GaugeChart({
+  customerData,
+  customerRisk,
+}: GaugeChartProps) {
   // Use state to store chart width to avoid SSR issues with window
   const [chartWidth, setChartWidth] = useState(300);
 

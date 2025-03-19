@@ -52,11 +52,9 @@ const postTask = async (task: TaskRow): Promise<TaskResponse> => {
   try {
     const payload = { ...task, rm_number };
     console.log("payload", payload);
-    const response = await api.post(
-      "/task-manager/post-task",
-      payload,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    const response = await api.post("/task-manager/post-task", payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     console.log("responseeeeeee", response.data);
     return response.data as TaskResponse;
   } catch (error: unknown) {

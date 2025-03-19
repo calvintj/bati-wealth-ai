@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import fetchPortfolio from '@/services/task-manager/manager-portfolio-api';
-import { PortfolioResponse, PortfolioRow } from '@/types/task-manager';
+import { useQuery } from "@tanstack/react-query";
+import fetchPortfolio from "@/services/task-manager/manager-portfolio-api";
+import { PortfolioResponse, PortfolioRow } from "@/types/task-manager";
 
 interface TransformedData {
   name: string;
@@ -14,7 +14,7 @@ export interface UsePortfolioResult {
 
 const usePortfolio = () => {
   return useQuery<PortfolioResponse, Error, UsePortfolioResult>({
-    queryKey: ['portfolio'],
+    queryKey: ["portfolio"],
     queryFn: fetchPortfolio,
     staleTime: 5 * 60 * 1000, // Data is fresh for 5 minutes
     select: (data: PortfolioResponse) => {
@@ -29,9 +29,18 @@ const usePortfolio = () => {
         // Create the transformed data array for the pie chart
         transformedData = [
           { name: "CASA", value: parseFloat(String(firstPortfolio.casa)) || 0 },
-          { name: "Saving Bond", value: parseFloat(String(firstPortfolio.sb)) || 0 },
-          { name: "Deposito", value: parseFloat(String(firstPortfolio.deposito)) || 0 },
-          { name: "Reksadana", value: parseFloat(String(firstPortfolio.rd)) || 0 },
+          {
+            name: "Saving Bond",
+            value: parseFloat(String(firstPortfolio.sb)) || 0,
+          },
+          {
+            name: "Deposito",
+            value: parseFloat(String(firstPortfolio.deposito)) || 0,
+          },
+          {
+            name: "Reksadana",
+            value: parseFloat(String(firstPortfolio.rd)) || 0,
+          },
         ].filter((item) => item.value > 0); // Only include items with a positive value
       }
 
