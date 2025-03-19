@@ -1,4 +1,4 @@
-import { TopProductsResult } from "@/types/overview";
+import { TopProductsResult } from "@/types/page/overview";
 import api from "@/services/api";
 import axios from "axios";
 

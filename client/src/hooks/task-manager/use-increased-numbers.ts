@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchIncreasedNumbers from "../../services/task-manager/increased-numbers-api";
-import { IncreasedNumbersResponse } from "@/types/task-manager";
+import { IncreasedNumbersResponse } from "@/types/page/task-manager";
 
 const useIncreasedNumbers = () => {
   return useQuery<IncreasedNumbersResponse, Error>({

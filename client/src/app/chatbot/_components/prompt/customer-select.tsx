@@ -15,8 +15,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/chatbot/ui/select";
-import { Spinner } from "@/components/chatbot/ui/spinner";
+} from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { useGetCustomersInfinite } from "@/hooks/chatbot/api/customer-api-infinite";
 import { cn } from "@/lib/utils";
 

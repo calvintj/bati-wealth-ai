@@ -4,13 +4,13 @@ import { ChevronDown, ChevronRight, Menu } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
-import { Button } from "@/components/chatbot/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/chatbot/ui/collapsible";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/chatbot/ui/sheet";
+} from "@/components/ui/collapsible";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 type MenuItem = {

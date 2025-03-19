@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchLastTransaction from "../../services/task-manager/last-transactions-api";
-import { LastTransactionResponse } from "@/types/task-manager";
+import { LastTransactionResponse } from "@/types/page/task-manager";
 
 export function useLastTransaction() {
   return useQuery<LastTransactionResponse, Error>({

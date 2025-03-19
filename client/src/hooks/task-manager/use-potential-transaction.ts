@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchPotentialTransaction from "@/services/task-manager/potential-transactions-api";
-import { PotentialTransactionResponse } from "@/types/task-manager";
+import { PotentialTransactionResponse } from "@/types/page/task-manager";
 
 const usePotentialTransaction = () => {
   return useQuery<PotentialTransactionResponse, Error>({

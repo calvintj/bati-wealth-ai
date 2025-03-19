@@ -1,5 +1,5 @@
 import fetchTotalAUM from "@/services/overview/total-aum-api";
-import { DataEntry, TotalAUM } from "@/types/overview";
+import { DataEntry, TotalAUM } from "@/types/page/overview";
 import { useQuery } from "@tanstack/react-query";
 
 export function useTotalAUM(customerRisk: string): DataEntry[] {

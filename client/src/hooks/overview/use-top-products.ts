@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import fetchTopProducts from "../../services/overview/top-products-api";
-import type { TopProduct } from "@/types/overview";
+import type { TopProduct } from "@/types/page/overview";
 
 export function useTopProducts(customerRisk: string): TopProduct[] {
   const [chartData, setChartData] = useState<TopProduct[]>([]);

@@ -1,5 +1,5 @@
 import api from "@/services/api";
-import { TaskResponse, TaskRow } from "@/types/task-manager";
+import { TaskResponse, TaskRow } from "@/types/page/task-manager";
 import axios from "axios";
 
 const getToken = () => localStorage.getItem("token");

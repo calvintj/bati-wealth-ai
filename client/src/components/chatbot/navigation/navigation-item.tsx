@@ -10,7 +10,7 @@ import {
   NavigationMenuLink,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/chatbot/ui/navigation-menu";
+} from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 
 interface NavigationItemOptions {

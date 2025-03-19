@@ -1,7 +1,7 @@
 import { Sparkles } from "lucide-react";
 import React from "react";
 
-import { Badge } from "@/components/chatbot/ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 export interface SuggestionBadgeProps {
   icon?: React.ReactNode;

@@ -1,4 +1,4 @@
-import { QuarterlyFUM } from "@/types/overview";
+import { QuarterlyFUM } from "@/types/page/overview";
 import api from "@/services/api";
 import axios from "axios";
 

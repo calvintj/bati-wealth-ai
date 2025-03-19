@@ -1,6 +1,6 @@
 import fetchOfferProductList from "../../services/task-manager/offer-products-list-api";
 import { useQuery } from "@tanstack/react-query";
-import { OfferProductRiskResponse } from "@/types/task-manager";
+import { OfferProductRiskResponse } from "@/types/page/task-manager";
 
 const useOfferProductRisk = () => {
   return useQuery<OfferProductRiskResponse, Error>({

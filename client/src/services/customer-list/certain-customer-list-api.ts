@@ -1,4 +1,4 @@
-import { Customer } from "@/types/customer-list";
+import { Customer } from "@/types/page/customer-list";
 
 const fetchCertainCustomerList = (
   setCustomerList: (data: Customer[]) => void,

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { chatBotModels } from "@/app/(main)/chatbot/_components/model_selector/chatbot-models";
+import { chatBotModels } from "@/app/chatbot/_components/model_selector/chatbot-models";
 import {
   Select,
   SelectContent,

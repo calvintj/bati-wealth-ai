@@ -1,12 +1,12 @@
 "use client";
 
 import { AnimatePresence, HTMLMotionProps, motion } from "framer-motion";
-import { ArrowDown, X } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Button } from "@/components/chatbot/ui/button";
-import Icon from "@/components/chatbot/ui/icon";
-import LoadingDots from "@/components/chatbot/ui/loading-dots";
+import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/icon";
+import LoadingDots from "@/components/ui/loading-dots";
 import { useDisclosure } from "@/hooks/chatbot/use-disclosure";
 import { useLockBodyScroll } from "@/hooks/chatbot/use-lock-body-scroll";
 import { cn } from "@/lib/utils";
@@ -16,7 +16,6 @@ import ChatSidebar from "./chat-sidebar";
 import MessageLists from "./message-lists";
 
 interface ChatPopupProps extends HTMLMotionProps<"div"> {
-  onClose?: () => void;
   isOpen?: boolean;
   isOpenDebounced?: boolean;
   isLoading: boolean;
@@ -28,7 +27,6 @@ interface ChatPopupProps extends HTMLMotionProps<"div"> {
 
 export default function ChatPopup({
   isLoading,
-  onClose,
   isOpen,
   isOpenDebounced,
   isFullScreen,
@@ -116,12 +114,12 @@ export default function ChatPopup({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ y: 200 }}
-            animate={{ y: 0 }}
-            exit={{ y: 200 }}
+            // initial={{ y: 200 }}
+            // animate={{ y: 0 }}
+            // exit={{ y: 200 }}
             transition={{ duration: 0.1, ease: "easeInOut" }}
             className={cn(
-              "p-0 flex w-full flex-1 h-full bg-[#181E26]",
+              "p-0 flex w-full flex-1 min-h-full bg-[#181E26]",
               className
             )}
             {...props}
@@ -165,14 +163,6 @@ export default function ChatPopup({
                   )}
                   <h2 className="font-bold text-lg">WealthAI</h2>
                 </div>
-                <Button
-                  onClick={onClose}
-                  size="icon"
-                  variant="ghost"
-                  className="!text-primary"
-                >
-                  <X />
-                </Button>
               </div>
               <Button
                 onClick={handleScrollDown}

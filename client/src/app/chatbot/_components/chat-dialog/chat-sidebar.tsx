@@ -1,15 +1,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
-import HistoryLists from "@/app/chatbot/chatbot/_components/chat-dialog/history-lists";
-import { Button } from "@/components/chatbot/ui/button";
-import Icon from "@/components/chatbot/ui/icon";
+import HistoryLists from "@/app/chatbot/_components/chat-dialog/history-lists";
+import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/icon";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/chatbot/ui/tooltip";
+} from "@/components/ui/tooltip";
 import { chatHistories } from "@/data/dummy/chat-histories";
 import { UseDisclosureReturn } from "@/hooks/chatbot/use-disclosure";
 

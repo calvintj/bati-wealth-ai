@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 
-import ChatBubble from "@/app/chatbot/chatbot/_components/chat-dialog/chat-bubble";
+import ChatBubble from "@/app/chatbot/_components/chat-dialog/chat-bubble";
 import { Message } from "@/schema/message";
 
 interface ChatSuggestionsProps {

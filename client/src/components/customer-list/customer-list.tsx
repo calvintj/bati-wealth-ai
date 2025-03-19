@@ -1,6 +1,6 @@
 import { useCustomerList } from "../../hooks/customer-list/use-customer-list";
 import { useCertainCustomerList } from "../../hooks/customer-list/use-certain-customer-list";
-import { CustomerRecord } from "@/types/customer-list";
+import { CustomerRecord } from "@/types/page/customer-list";
 
 interface CustomerListTableProps {
   propensity: string;

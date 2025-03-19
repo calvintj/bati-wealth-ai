@@ -1,5 +1,5 @@
 import api from "@/services/api";
-import { ReProfileRiskTargetResponse } from "@/types/task-manager";
+import { ReProfileRiskTargetResponse } from "@/types/page/task-manager";
 import axios from "axios";
 
 const fetchReprofileRiskTarget =

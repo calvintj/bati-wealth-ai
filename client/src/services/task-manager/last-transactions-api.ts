@@ -1,6 +1,6 @@
 import axios from "axios";
 import api from "@/services/api";
-import { LastTransactionResponse } from "@/types/task-manager";
+import { LastTransactionResponse } from "@/types/page/task-manager";
 
 const fetchLastTransaction = async (): Promise<LastTransactionResponse> => {
   const token = localStorage.getItem("token");

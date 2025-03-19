@@ -1,47 +1,46 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-// ASSETS
-import Logo from "@/assets/bati-percentage-white.png";
 
 // ICONS
-import { RxDashboard } from "react-icons/rx";
-import { FaListUl } from "react-icons/fa";
-import { IoPersonOutline } from "react-icons/io5";
-import { MdOutlineTaskAlt } from "react-icons/md";
-import { IoNewspaperOutline } from "react-icons/io5";
-import { RiRobot3Line } from "react-icons/ri";
-import { BiLogOut } from "react-icons/bi";
+import {
+  LayoutDashboard,
+  List,
+  User,
+  CircleCheckBig,
+  Newspaper,
+  Bot,
+  LogOut,
+} from "lucide-react";
 
 const navItems = [
   {
     to: "/overview",
-    icon: <RxDashboard className="text-4xl" />,
+    icon: <LayoutDashboard size={64} />,
     label: "Overview",
   },
   {
     to: "/customer-list",
-    icon: <FaListUl className="text-4xl" />,
+    icon: <List size={64} />,
     label: "Customer List",
   },
   {
     to: "/customer-details",
-    icon: <IoPersonOutline className="text-4xl" />,
+    icon: <User size={64} />,
     label: "Customer Details",
   },
   {
     to: "/task-manager",
-    icon: <MdOutlineTaskAlt className="text-4xl" />,
+    icon: <CircleCheckBig size={64} />,
     label: "Task Manager",
   },
   {
     to: "/news",
-    icon: <IoNewspaperOutline className="text-4xl" />,
+    icon: <Newspaper size={64} />,
     label: "News",
   },
   {
     to: "/chatbot",
-    icon: <RiRobot3Line className="text-4xl" />,
+    icon: <Bot size={64} />,
     label: "Chatbot",
   },
 ];
@@ -49,7 +48,7 @@ const navItems = [
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const linkClass = "text-white hover:text-white p-4 mt-2 rounded-full";
+  const linkClass = "mt-2 rounded-2xl p-2 [&>svg]:!w-8 [&>svg]:!h-8";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -57,13 +56,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-20 m-2 flex flex-col rounded-2xl items-center bg-[#1D283A]">
-      {/* LOGO OR BRAND */}
-      <div>
-        <Image src={Logo} alt="Bati Logo" className="w-10 h-10 mt-6" />
-      </div>
-
-      {/* NAV ITEMS */}
+    <aside className="w-15 m-2 flex flex-col rounded-2xl items-center bg-[#1D283A]">
       <nav className="flex flex-col">
         {navItems.map(({ to, icon, label }) => {
           const isActive = pathname === to;
@@ -81,13 +74,13 @@ export default function Sidebar() {
       </nav>
 
       {/* LOGOUT */}
-      <div className="mt-auto mb-2">
+      <div className="mt-auto">
         <button
-          className="text-white hover:text-white cursor-pointer"
+          className="text-white hover:text-white cursor-pointer p-4 [&>svg]:!w-8 [&>svg]:!h-8"
           onClick={handleLogout}
           aria-label="Logout"
         >
-          <BiLogOut className="text-4xl" />
+          <LogOut />
         </button>
       </div>
     </aside>

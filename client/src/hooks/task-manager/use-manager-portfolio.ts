@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchPortfolio from "@/services/task-manager/manager-portfolio-api";
-import { PortfolioResponse, PortfolioRow } from "@/types/task-manager";
+import { PortfolioResponse, PortfolioRow } from "@/types/page/task-manager";
 
 interface TransformedData {
   name: string;

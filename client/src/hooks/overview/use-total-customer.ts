@@ -1,5 +1,5 @@
 import fetchTotalCustomer from "@/services/overview/total-customer-api";
-import { DataEntry, TotalCustomer } from "@/types/overview";
+import { DataEntry, TotalCustomer } from "@/types/page/overview";
 import { useQuery } from "@tanstack/react-query";
 
 export function useTotalCustomer(customerRisk: string): DataEntry[] {

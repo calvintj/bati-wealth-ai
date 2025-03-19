@@ -1,4 +1,4 @@
-import { TotalFBI } from "@/types/overview";
+import { TotalFBI } from "@/types/page/overview";
 import api from "@/services/api";
 import axios from "axios";
 

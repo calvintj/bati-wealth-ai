@@ -1,6 +1,6 @@
 import React from "react";
 
-import { NavigationMenuList } from "@/components/chatbot/ui/navigation-menu";
+import { NavigationMenuList } from "@/components/ui/navigation-menu";
 
 import NavigationItem, { NavigationItemProps } from "./navigation-item";
 

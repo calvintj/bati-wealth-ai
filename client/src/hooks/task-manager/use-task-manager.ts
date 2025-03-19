@@ -1,6 +1,6 @@
 import { getTask } from "@/services/task-manager/task-manager-api";
 import { postTask } from "@/services/task-manager/task-manager-api";
-import { TaskResponse, TaskRow } from "@/types/task-manager";
+import { TaskResponse, TaskRow } from "@/types/page/task-manager";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetTask = () => {

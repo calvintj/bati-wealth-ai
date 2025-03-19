@@ -1,5 +1,5 @@
 import api from "@/services/api";
-import { PotentialTransactionResponse } from "@/types/task-manager";
+import { PotentialTransactionResponse } from "@/types/page/task-manager";
 import axios from "axios";
 
 const fetchPotentialTransaction =

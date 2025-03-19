@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { Button, buttonVariants } from "@/components/chatbot/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 interface GlobalErrorPageProps {
   error: Error & { digest?: string };

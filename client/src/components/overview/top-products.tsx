@@ -7,7 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { TopProduct } from "@/types/overview";
+import type { TopProduct } from "@/types/page/overview";
 
 interface TopProductsProps {
   topProducts: TopProduct[];

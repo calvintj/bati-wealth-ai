@@ -1,4 +1,4 @@
-import { QuarterlyFBI } from "@/types/overview";
+import { QuarterlyFBI } from "@/types/page/overview";
 import api from "@/services/api";
 import axios from "axios";
 

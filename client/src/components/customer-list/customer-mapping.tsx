@@ -28,7 +28,7 @@ ChartJS.register(
 // HOOKS
 import { useCustomerList } from "../../hooks/customer-list/use-customer-list";
 import { useState } from "react";
-import { CustomerRecord } from "@/types/customer-list";
+import { CustomerRecord } from "@/types/page/customer-list";
 
 interface StackedBarChartProps {
   setPropensity: (propensity: string) => void;

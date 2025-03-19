@@ -1,4 +1,4 @@
-import { Customer } from "@/types/customer-list";
+import { Customer } from "@/types/page/customer-list";
 
 const fetchCustomerList = (setCustomerList: (data: Customer[]) => void) => {
   const token = localStorage.getItem("token");

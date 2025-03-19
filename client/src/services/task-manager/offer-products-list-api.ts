@@ -1,5 +1,5 @@
 import api from "@/services/api";
-import { OfferProductRiskResponse } from "@/types/task-manager";
+import { OfferProductRiskResponse } from "@/types/page/task-manager";
 import axios from "axios";
 
 const fetchOfferProductList = async (): Promise<OfferProductRiskResponse> => {

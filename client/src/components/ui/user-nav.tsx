@@ -1,7 +1,7 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/chatbot/ui/avatar";
-import { Button } from "@/components/chatbot/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/chatbot/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { useSessionStore } from "@/stores/use-session-store";
 
 export function UserNav() {

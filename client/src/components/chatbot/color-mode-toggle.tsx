@@ -4,13 +4,13 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
 
-import { Button } from "@/components/chatbot/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/chatbot/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 
 import { setThemeCookie } from "./set-cookie-theme";
 

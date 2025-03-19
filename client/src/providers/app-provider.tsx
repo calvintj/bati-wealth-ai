@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { PropsWithChildren } from "react";
 
-import { useIsMounted } from "@/components/chatbot/ui/use-is-mounted";
+import { useIsMounted } from "@/components/ui/use-is-mounted";
 import { ThemeProvider } from "@/providers/theme-provider";
 
 const queryClient = new QueryClient();

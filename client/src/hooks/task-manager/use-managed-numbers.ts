@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchManagedNumbers from "@/services/task-manager/managed-numbers-api";
-import { ManagedNumbersResponse } from "@/types/task-manager";
+import { ManagedNumbersResponse } from "@/types/page/task-manager";
 
 const useManagedNumbers = () => {
   return useQuery<ManagedNumbersResponse, Error>({

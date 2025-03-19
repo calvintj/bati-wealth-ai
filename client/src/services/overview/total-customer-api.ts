@@ -1,4 +1,4 @@
-import { TotalCustomer } from "@/types/overview";
+import { TotalCustomer } from "@/types/page/overview";
 import api from "@/services/api";
 import axios from "axios";
 

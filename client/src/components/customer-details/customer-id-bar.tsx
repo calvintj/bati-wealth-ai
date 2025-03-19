@@ -1,7 +1,7 @@
 import { useCustomerIDList } from "@/hooks/customer-details/use-customer-id-list";
 import { useEffect, useState, useRef } from "react";
 
-import { Customer } from "@/types/customer-list";
+import { Customer } from "@/types/page/customer-list";
 
 interface CustomerInputProps {
   customerID: string;

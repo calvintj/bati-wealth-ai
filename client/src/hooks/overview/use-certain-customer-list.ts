@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { CertainCustomerList } from "@/types/overview";
+import { CertainCustomerList } from "@/types/page/overview";
 import fetchCertainCustomerList from "../../services/overview/customer-list-api";
 
 // Helper function to map the customerRisk to the format expected by the backend

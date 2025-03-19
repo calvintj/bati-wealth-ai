@@ -1,8 +1,8 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { TypeAnimation } from "react-type-animation";
 
-import ChatSuggestions from "@/app/chatbot/chatbot/_components/chat-dialog/chat-suggestions";
-import Icon from "@/components/chatbot/ui/icon";
+import ChatSuggestions from "@/app/chatbot/_components/chat-dialog/chat-suggestions";
+import Icon from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { Message } from "@/schema/message";
 

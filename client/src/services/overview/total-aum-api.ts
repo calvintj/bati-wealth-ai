@@ -1,4 +1,4 @@
-import { TotalAUM } from "@/types/overview";
+import { TotalAUM } from "@/types/page/overview";
 import api from "@/services/api";
 import axios from "axios";
 

@@ -1,4 +1,4 @@
-import { Activity } from "@/types/customer-details";
+import { Activity } from "@/types/page/customer-details";
 
 const BASE_URL = "http://localhost:5000/api/customer-details"; // Replace with your API's base URL
 

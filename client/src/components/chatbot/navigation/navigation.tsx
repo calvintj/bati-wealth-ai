@@ -5,12 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-import { Button } from "@/components/chatbot/ui/button";
-import HamburgerMenu from "@/components/chatbot/ui/hamburger";
-import Icon from "@/components/chatbot/ui/icon";
-import { NavigationMenu } from "@/components/chatbot/ui/navigation-menu";
-import { useIsMounted } from "@/components/chatbot/ui/use-is-mounted";
-import { UserNav } from "@/components/chatbot/ui/user-nav";
+import { Button } from "@/components/ui/button";
+import HamburgerMenu from "@/components/ui/hamburger";
+import Icon from "@/components/ui/icon";
+import { NavigationMenu } from "@/components/ui/navigation-menu";
+import { useIsMounted } from "@/components/ui/use-is-mounted";
+import { UserNav } from "@/components/ui/user-nav";
 import { QUERY_TOKEN, useMediaQuery } from "@/hooks/chatbot/use-media-query";
 
 import { ColorModeToggle } from "../color-mode-toggle";

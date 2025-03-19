@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { PieChart as RePieChart, Pie, Cell, Label, Tooltip } from "recharts";
-import { DataEntry } from "@/types/overview";
+import { DataEntry } from "@/types/page/overview";
 
 interface GaugeChartProps {
   customerData: DataEntry[];

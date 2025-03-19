@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { format } from "date-fns";
 import { id } from "date-fns/locale/id";
 import { CiCirclePlus } from "react-icons/ci";
-import { TaskResponse } from "@/types/task-manager";
+import { TaskResponse } from "@/types/page/task-manager";
 import { usePostTask, useGetTask } from "@/hooks/task-manager/use-task-manager";
 import { useQueryClient } from "@tanstack/react-query";
 

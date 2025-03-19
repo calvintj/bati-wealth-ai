@@ -1,14 +1,15 @@
 // ICONS
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { MdOutlineEmail } from "react-icons/md";
-import { MdOutlineNotifications } from "react-icons/md";
-import batiTransparent from "@/assets/bati-transparent.png";
+import { Bell, Mail } from "lucide-react";
+import batiTransparent from "@/assets/bati-transparent-white.svg";
+import { Button } from "@/components/ui/button";
 
 // ROUTER
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { ColorModeToggle } from "@/components/chatbot/color-mode-toggle";
+
 export default function Navbar({
   setCustomerRisk,
 }: {
@@ -67,9 +68,12 @@ export default function Navbar({
       {/* Right: Notification, Email, RM */}
       <div className="flex items-center gap-4 mr-2">
         <ColorModeToggle className="cursor-pointer" />
-        <MdOutlineEmail className="text-white text-4xl cursor-pointer" />
-        <MdOutlineNotifications className="text-white text-4xl cursor-pointer" />
-
+        <Button variant="ghost" size="icon">
+          <Mail />
+        </Button>
+        <Button variant="ghost" size="icon">
+          <Bell />
+        </Button>
         <div className="bg-gray-700 text-white p-2 rounded-full w-10 h-10">
           RM
         </div>

@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/chatbot/ui/avatar";
-import { Markdown } from "@/components/chatbot/ui/markdown";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Markdown } from "@/components/ui/markdown";
 import { cn } from "@/lib/utils";
 import { Message } from "@/schema/message";
 

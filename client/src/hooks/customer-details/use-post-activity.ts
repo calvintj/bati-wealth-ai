@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { postActivity } from "../../services/customer-details/activity-manager-api";
-import { Activity } from "@/types/customer-details";
+import { Activity } from "@/types/page/customer-details";
 
 const usePostActivity = () => {
   const [data, setData] = useState<Activity | null>(null);

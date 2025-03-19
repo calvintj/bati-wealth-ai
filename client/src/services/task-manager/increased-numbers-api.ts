@@ -1,6 +1,6 @@
 import axios from "axios";
 import api from "@/services/api";
-import { IncreasedNumbersResponse } from "@/types/task-manager";
+import { IncreasedNumbersResponse } from "@/types/page/task-manager";
 
 const fetchManagedNumbers = async (): Promise<IncreasedNumbersResponse> => {
   const token = localStorage.getItem("token");

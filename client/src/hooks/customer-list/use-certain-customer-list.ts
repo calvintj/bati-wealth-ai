@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import fetchCertainCustomerList from "../../services/customer-list/certain-customer-list-api";
-import { Customer } from "@/types/customer-list";
+import { Customer } from "@/types/page/customer-list";
 
 export function useCertainCustomerList(propensity: string, aum: string) {
   const [customerList, setCustomerList] = useState<Customer[]>([]);

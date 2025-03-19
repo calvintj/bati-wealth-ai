@@ -1,5 +1,5 @@
 import fetchTotalFBI from "@/services/overview/total-fbi-api";
-import { DataEntry, TotalFBI } from "@/types/overview";
+import { DataEntry, TotalFBI } from "@/types/page/overview";
 import { useQuery } from "@tanstack/react-query";
 
 export function useTotalFBI(customerRisk: string): DataEntry[] {
