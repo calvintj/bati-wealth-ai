@@ -4,19 +4,17 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/chatbot/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/chatbot/ui/dropdown-menu";
 
 import { setThemeCookie } from "./set-cookie-theme";
 
-interface ColorModeToggleProps extends React.ComponentProps<typeof Button> {}
-
-export function ColorModeToggle(props: ColorModeToggleProps) {
+export function ColorModeToggle(props: React.ComponentProps<typeof Button>) {
   const { setTheme } = useTheme();
 
   return (

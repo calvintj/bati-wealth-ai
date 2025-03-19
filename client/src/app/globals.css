@@ -121,3 +121,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+.lucide {
+  width: 20px !important;
+  height: 20px !important;
+}
+

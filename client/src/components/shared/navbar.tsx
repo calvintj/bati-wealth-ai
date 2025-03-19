@@ -8,7 +8,7 @@ import batiTransparent from "@/assets/bati-transparent.png";
 // ROUTER
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-
+import { ColorModeToggle } from "@/components/chatbot/color-mode-toggle";
 export default function Navbar({
   setCustomerRisk,
 }: {
@@ -30,7 +30,7 @@ export default function Navbar({
     <header className="flex items-center justify-between rounded-2xl bg-[#1D283A] p-2 mt-2 mr-2">
       {/* Left: Only show on /overview */}
       <div className="flex items-center gap-2">
-        <Image src={batiTransparent} alt="bati" className="w-27 h-10" />
+        <Image src={batiTransparent} alt="bati" className="w-30 h-10" />
         {pathname === "/overview" && (
           <Menu as="div" className="relative inline-block ml-2 z-10">
             <div>
@@ -66,6 +66,7 @@ export default function Navbar({
 
       {/* Right: Notification, Email, RM */}
       <div className="flex items-center gap-4 mr-2">
+        <ColorModeToggle className="cursor-pointer" />
         <MdOutlineEmail className="text-white text-4xl cursor-pointer" />
         <MdOutlineNotifications className="text-white text-4xl cursor-pointer" />
 

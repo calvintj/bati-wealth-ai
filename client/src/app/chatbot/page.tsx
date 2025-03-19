@@ -2,7 +2,7 @@
 import Sidebar from "@/components/shared/sidebar";
 // import Navbar from "@/components/shared/navbar";
 import { useState } from "react";
-// import InputPrompt from "./_components/prompt/input-prompt";
+import InputPrompt from "@/app/chatbot/chatbot/_components/prompt/input-prompt";
 import Navbar from "@/components/shared/navbar";
 
 export default function ChatbotPage() {
@@ -18,7 +18,7 @@ export default function ChatbotPage() {
         <Navbar setCustomerRisk={setCustomerRisk} />
         {/* DASHBOARD CONTENT */}
         {/* <main> */}
-          {/* <InputPrompt /> */}
+          <InputPrompt />
         {/* </main> */}
       </div>
     </div>
