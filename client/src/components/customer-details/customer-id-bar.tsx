@@ -1,7 +1,7 @@
 import { useCustomerIDList } from "@/hooks/customer-details/use-customer-id-list";
+import { CustomerDetails } from "@/types/page/customer-details";
 import { useEffect, useState, useRef } from "react";
 
-import { Customer } from "@/types/page/customer-list";
 
 interface CustomerInputProps {
   customerID: string;
@@ -9,10 +9,7 @@ interface CustomerInputProps {
 }
 
 const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
-  const { data: customers = [], loading } = useCustomerIDList() as {
-    data: Customer[];
-    loading: boolean;
-  };
+  const { data: customers = [], isLoading: loading } = useCustomerIDList();
 
   const [query, setQuery] = useState(customerID || "");
 
@@ -26,13 +23,13 @@ const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
 
   const trimmedQuery = query.trim().toLowerCase();
   const filteredCustomers = customers.filter((cust) => {
-    const id = cust.ID && cust.ID.toString().toLowerCase();
+    const id = cust.bp_number_wm_core && cust.bp_number_wm_core.toString().toLowerCase();
     return id && id.includes(trimmedQuery);
   });
 
-  const handleSelect = (customer: Customer) => {
-    setCustomerID(customer.ID?.toString() || "");
-    setQuery(customer.ID?.toString() || "");
+  const handleSelect = (customer: CustomerDetails) => {
+    setCustomerID(customer.bp_number_wm_core || "");
+    setQuery(customer.bp_number_wm_core || "");
     setShowSuggestions(false);
     setActiveSuggestion(-1);
   };
@@ -94,7 +91,7 @@ const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
         <ul className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto rounded-md bg-[#1D283A] border border-white">
           {filteredCustomers.map((customer, index) => (
             <li
-              key={customer.ID}
+              key={customer.bp_number_wm_core}
               ref={(el) => {
                 suggestionRefs.current[index] = el;
                 return undefined;
@@ -104,7 +101,7 @@ const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
                 index === activeSuggestion ? "bg-gray-700" : ""
               }`}
             >
-              {customer.ID}
+              {customer.bp_number_wm_core}
             </li>
           ))}
         </ul>

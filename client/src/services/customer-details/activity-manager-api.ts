@@ -1,41 +1,54 @@
-import { Activity } from "@/types/page/customer-details";
-
-const BASE_URL = "http://localhost:5000/api/customer-details"; // Replace with your API's base URL
+import api from "@/services/api";
+import axios, { AxiosResponse } from "axios";
+import { Activity, ActivityResponse } from "@/types/page/customer-details";
 
 // Helper to process responses
-const handleResponse = async (response: Response) => {
-  if (!response.ok) {
-    const errorData = await response.json();
+const handleResponse = (response: AxiosResponse) => {
+  if (response.status !== 200) {
     throw new Error(
-      errorData.message || "An error occurred while fetching data"
+      response.data.message || "An error occurred while fetching data"
     );
   }
-  return response.json();
+  return {
+    data: response.data,
+    error: null,
+    loading: false
+  }; // Wrap in ActivityResponse format
 };
 
-const getActivity = async (bp_number_wm_core: string) => {
-  // Include bp_number_wm_core as a query parameter
-  const response = await fetch(
-    `${BASE_URL}/get-activity?bp_number_wm_core=${bp_number_wm_core}`,
-    {
-      method: "GET",
+const getActivity = async (bp_number_wm_core: string): Promise<ActivityResponse> => {
+  try {
+    const response = await api.get("/customer-details/get-activity", {
+      params: { bp_number_wm_core },
       headers: {
         "Content-Type": "application/json",
       },
+    });
+    return handleResponse(response);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
     }
-  );
-  return handleResponse(response);
+    throw new Error("An unexpected error occurred");
+  }
 };
 
-const postActivity = async (data: Activity) => {
-  const response = await fetch(`${BASE_URL}/post-activity`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  return handleResponse(response);
+const postActivity = async (data: Activity): Promise<ActivityResponse> => {
+  try {
+    const response = await api.post("/customer-details/post-activity", data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return handleResponse(response);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
 };
 
 export { getActivity, postActivity };

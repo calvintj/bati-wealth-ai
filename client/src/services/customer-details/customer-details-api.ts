@@ -1,3 +1,7 @@
+import api from "@/services/api";
+import axios from "axios";
+import { CustomerDetails } from "@/types/page/customer-details";
+
 const fetchCustomerDetails = async (customerID: string) => {
   try {
     // Don't proceed if customerID is empty
@@ -10,30 +14,29 @@ const fetchCustomerDetails = async (customerID: string) => {
       throw new Error("Authentication token not found");
     }
 
-    const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+    let tokenPayload;
+    try {
+      tokenPayload = JSON.parse(atob(token.split(".")[1]));
+    } catch {
+      throw new Error("Invalid token format");
+    }
     const rm_number = tokenPayload.rm_number;
 
-    const response = await fetch(
-      `http://localhost:5000/api/customer-details/customer-details?rm_number=${rm_number}&customerID=${customerID}`,
-      {
+    try {
+      const response = await api.get("/customer-details/customer-details", {
+        params: { rm_number, customerID },
         headers: {
           Authorization: `Bearer ${token}`,
         },
+      });
+      return response.data as CustomerDetails;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || error.message;
+        throw new Error(errorMessage);
       }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Server responded with status: ${response.status}`);
+      throw new Error("An unexpected error occurred");
     }
-
-    // Check if response has content before parsing
-    const text = await response.text();
-    if (!text) {
-      return null; // Return null for empty responses
-    }
-
-    // Parse the text as JSON
-    return JSON.parse(text);
   } catch (error) {
     console.error("Error in fetchCustomerDetails:", error);
     throw error;

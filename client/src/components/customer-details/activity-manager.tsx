@@ -1,34 +1,27 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CiCirclePlus } from "react-icons/ci";
-import useGetActivity from "../../hooks/customer-details/use-get-activity"; // Custom hook to fetch tasks
-import usePostActivity from "../../hooks/customer-details/use-post-activity"; // Custom hook to post a new task
-
-interface Activity {
-  title: string;
-  description: string;
-  date: string;
-}
-
-interface ActivityWithCustomerId extends Activity {
-  bp_number_wm_core: string;
-}
+import {
+  useGetActivity,
+  usePostActivity,
+} from "../../hooks/customer-details/use-activity-manager";
+import { Activity } from "@/types/page/customer-details";
 
 const ActivityManager = ({ customerID }: { customerID: string }) => {
-  // Fetch tasks using the provided customerID (as bp_number_wm_core).
-  console.log("customerID", customerID);
   const {
-    activity: activityFromHook,
+    data: activityFromHook,
     error,
-    loading,
+    isLoading: loading,
+    refetch,
   } = useGetActivity(customerID);
-  const { postData, loading: posting } = usePostActivity();
+  const { mutate: postData } = usePostActivity();
 
-  // Local state for tasks to update immediately without a full refetch.
+  // Initialize with empty array
   const [localActivity, setLocalActivity] = useState<Activity[]>([]);
+
   useEffect(() => {
-    if (activityFromHook) {
-      setLocalActivity(activityFromHook);
+    if (activityFromHook?.data) {
+      setLocalActivity(activityFromHook.data);
     }
   }, [activityFromHook]);
 
@@ -40,10 +33,8 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   // Form fields for adding a new activity.
   const [newActivity, setNewActivity] = useState("");
   const [newDescription, setNewDescription] = useState("");
-  const [newDate, setNewDate] = useState("");
-
-  // All fetched activities.
-  const activities = localActivity;
+  const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+  const [newDate, setNewDate] = useState(today);
 
   // Toggle the popup position at the bottom left of the button.
   const togglePopup = () => {
@@ -58,24 +49,27 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
     setShowPopup((prev) => !prev);
   };
 
-  // Add a new activity and update local state optimistically.
   const addActivity = async () => {
     if (!newActivity.trim() || !newDescription.trim() || !newDate.trim())
       return;
+
+    const newActivityObj = {
+      bp_number_wm_core: customerID,
+      title: newActivity,
+      description: newDescription,
+      date: newDate,
+    } as Activity;
+
     try {
-      // Include customerID as bp_number_wm_core in the payload.
-      const newActivityObj = await postData({
-        bp_number_wm_core: customerID,
-        title: newActivity,
-        description: newDescription,
-        date: newDate,
-      } as ActivityWithCustomerId);
-      setLocalActivity((prev) => [...prev, newActivityObj]);
-      // Reset form and close popup.
-      setNewActivity("");
-      setNewDescription("");
-      setNewDate("");
-      setShowPopup(false);
+      postData(newActivityObj, {
+        onSuccess: () => {
+          refetch();
+          setNewActivity("");
+          setNewDescription("");
+          setNewDate("");
+          setShowPopup(false);
+        },
+      });
     } catch (err) {
       console.error("Failed to add activity:", err);
     }
@@ -84,97 +78,85 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   return (
     <div className="relative p-4 rounded-lg text-white w-full bg-[#1D283A]">
       {/* Header */}
-      <div className="flex justify-between items-center mb-3">
-        <p className="text-xl font-bold">Riwayat Aktivitas</p>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Aktivitas</h2>
         <button
           ref={buttonRef}
-          className="text-3xl text-blue-500 cursor-pointer"
           onClick={togglePopup}
-          aria-label="Add Task"
+          className="text-2xl hover:text-gray-300 cursor-pointer"
         >
           <CiCirclePlus />
         </button>
       </div>
 
-      {/* Loading or error messages */}
-      {loading && (
-        <p className="text-center text-2xl h-[220px] flex justify-center items-center">
-          N/A
+      {/* Activity List */}
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error.message}</p>
+      ) : localActivity.length === 0 ? (
+        <p className="text-center bg-gray-700 p-4 rounded-2xl">
+          Tidak ada aktivitas tersedia !
         </p>
+      ) : (
+        <ul className="mb-4 max-h-80 overflow-y-auto rounded-md">
+          {localActivity.map((activity, index) => (
+            <li
+              key={index}
+              className="bg-gray-700 p-4 mb-2 rounded-md hover:bg-gray-600 transition-colors flex justify-between items-center"
+            >
+              <div>
+                <h3 className="font-semibold">{activity.title}</h3>
+                <p className="text-sm text-gray-300">{activity.description}</p>
+              </div>
+              <p className="text-xs text-gray-400">{activity.date.split('T')[0]}</p>
+            </li>
+          ))}
+        </ul>
       )}
-      {error && <p>Error: {error.message}</p>}
 
-      {/* Activity list */}
-      {!loading &&
-        !error &&
-        (activities.length === 0 ? (
-          <p className="text-center bg-gray-700 p-4 rounded-2xl">
-            Tidak ada aktivitas tersedia !
-          </p>
-        ) : (
-          <ul className="mb-4 max-h-80 overflow-y-auto rounded-md">
-            {activities.map((activity, index) => (
-              <li
-                key={index}
-                className="bg-gray-700 py-2 px-4 mt-2 rounded-2xl text-white flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-bold">{activity.title}</p>
-                  <p>{activity.description}</p>
-                </div>
-                <p className="text-gray-400">
-                  {activity.date
-                    ? new Date(activity.date).toLocaleDateString("id-ID")
-                    : "—"}
-                </p>
-              </li>
-            ))}
-          </ul>
-        ))}
-
-      {/* Popup rendered via Portal */}
+      {/* Add Activity Popup */}
       {showPopup &&
         createPortal(
           <div
-            style={{ top: popupPosition.top, left: popupPosition.left }}
-            className="absolute w-60 p-4 bg-[#1D283A] border border-gray-300 rounded-lg shadow-lg z-50"
+            style={{
+              position: "absolute",
+              top: popupPosition.top,
+              left: popupPosition.left,
+            }}
+            className="bg-gray-800 p-4 rounded-lg shadow-lg w-60 border border-gray-600"
           >
-            <h4 className="text-md font-bold mb-3 text-white">
-              Tambahkan aktivitas baru
-            </h4>
             <input
               type="text"
-              className="p-2 rounded-md text-black bg-white w-full mb-2"
-              placeholder="Aktivitas"
               value={newActivity}
               onChange={(e) => setNewActivity(e.target.value)}
+              placeholder="Aktivitas"
+              className="w-full mb-2 p-2 rounded bg-white text-black"
             />
-            <input
-              type="text"
-              className="p-2 rounded-md text-black bg-white w-full mb-2"
-              placeholder="Deskripsi"
+            <textarea
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
+              placeholder="Deskripsi"
+              className="w-full mb-2 p-2 rounded bg-white text-black"
             />
             <input
               type="date"
-              className="p-2 rounded-md text-black bg-white w-full mb-4"
               value={newDate}
               onChange={(e) => setNewDate(e.target.value)}
+              className="w-full mb-2 p-2 rounded bg-white text-black"
             />
-            <div className="flex justify-between gap-2">
+            <div className="flex gap-2">
               <button
-                className="px-3 py-1 rounded-md bg-gray-500 text-white cursor-pointer"
                 onClick={() => setShowPopup(false)}
+                className="w-1/2 bg-gray-600 text-white p-2 rounded hover:bg-gray-700 cursor-pointer"
               >
                 Batal
               </button>
               <button
-                className="px-3 py-1 rounded-md bg-blue-500 text-white cursor-pointer"
                 onClick={addActivity}
-                disabled={posting}
+                className="w-1/2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700 cursor-pointer"
               >
-                {posting ? "Menambahkan..." : "Tambahkan"}
+                Tambahkan
               </button>
             </div>
           </div>,

@@ -1,29 +1,19 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import fetchCustomerDetails from "../../services/customer-details/customer-details-api";
-
-interface CustomerDetails {
-    Priority_Private: string;
-    Usia: string;
-    Status_Nikah: string;
-    Risk_Profile: string;
-    Vintage: string;
-}
+import { CustomerDetails } from "@/types/page/customer-details";
 
 export function useCustomerDetails(customerID: string) {
-  const [data, setData] = useState<CustomerDetails[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, error } = useQuery<CustomerDetails | null, Error>({
+    queryKey: ["customerDetails", customerID],
+    queryFn: async () => {
+      const result = await fetchCustomerDetails(customerID);
+      return result;
+    },
+  });
 
-  useEffect(() => {
-    fetchCustomerDetails(customerID)
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching customer details:", err);
-        setLoading(false);
-      });
-  }, [customerID]);
-
-  return { data, loading };
+  return {
+    data: data || null,
+    loading: isLoading,
+    error,
+  };
 }

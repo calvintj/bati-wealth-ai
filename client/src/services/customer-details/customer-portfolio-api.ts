@@ -1,18 +1,36 @@
-const fetchCustomerPortfolio = async (customerID: string) => {
+import api from "@/services/api";
+import axios from "axios";
+import { CustomerPortfolio } from "@/types/page/customer-details";
+
+const fetchCustomerPortfolio = async (customerID: string): Promise<CustomerPortfolio[]> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("Token not found");
   }
-  const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+
+  let tokenPayload;
+  try {
+    tokenPayload = JSON.parse(atob(token.split(".")[1]));
+  } catch {
+    throw new Error("Invalid token format");
+  }
   const rm_number = tokenPayload.rm_number;
 
-  const response = await fetch(`http://localhost:5000/api/customer-details/customer-portfolio?rm_number=${rm_number}&customerID=${customerID}`, {
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
+  try {
+    const response = await api.get("/customer-details/customer-portfolio", {
+      params: { rm_number, customerID },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data as CustomerPortfolio[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
     }
-  });
-  return response.json();
+    throw new Error("An unexpected error occurred");
+  }
 };
-
 export default fetchCustomerPortfolio;

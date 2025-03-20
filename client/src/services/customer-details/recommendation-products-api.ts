@@ -1,22 +1,38 @@
-const fetchRecommendationProduct = async (customerID: string) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        throw new Error("Token not found");
-    }
-    const response = await fetch(
-        `http://localhost:5000/api/customer-details/recommendation-product?customerID=${customerID}`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+import api from "@/services/api";
+import axios from "axios";
+import { RecommendationProduct } from "@/types/page/customer-details";
 
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
+const fetchRecommendationProduct = async (
+  customerID: string
+): Promise<RecommendationProduct[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Token not found");
+  }
 
-    return response.json(); // this should return an array of customer objects
+  let tokenPayload;
+  try {
+    tokenPayload = JSON.parse(atob(token.split(".")[1]));
+  } catch {
+    throw new Error("Invalid token format");
+  }
+  const rm_number = tokenPayload.rm_number;
+
+  try {
+    const response = await api.get("/customer-details/recommendation-product", {
+      params: { rm_number, customerID },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data as RecommendationProduct[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
 };
 
 export default fetchRecommendationProduct;

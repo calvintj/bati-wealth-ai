@@ -1,5 +1,4 @@
-import { getTask } from "@/services/task-manager/task-manager-api";
-import { postTask } from "@/services/task-manager/task-manager-api";
+import { getTask, postTask } from "@/services/task-manager/task-manager-api";
 import { TaskResponse, TaskRow } from "@/types/page/task-manager";
 import { useMutation, useQuery } from "@tanstack/react-query";
 

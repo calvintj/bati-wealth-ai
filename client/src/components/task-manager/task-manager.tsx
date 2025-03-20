@@ -12,7 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   // React Query hook for tasks
   const { data: taskResponse, error, isLoading } = useGetTask();
-  const { mutateAsync: postData, isPending: posting } = usePostTask();
+  const { mutateAsync: postData } = usePostTask();
   const queryClient = useQueryClient();
 
   // Popup state and positioning
@@ -127,45 +127,44 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
       {showPopup &&
         createPortal(
           <div
-            style={{ top: popupPosition.top, left: popupPosition.left }}
-            className="absolute w-60 p-4 bg-[#1D283A] border border-gray-300 rounded-lg shadow-lg z-50"
+            style={{
+              position: "absolute",
+              top: popupPosition.top,
+              left: popupPosition.left,
+            }}
+            className="bg-gray-800 p-4 rounded-lg shadow-lg w-60 border border-gray-600"
           >
-            <h4 className="text-md font-bold mb-3 text-white">
-              Tambahkan tugas baru
-            </h4>
-            <input
-              type="text"
-              className="p-2 rounded-md text-black bg-white w-full mb-2"
-              placeholder="Deskripsi"
+            <textarea
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
+              placeholder="Tugas"
+              className="w-full mb-2 p-2 rounded bg-white text-black"
             />
             <input
               type="text"
-              className="p-2 rounded-md text-black bg-white w-full mb-2"
-              placeholder="Dengan siapa?"
               value={newInvitee}
               onChange={(e) => setNewInvitee(e.target.value)}
+              placeholder="Undangan"
+              className="w-full mb-2 p-2 rounded bg-white text-black"
             />
             <input
               type="date"
-              className="p-2 rounded-md text-black bg-white w-full mb-4"
               value={newDueDate}
               onChange={(e) => setNewDueDate(e.target.value)}
+              className="w-full mb-2 p-2 rounded bg-white text-black"
             />
-            <div className="flex justify-between gap-2">
+            <div className="flex gap-2">
               <button
-                className="px-3 py-1 rounded-md bg-gray-500 text-white cursor-pointer"
                 onClick={() => setShowPopup(false)}
+                className="w-1/2 bg-gray-600 text-white p-2 rounded hover:bg-gray-700 cursor-pointer"
               >
                 Batal
               </button>
               <button
-                className="px-3 py-1 rounded-md bg-blue-500 text-white cursor-pointer"
                 onClick={addTask}
-                disabled={posting}
+                className="w-1/2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700 cursor-pointer"
               >
-                {posting ? "Menambahkan..." : "Tambahkan"}
+                Tambahkan
               </button>
             </div>
           </div>,

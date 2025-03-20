@@ -1,28 +1,15 @@
 import useGetRecommendationProduct from "../../hooks/customer-details/use-recommendation-products";
 
-interface RecommendationProduct {
-  nama_produk: string;
-  profit: number;
-  offer_product_risk_1: string;
-  offer_product_risk_2: string;
-  offer_product_risk_3: string;
-  offer_product_risk_4: string;
-  offer_product_risk_5: string;
-  offer_reprofile_risk_target: string;
-}
-
 export default function RecommendationProduct({
   customerID,
 }: {
   customerID: string;
 }) {
-  const { recommendationProduct, loading, error } = useGetRecommendationProduct(
-    customerID
-  ) as {
-    recommendationProduct: RecommendationProduct[];
-    loading: boolean;
-    error: Error | null;
-  };
+  const {
+    data: recommendationProduct,
+    isLoading: loading,
+    error,
+  } = useGetRecommendationProduct(customerID);
 
   if (loading)
     return (
@@ -40,7 +27,7 @@ export default function RecommendationProduct({
   return (
     <div>
       <ul>
-        {recommendationProduct.map((product, index) => (
+        {recommendationProduct?.map((product, index) => (
           <li key={index} className="text-md p-4">
             <div className="py-2">
               <p className="uppercase font-bold underline">Aksi Potensial</p>

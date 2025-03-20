@@ -1,22 +1,8 @@
 import useOwnedProduct from "../../hooks/customer-details/use-owned-products";
 
-interface OwnedProduct {
-  nama_produk: string;
-  keterangan: string;
-  jumlah_amount: number;
-  price_bought: number;
-  jumlah_transaksi: number;
-  profit: number;
-  return_value: number;
-}
-
 const OwnedProductTable = ({ customerID }: { customerID: string }) => {
   // Hook
-  const { ownedProduct, loading, error } = useOwnedProduct(customerID) as {
-    ownedProduct: OwnedProduct[];
-    loading: boolean;
-    error: Error | null;
-  };
+  const { data: ownedProduct, isLoading: loading, error } = useOwnedProduct(customerID);
 
   if (loading) {
     return (
@@ -64,7 +50,7 @@ const OwnedProductTable = ({ customerID }: { customerID: string }) => {
             </tr>
           </thead>
           <tbody className="divide-y-2 divide-gray-900">
-            {ownedProduct.map((product, index) => (
+            {ownedProduct?.map((product, index) => (
               <tr key={index}>
                 <td className="sticky left-0 z-10 whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
                   {product.nama_produk}

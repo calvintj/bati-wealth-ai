@@ -1,23 +1,16 @@
 // hooks/customerDetails-hook/customerDetails.js
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import fetchCustomerIDList from "../../services/customer-details/customer-id-list-api";
+import { CustomerDetails } from "@/types/page/customer-details";
 
 export function useCustomerIDList() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data, error, isLoading } = useQuery<CustomerDetails[], Error>({
+    queryKey: ["customerIDList"],
+    queryFn: async () => {
+      const customerDetails = await fetchCustomerIDList();
+      return customerDetails || [];
+    },
+  });
 
-  useEffect(() => {
-    fetchCustomerIDList()
-      // Fetch customer details
-      .then((customers) => {
-        setData(customers);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching customer list:", err);
-        setLoading(false);
-      });
-  }, []);
-
-  return { data, loading };
+  return { data: data || [], error, isLoading };
 }

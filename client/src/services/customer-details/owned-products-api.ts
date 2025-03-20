@@ -1,29 +1,38 @@
-const fetchOwnedProduct = async (customerID: string) => {
+import api from "@/services/api";
+import axios from "axios";
+import { OwnedProduct } from "@/types/page/customer-details";
+
+const fetchOwnedProduct = async (
+  customerID: string
+): Promise<OwnedProduct[]> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("Token not found");
   }
-  const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+
+  let tokenPayload;
+  try {
+    tokenPayload = JSON.parse(atob(token.split(".")[1]));
+  } catch {
+    throw new Error("Invalid token format");
+  }
   const rm_number = tokenPayload.rm_number;
 
-  return fetch(
-    `http://localhost:5000/api/customer-details/owned-product?rm_number=${rm_number}&customerID=${customerID}`,
-    {
+  try {
+    const response = await api.get("/customer-details/owned-product", {
+      params: { rm_number, customerID },
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
-  )
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return res.json();
-    })
-    .catch((err) => {
-      console.error("Error fetching owned product:", err);
-      throw err;
     });
+    return response.data as OwnedProduct[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
 };
 
 export default fetchOwnedProduct;

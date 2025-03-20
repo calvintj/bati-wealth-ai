@@ -70,7 +70,7 @@ export default function CustomerDetailsPage() {
     loading: boolean;
   };
 
-  const { returnPercentage } = useGetReturnPercentage(customerID);
+  const { data: returnPercentage } = useGetReturnPercentage(customerID);
 
   const togglePortfolio = () => {
     setCurrentPortfolio((prev) =>

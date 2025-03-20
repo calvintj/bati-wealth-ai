@@ -1,55 +1,60 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import fetchCustomerPortfolio from "../../services/customer-details/customer-portfolio-api";
+import { CustomerPortfolio } from "@/types/page/customer-details";
 
-interface customerPortfolio {
-  asset_type: string;
-  recommended_allocation: string;
+type PieData = {
+  name: string;
+  value: number;
+};
+
+interface PortfolioResult {
+  customerPortfolio: CustomerPortfolio[];
+  transformedData: PieData[];
 }
 
 const useCustomerPortfolio = (customerID: string) => {
-  const [customerPortfolio, setCustomerPortfolio] = useState<customerPortfolio[]>([]);
-  const [transformedData, setTransformedData] = useState<{ name: string; value: number }[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const {
+    data,
+    error,
+    isLoading: loading,
+  } = useQuery<PortfolioResult, Error>({
+    queryKey: ["customerPortfolio", customerID],
+    queryFn: async () => {
+      const portfolioData = await fetchCustomerPortfolio(customerID);
+      console.log("Raw portfolio data:", portfolioData);
 
-  useEffect(() => {
-    const getCustomerPortfolio = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchCustomerPortfolio(customerID);
-        setCustomerPortfolio(data);
+      const portfolio = portfolioData?.[0] || null;
+      console.log("Portfolio values:", {
+        casa: portfolio?.casa,
+        sb: portfolio?.sb,
+        deposito: portfolio?.deposito,
+        rd: portfolio?.rd,
+      });
 
-        // Transform portfolio data for the pie chart
-        if (data && data.length > 0) {
-          const portfolio = data[0]; // Get the first item from the array
+      const transformedData = portfolio
+        ? [
+            { name: "CASA", value: Number(portfolio.casa) || 0 },
+            { name: "Saving Bond", value: Number(portfolio.sb) || 0 },
+            { name: "Deposito", value: Number(portfolio.deposito) || 0 },
+            { name: "Reksadana", value: Number(portfolio.rd) || 0 },
+          ].filter((item) => item.value > 0)
+        : [];
+      console.log("Chart data:", transformedData);
 
-          const transformed = [
-            { name: "CASA", value: parseFloat(portfolio?.casa) || 0 },
-            { name: "Saving Bond", value: parseFloat(portfolio?.sb) || 0 },
-            { name: "Deposito", value: parseFloat(portfolio?.deposito) || 0 },
-            { name: "Reksadana", value: parseFloat(portfolio?.rd) || 0 },
-          ].filter((item) => item.value > 0); // Only include items with values > 0
+      return {
+        customerPortfolio: portfolioData,
+        transformedData,
+      };
+    },
+    enabled: !!customerID,
+  });
 
-          setTransformedData(transformed);
-        } else {
-          setTransformedData([]);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        setError(error as Error);
-        setLoading(false);
-      }
-    };
-
-    if (customerID) {
-      getCustomerPortfolio();
-    }
-  }, [customerID]);
-
-  console.log("transformedData:", transformedData);
-  console.log("customerPortfolio:", customerPortfolio);
-  return { customerPortfolio, transformedData, loading, error };
+  return {
+    customerPortfolio: data?.customerPortfolio ?? [],
+    transformedData: data?.transformedData ?? [],
+    loading,
+    error,
+  };
 };
 
 export default useCustomerPortfolio;
