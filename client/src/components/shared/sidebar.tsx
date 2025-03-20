@@ -15,32 +15,32 @@ import {
 const navItems = [
   {
     to: "/overview",
-    icon: <LayoutDashboard size={64} />,
+    icon: <LayoutDashboard />,
     label: "Overview",
   },
   {
     to: "/customer-list",
-    icon: <List size={64} />,
+    icon: <List />,
     label: "Customer List",
   },
   {
     to: "/customer-details",
-    icon: <User size={64} />,
+    icon: <User />,
     label: "Customer Details",
   },
   {
     to: "/task-manager",
-    icon: <CircleCheckBig size={64} />,
+    icon: <CircleCheckBig />,
     label: "Task Manager",
   },
   {
     to: "/news",
-    icon: <Newspaper size={64} />,
+    icon: <Newspaper />,
     label: "News",
   },
   {
     to: "/chatbot",
-    icon: <Bot size={64} />,
+    icon: <Bot />,
     label: "Chatbot",
   },
 ];
@@ -48,7 +48,7 @@ const navItems = [
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const linkClass = "mt-2 rounded-2xl p-2 [&>svg]:!w-8 [&>svg]:!h-8";
+  const linkClass = "mt-2 rounded-2xl p-2 [&>svg]:!w-8 [&>svg]:!h-8 text-white";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -65,7 +65,7 @@ export default function Sidebar() {
               key={to}
               href={to}
               aria-label={label}
-              className={`${linkClass} ${isActive ? "bg-gray-700" : ""}`}
+              className={`${linkClass} ${isActive ? "bg-[#0077E4]" : ""}`}
             >
               {icon}
             </Link>

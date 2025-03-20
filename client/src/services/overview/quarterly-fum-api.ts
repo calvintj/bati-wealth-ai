@@ -2,7 +2,7 @@ import { QuarterlyFUM } from "@/types/page/overview";
 import api from "@/services/api";
 import axios from "axios";
 
-const fetchQuarterlyFUM = async (): Promise<QuarterlyFUM> => {
+const fetchQuarterlyFUM = async (): Promise<QuarterlyFUM[]> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("Token not found");
@@ -24,7 +24,7 @@ const fetchQuarterlyFUM = async (): Promise<QuarterlyFUM> => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data as QuarterlyFUM;
+    return response.data as QuarterlyFUM[];
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const errorMessage = error.response?.data?.message || error.message;

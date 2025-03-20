@@ -31,7 +31,7 @@ const LoginForm: React.FC = () => {
           id="email"
           type="email"
           name="email"
-          placeholder="Email address"
+          placeholder="RM001@batiinvestasi.ai"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -48,7 +48,7 @@ const LoginForm: React.FC = () => {
           id="password"
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder="RM12345"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required

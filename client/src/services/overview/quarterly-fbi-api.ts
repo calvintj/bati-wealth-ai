@@ -24,10 +24,7 @@ const fetchQuarterlyFBI = async (): Promise<QuarterlyFBI[]> => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = response.data;
-    return Array.isArray(data)
-      ? (data as QuarterlyFBI[])
-      : [data as QuarterlyFBI];
+    return response.data as QuarterlyFBI[];
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const errorMessage = error.response?.data?.message || error.message;

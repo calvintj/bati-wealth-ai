@@ -1,74 +1,75 @@
-import { useState, useEffect } from "react";
-import fetchQuarterlyFUM from "@/services/overview/quarterly-fum-api";
+import { useQuery } from "@tanstack/react-query";
 import { DataEntry } from "@/components/overview/quarterly-fum";
+import fetchQuarterlyFUM from "@/services/overview/quarterly-fum-api";
 
 export function useQuarterlyFUM(customerRisk: string): DataEntry[] {
-  const [chartData, setChartData] = useState<DataEntry[]>([]);
+  const { data, error, isLoading } = useQuery<DataEntry[]>({
+    queryKey: ["quarterlyFUM", customerRisk],
+    queryFn: async () => {
+      const result = await fetchQuarterlyFUM();
+      const formattedData: DataEntry[] = [];
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const result = await fetchQuarterlyFUM();
-        const formattedData: DataEntry[] = [];
+      // Process each year and quarter
+      result.forEach(
+        (yearData: {
+          year: number;
+          quarters: {
+            all: Record<string, number>;
+            conservative: Record<string, number>;
+            balanced: Record<string, number>;
+            moderate: Record<string, number>;
+            growth: Record<string, number>;
+            aggressive: Record<string, number>;
+          };
+        }) => {
+          ["q1", "q2", "q3", "q4"].forEach((quarter) => {
+            const quarterValue = yearData.quarters;
+            const entries = [
+              {
+                name: `All ${yearData.year} ${quarter.toUpperCase()}`,
+                value: quarterValue.all[quarter] || 0,
+              },
+              {
+                name: `Conservative ${yearData.year} ${quarter.toUpperCase()}`,
+                value: quarterValue.conservative[quarter] || 0,
+              },
+              {
+                name: `Balanced ${yearData.year} ${quarter.toUpperCase()}`,
+                value: quarterValue.balanced[quarter] || 0,
+              },
+              {
+                name: `Moderate ${yearData.year} ${quarter.toUpperCase()}`,
+                value: quarterValue.moderate[quarter] || 0,
+              },
+              {
+                name: `Growth ${yearData.year} ${quarter.toUpperCase()}`,
+                value: quarterValue.growth[quarter] || 0,
+              },
+              {
+                name: `Aggressive ${yearData.year} ${quarter.toUpperCase()}`,
+                value: quarterValue.aggressive[quarter] || 0,
+              },
+            ].filter((entry) => entry.value !== 0);
 
-        // Process each year and quarter
-        result.forEach(
-          (yearData: {
-            year: string;
-            quarters: {
-              all: Record<string, number>;
-              conservative: Record<string, number>;
-              balanced: Record<string, number>;
-              moderate: Record<string, number>;
-              growth: Record<string, number>;
-              aggressive: Record<string, number>;
-            };
-          }) => {
-            ["q1", "q2", "q3", "q4"].forEach((quarter) => {
-              const quarterValue = yearData.quarters;
-              const entries = [
-                {
-                  name: `All ${yearData.year} ${quarter.toUpperCase()}`,
-                  value: quarterValue.all[quarter] || 0,
-                },
-                {
-                  name: `Conservative ${
-                    yearData.year
-                  } ${quarter.toUpperCase()}`,
-                  value: quarterValue.conservative[quarter] || 0,
-                },
-                {
-                  name: `Balanced ${yearData.year} ${quarter.toUpperCase()}`,
-                  value: quarterValue.balanced[quarter] || 0,
-                },
-                {
-                  name: `Moderate ${yearData.year} ${quarter.toUpperCase()}`,
-                  value: quarterValue.moderate[quarter] || 0,
-                },
-                {
-                  name: `Growth ${yearData.year} ${quarter.toUpperCase()}`,
-                  value: quarterValue.growth[quarter] || 0,
-                },
-                {
-                  name: `Aggressive ${yearData.year} ${quarter.toUpperCase()}`,
-                  value: quarterValue.aggressive[quarter] || 0,
-                },
-              ].filter((entry) => entry.value !== 0);
+            formattedData.push(...entries);
+          });
+        }
+      );
 
-              formattedData.push(...entries);
-            });
-          }
-        );
+      return formattedData;
+    },
+  });
 
-        console.log("Formatted data:", formattedData);
-        setChartData(formattedData);
-      } catch (error) {
-        console.error("Error fetching customer data:", error);
-      }
-    };
+  if (isLoading) {
+    console.log("Loading quarterly FBI data...");
+    return [];
+  }
 
-    loadData();
-  }, [customerRisk]);
+  if (error) {
+    console.error("Error fetching quarterly FBI data:", error);
+    return [];
+  }
 
-  return chartData;
+  console.log("Formatted data:", data);
+  return data || [];
 }
