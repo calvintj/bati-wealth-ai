@@ -1,33 +1,36 @@
-import { Customer } from "@/types/page/customer-list";
+import { CustomerList } from "@/types/page/customer-list";
+import api from "@/services/api";
+import axios from "axios";
 
-const fetchCustomerList = (setCustomerList: (data: Customer[]) => void) => {
+const fetchCustomerList = async (): Promise<CustomerList[]> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("No token found");
   }
-  const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+
+  let tokenPayload;
+  try {
+    tokenPayload = JSON.parse(atob(token.split(".")[1]));
+  } catch {
+    throw new Error("Invalid token format");
+  }
   const rm_number = tokenPayload.rm_number;
 
-  fetch(
-    `http://localhost:5000/api/customer-list/customer-list?rm_number=${rm_number}`,
-    {
+  try {
+    const response = await api.get("/customer-list/customer-list", {
+      params: { rm_number },
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
-  )
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      setCustomerList(data);
-    })
-    .catch((err) => {
-      console.error("Error fetching customer list:", err);
     });
+    return response.data as CustomerList[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
 };
 
 export default fetchCustomerList;

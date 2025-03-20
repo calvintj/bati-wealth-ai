@@ -26,7 +26,7 @@ const fetchCertainCustomerList = async (
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data; // directly return the data
+    return response.data as CertainCustomerList[]; // directly return the data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const errorMessage = error.response?.data?.message || error.message;

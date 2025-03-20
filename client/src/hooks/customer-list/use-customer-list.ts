@@ -1,13 +1,26 @@
-import { useState, useEffect } from "react";
 import fetchCustomerList from "../../services/customer-list/customer-list-api";
-import { Customer } from "@/types/page/customer-list";
+import { CustomerList } from "@/types/page/customer-list";
+import { useQuery } from "@tanstack/react-query";
 
 export function useCustomerList() {
-  const [customerList, setCustomerList] = useState<Customer[]>([]);
+  const { data, error, isLoading } = useQuery<CustomerList[], Error>({
+    queryKey: ["customerList"],
+    queryFn: async () => {
+      const customerList = await fetchCustomerList();
+      return customerList;
+    },
+  });
 
-  useEffect(() => {
-    fetchCustomerList(setCustomerList);
-  }, []);
+  if (isLoading) {
+    console.log("Loading customer list...");
+    return [];
+  }
 
-  return customerList;
+  if (error) {
+    console.error("Error loading customer list:", error);
+    return [];
+  }
+
+  console.log("Fetched customer list:", data);
+  return data || [];
 }
