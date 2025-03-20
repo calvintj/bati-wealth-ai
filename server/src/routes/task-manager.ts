@@ -10,6 +10,8 @@ import {
   postTaskController,
   getOfferProductRiskController,
   getReProfileRiskTargetController,
+  deleteTaskController,
+  updateTaskController,
 } from "../controllers/task-manager";
 
 const router = Router();
@@ -25,5 +27,7 @@ router.get("/offer-product-risk", getOfferProductRiskController);
 router.get("/re-profile-risk-target", getReProfileRiskTargetController);
 // Protect the POST route with authMiddleware
 router.post("/post-task", authMiddleware, postTaskController);
+router.delete("/delete-task", deleteTaskController);
+router.put("/update-task", updateTaskController);
 
 export default router;

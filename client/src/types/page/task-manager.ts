@@ -1,4 +1,5 @@
 export interface TaskRow {
+  id: string;
   description: string;
   invitee: string;
   due_date: string;

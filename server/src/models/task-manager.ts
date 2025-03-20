@@ -13,7 +13,7 @@ import {
 const getTask = async (rm_number: string): Promise<TaskResponse> => {
   const result = await db.query(
     `
-      SELECT description, invitee, due_date FROM rm_task_manager
+      SELECT id, description, invitee, due_date FROM rm_task_manager
       WHERE rm_number = $1
     `,
     [rm_number]
@@ -36,6 +36,30 @@ const postTask = async (
         RETURNING *
       `,
     [description, due_date, invitee, rm_number]
+  );
+  return {
+    task: [result.rows[0]],
+  };
+};
+
+const deleteTask = async (id: string): Promise<TaskResponse> => {
+  const result = await db.query(
+    `
+    DELETE FROM rm_task_manager WHERE id = $1
+    `,
+    [id]
+  );
+  return {
+    task: [result.rows[0]],
+  };
+};
+
+const updateTask = async (task: any): Promise<TaskResponse> => {
+  const result = await db.query(
+    `
+    UPDATE rm_task_manager SET description = $1, due_date = $2, invitee = $3 WHERE id = $4
+    `,
+    [task.description, task.due_date, task.invitee, task.id]
   );
   return {
     task: [result.rows[0]],
@@ -210,4 +234,6 @@ export {
   postTask,
   getOfferProductRisk,
   getReProfileRiskTarget,
+  deleteTask,
+  updateTask,
 };

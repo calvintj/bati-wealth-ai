@@ -1,4 +1,4 @@
-import { getTask, postTask } from "@/services/task-manager/task-manager-api";
+import { deleteTask, getTask, postTask, updateTask } from "@/services/task-manager/task-manager-api";
 import { TaskResponse, TaskRow } from "@/types/page/task-manager";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -13,5 +13,17 @@ export const useGetTask = () => {
 export const usePostTask = () => {
   return useMutation<TaskResponse, Error, TaskRow>({
     mutationFn: postTask,
+  });
+};
+
+export const useDeleteTask = () => {
+  return useMutation<TaskResponse, Error, string>({
+    mutationFn: deleteTask,
+  });
+};
+
+export const useUpdateTask = () => {
+  return useMutation<TaskResponse, Error, TaskRow>({
+    mutationFn: updateTask,
   });
 };

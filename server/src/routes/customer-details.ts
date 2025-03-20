@@ -9,6 +9,8 @@ import {
   getOwnedProductController,
   getActivityController,
   postActivityController,
+  deleteActivityController,
+  updateActivityController,
 } from "../controllers/customer-details";
 
 const router = Router();
@@ -22,5 +24,7 @@ router.get("/return-percentage", getReturnPercentageController);
 router.get("/owned-product", getOwnedProductController);
 router.get("/get-activity", getActivityController);
 router.post("/post-activity", postActivityController);
+router.delete("/delete-activity", deleteActivityController);
+router.put("/update-activity", updateActivityController);
 
 export default router;

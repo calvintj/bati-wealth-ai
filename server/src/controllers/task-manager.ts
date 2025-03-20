@@ -9,6 +9,8 @@ import {
   postTask,
   getOfferProductRisk,
   getReProfileRiskTarget,
+  deleteTask,
+  updateTask,
 } from "../models/task-manager";
 
 export const getManagedNumbersController = async (req: Request, res: Response): Promise<void> => {
@@ -105,6 +107,31 @@ export const postTaskController = async (req: Request, res: Response): Promise<v
   } catch (error) {
     console.error("Error posting task:", error);
     res.status(500).json({ error: "Failed to add task" });
+  }
+};
+
+export const deleteTaskController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.query as { id: string };
+    const deletedTask = await deleteTask(id);
+    res.json(deletedTask);
+    return;
+  } catch (error) {
+    console.error("Error in deleteTaskController:", error);
+    res.status(500).json({ error: "Internal server error" });
+    return;
+  }
+};
+
+export const updateTaskController = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const updatedTask = await updateTask(req.body);
+    res.json(updatedTask);
+    return;
+  } catch (error) {
+    console.error("Error in updateTaskController:", error);
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 };
 

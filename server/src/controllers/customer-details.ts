@@ -9,6 +9,8 @@ import {
   getOwnedProduct,
   getActivity,
   postActivity,
+  updateActivity,
+  deleteActivity,
 } from "../models/customer-details";
 
 const getCustomerIDListController = async (req: Request, res: Response) => {
@@ -65,6 +67,19 @@ const postActivityController = async (req: Request, res: Response) => {
   res.json(newActivity);
 };
 
+const deleteActivityController = async (req: Request, res: Response) => {
+  const { id } = req.query as { id: string };
+  const deletedActivity = await deleteActivity(id);
+  res.json(deletedActivity);
+};
+
+const updateActivityController = async (req: Request, res: Response) => {
+  const activity = req.body as any;
+  const updatedActivity = await updateActivity(activity);
+  res.json(updatedActivity);
+};
+
+
 export {
   getCustomerIDListController,
   getCustomerDetailsController,
@@ -75,4 +90,6 @@ export {
   getOwnedProductController,
   getActivityController,
   postActivityController,
+  deleteActivityController,
+  updateActivityController,
 };

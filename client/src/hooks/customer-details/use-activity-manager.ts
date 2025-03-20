@@ -1,4 +1,4 @@
-import { getActivity, postActivity } from "@/services/customer-details/activity-manager-api";
+import { deleteActivity, getActivity, postActivity, updateActivity } from "@/services/customer-details/activity-manager-api";
 import { Activity, ActivityResponse } from "@/types/page/customer-details";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -16,3 +16,14 @@ export const useGetActivity = (customerID: string) => {
   });
 };
 
+export const useDeleteActivity = () => {
+  return useMutation<ActivityResponse, Error, string>({
+    mutationFn: deleteActivity,
+  });
+};
+
+export const useUpdateActivity = () => {
+  return useMutation<ActivityResponse, Error, Activity>({
+    mutationFn: updateActivity,
+  });
+};

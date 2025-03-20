@@ -67,4 +67,46 @@ const postTask = async (task: TaskRow): Promise<TaskResponse> => {
   }
 };
 
-export { getTask, postTask };
+const deleteTask = async (task_id: string): Promise<TaskResponse> => {
+  const token = getToken();
+  if (!token) {
+    throw new Error("Token not found");
+  }
+
+  try {
+    const response = await api.delete("/task-manager/delete-task", {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { task_id },
+    });
+    return response.data as TaskResponse;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
+};
+
+const updateTask = async (task: TaskRow): Promise<TaskResponse> => {
+  const token = getToken();
+  if (!token) {
+    throw new Error("Token not found");
+  }
+
+  try {
+    const response = await api.put("/task-manager/update-task", {
+      params: { task_id: task.id },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data as TaskResponse;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
+};
+
+export { getTask, postTask, deleteTask, updateTask };

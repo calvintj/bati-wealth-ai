@@ -51,4 +51,39 @@ const postActivity = async (data: Activity): Promise<ActivityResponse> => {
   }
 };
 
-export { getActivity, postActivity };
+const deleteActivity = async (id: string): Promise<ActivityResponse> => {
+  try {
+    const response = await api.delete("/customer-details/delete-activity", {
+      params: { id },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return handleResponse(response);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
+};
+
+const updateActivity = async (data: Activity): Promise<ActivityResponse> => {
+  try {
+    const response = await api.put("/customer-details/update-activity", data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return handleResponse(response);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.message;
+      throw new Error(errorMessage);
+    }
+    throw new Error("An unexpected error occurred");
+  }
+};
+
+export { getActivity, postActivity, deleteActivity, updateActivity };

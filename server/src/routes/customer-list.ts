@@ -7,6 +7,6 @@ import {
 const router = Router();
 
 router.get("/customer-list", getCustomerListController);
-router.get("/customer-list/certain", getCertainCustomerListController);
+router.get("/certain-customer-list", getCertainCustomerListController);
 
 export default router;
