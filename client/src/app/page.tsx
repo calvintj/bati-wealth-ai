@@ -12,7 +12,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-[#1D283A]">
       {/* Left decoration (hidden on small screens) */}
-      <div className="md:block md:mx-20">
+      <div className="hidden md:block md:ml-20">
         <Image src={Polygon} alt="Polygon" width={320} height={320} />
       </div>
 
@@ -38,7 +38,7 @@ const LoginPage = () => {
       </div>
 
       {/* Right decoration (hidden on small screens) */}
-      <div className="md:block md:mx-20">
+      <div className="hidden md:block md:mr-20">
         <Image src={Polygon2} alt="Polygon 2" width={320} height={320} />
       </div>
     </div>

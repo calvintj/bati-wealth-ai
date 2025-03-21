@@ -1,20 +1,42 @@
 // ICONS
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import {
+  Menu as HeadlessMenu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+} from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { Bell, Mail } from "lucide-react";
+// import { Bell, Mail } from "lucide-react";
 import batiTransparent from "@/assets/bati-transparent-white.svg";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 
 // ROUTER
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { ColorModeToggle } from "@/components/chatbot/color-mode-toggle";
+// import { ColorModeToggle } from "@/components/chatbot/color-mode-toggle";
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LogOut, Menu } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { VisuallyHidden } from "@/components/ui/visually-hidden";
+
+// Import the navigation items from sidebar
+import { navItems } from "./sidebar";
 
 export default function Navbar({
   setCustomerRisk,
 }: {
   setCustomerRisk: (risk: string) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
   const pathname = usePathname();
 
   // Array of risk options with their display labels and values
@@ -27,13 +49,85 @@ export default function Navbar({
     { label: "Aggressive", value: "Aggressive" },
   ];
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/");
+  };
+
   return (
-    <header className="flex items-center justify-between rounded-2xl bg-[#1D283A] p-2 mt-2 mr-2">
+    <nav className="w-screen p-4 flex items-center justify-between bg-[#1D283A] rounded-2xl mt-2 md:mr-2 md:w-auto">
+      <div className="flex items-center gap-4">
+        {/* Hamburger menu for mobile */}
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent
+            side="left"
+            className="w-[240px] p-4 bg-[#1D283A] text-white"
+          >
+            <SheetTitle>
+              <VisuallyHidden>Navigation Menu</VisuallyHidden>
+            </SheetTitle>
+            <div className="py-4">
+              <Image
+                src="/bati-dark.svg"
+                alt="Bati Logo"
+                width={120}
+                height={36}
+              />
+            </div>
+            <nav className="flex flex-col gap-2">
+              {navItems.map(({ to, icon, label }) => {
+                const isActive = pathname === to;
+                return (
+                  <Link
+                    key={to}
+                    href={to}
+                    className={`flex items-center gap-3 p-3 rounded-lg ${
+                      isActive ? "bg-[#0077E4]" : "hover:bg-[#2D385A]"
+                    }`}
+                    onClick={() => setOpen(false)}
+                  >
+                    <span className="[&>svg]:w-5 [&>svg]:h-5">{icon}</span>
+                    <span>{label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="mt-auto pt-8">
+              <button
+                className="flex items-center gap-3 p-3 rounded-lg w-full hover:bg-[#2D385A]"
+                onClick={() => {
+                  handleLogout();
+                  setOpen(false);
+                }}
+              >
+                <LogOut className="w-5 h-5" />
+                <span>Logout</span>
+              </button>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        {/* Logo - visible on both mobile and desktop */}
+        <Link href="/">
+          <Image
+            src={batiTransparent}
+            alt="Bati Logo"
+            width={120}
+            height={36}
+          />
+        </Link>
+      </div>
+
       {/* Left: Only show on /overview */}
       <div className="flex items-center gap-2">
-        <Image src={batiTransparent} alt="bati" className="w-30 h-10" />
         {pathname === "/overview" && (
-          <Menu as="div" className="relative inline-block ml-2 z-10">
+          <HeadlessMenu as="div" className="relative inline-block ml-2 z-10">
             <div>
               <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-white text-white bg-[#1D283A]">
                 Risiko
@@ -58,7 +152,7 @@ export default function Navbar({
                 ))}
               </div>
             </MenuItems>
-          </Menu>
+          </HeadlessMenu>
         )}
       </div>
 
@@ -67,17 +161,17 @@ export default function Navbar({
 
       {/* Right: Notification, Email, RM */}
       <div className="flex items-center gap-4 mr-2">
-        <ColorModeToggle className="cursor-pointer" />
+        {/* <ColorModeToggle className="cursor-pointer" />
         <Button variant="ghost" size="icon">
           <Mail />
         </Button>
         <Button variant="ghost" size="icon">
           <Bell />
-        </Button>
+        </Button> */}
         <div className="bg-gray-700 text-white p-2 rounded-full w-10 h-10">
           RM
         </div>
       </div>
-    </header>
+    </nav>
   );
 }

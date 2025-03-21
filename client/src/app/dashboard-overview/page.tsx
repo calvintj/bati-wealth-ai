@@ -46,7 +46,7 @@ const OverviewPage = () => {
         <Navbar setCustomerRisk={setCustomerRisk} />
 
         {/* DASHBOARD CONTENT */}
-        <main className="flex flex-col gap-2 flex-1 overflow-y-scroll mr-2 my-2 overscroll-contain">
+        <main className="flex flex-col gap-2 overflow-y-scroll my-2 mr-2 overscroll-auto w-screen md:w-auto md:overscroll-contain">
           {/* Total Customer, AUM, and FBI */}
           <div className="flex flex-col md:flex-row gap-2">
             <section

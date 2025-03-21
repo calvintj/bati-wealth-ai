@@ -15,7 +15,8 @@ import {
   LogOut,
 } from "lucide-react";
 
-const navItems = [
+// Export navItems so Navbar can access them
+export const navItems = [
   {
     to: "/dashboard-overview",
     icon: <LayoutDashboard />,
@@ -58,8 +59,9 @@ export default function Sidebar() {
     router.push("/");
   };
 
+  // Only render the desktop sidebar - mobile will be handled by navbar
   return (
-    <aside className="w-15 m-2 flex flex-col rounded-2xl items-center bg-[#1D283A]">
+    <aside className="w-15 m-2 hidden md:flex flex-col rounded-2xl items-center bg-[#1D283A]">
       <nav className="flex flex-col">
         {navItems.map(({ to, icon, label }) => {
           const isActive = pathname === to;

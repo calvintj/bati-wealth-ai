@@ -80,7 +80,7 @@ app.use(
 // 2. Rate Limiting - Prevent brute force attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // limit each IP to 100 requests per windowMs
+  max: 1000, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
