@@ -1,4 +1,5 @@
 import { Router } from "express";
+import cors from "cors";
 import {
   getCustomerListController,
   getCertainCustomerListController,
@@ -6,7 +7,28 @@ import {
 
 const router = Router();
 
-router.get("/customer-list", getCustomerListController);
-router.get("/certain-customer-list", getCertainCustomerListController);
+// Enable CORS specifically for these routes
+const routeSpecificCors = cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Origin",
+    "X-Requested-With",
+    "Accept",
+  ],
+  optionsSuccessStatus: 204,
+});
+
+// Apply the route-specific CORS
+router.options("/certain-customer-list", routeSpecificCors);
+router.get("/customer-list", routeSpecificCors, getCustomerListController);
+router.get(
+  "/certain-customer-list",
+  routeSpecificCors,
+  getCertainCustomerListController
+);
 
 export default router;

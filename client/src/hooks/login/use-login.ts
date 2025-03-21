@@ -31,12 +31,12 @@ export const useLogin = () => {
     try {
       // Login the user
       const data = await loginService.login(email, password);
-      // Set the token in local storage
+      // Store token in localStorage
       localStorage.setItem("token", data.token);
       // Set loading to false
       setLoading(false);
       // Navigate to the overview page
-      router.push("/overview");
+      router.push("/dashboard-overview");
       // Return true
       return true;
     } catch (error: unknown) {

@@ -14,6 +14,27 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+// CORS Configuration - Moving this up before other middleware
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Origin",
+      "X-Requested-With",
+      "Accept",
+    ],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  })
+);
+
+// Handle OPTIONS method for preflight requests
+app.options("*", cors());
+
 // Request timeout
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setTimeout(30000, () => {
@@ -59,7 +80,7 @@ app.use(
 // 2. Rate Limiting - Prevent brute force attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 200, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
@@ -87,17 +108,6 @@ app.use(
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
-  })
-);
-
-// 6. CORS Configuration
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    exposedHeaders: ["set-cookie"],
   })
 );
 

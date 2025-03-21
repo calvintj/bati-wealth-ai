@@ -41,10 +41,18 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         rm_number: account.rm_number,
       },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
-    res.json({ message: "Login successful", token });
+    res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: account.rm_account_id,
+        email: account.email,
+        rm_number: account.rm_number,
+      },
+    });
     return;
   } catch (err) {
     console.error(err);
@@ -54,7 +62,10 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 };
 
 // 🟢 REGISTER USER
-export const registerUser = async (req: Request, res: Response): Promise<void> => {
+export const registerUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -81,12 +92,17 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
 };
 
 // 🟢 UPDATE USER
-export const updateUser = async (req: Request, res: Response): Promise<void> => {
+export const updateUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { email } = req.body;
     const { rm_number } = req.params;
     if (!rm_number) {
-      res.status(400).json({ error: "rm_number is required in URL parameter." });
+      res
+        .status(400)
+        .json({ error: "rm_number is required in URL parameter." });
       return;
     }
 
@@ -101,7 +117,10 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
 };
 
 // 🟢 UPDATE PASSWORD
-export const updatePassword = async (req: Request, res: Response): Promise<void> => {
+export const updatePassword = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { email, newPassword } = req.body;
     const account = await findAccountByEmail(email);

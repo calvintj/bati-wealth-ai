@@ -1,6 +1,10 @@
 {
 	"dependencies": {
+		"@headlessui/react": "^2.2.0",
+		"@tippyjs/react": "^4.2.6",
+		"@types/hpp": "^0.2.6",
 		"hpp": "^0.2.3",
-		"@types/hpp": "^0.2.6"
+		"react-tooltip": "^5.28.0",
+		"tippy.js": "^6.3.7"
 	}
 }

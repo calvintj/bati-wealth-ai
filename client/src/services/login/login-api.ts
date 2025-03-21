@@ -1,5 +1,6 @@
 // Define the response type for login
 interface LoginResponse {
+  success: boolean;
   token: string;
   user: {
     id: string;
@@ -16,7 +17,7 @@ export const loginService = {
    * @param {string} password - User's password
    * @returns {Promise<LoginResponse>} Response data containing token and user info
    */
-  
+
   login: async (email: string, password: string): Promise<LoginResponse> => {
     // Fetch the login endpoint
     const response = await fetch("http://localhost:5000/api/auth/login", {

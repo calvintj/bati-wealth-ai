@@ -1,5 +1,8 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+import "tippy.js/animations/shift-away.css";
 
 // ICONS
 import {
@@ -7,21 +10,21 @@ import {
   List,
   User,
   CircleCheckBig,
-  Newspaper,
+  // Newspaper,
   Bot,
   LogOut,
 } from "lucide-react";
 
 const navItems = [
   {
-    to: "/overview",
+    to: "/dashboard-overview",
     icon: <LayoutDashboard />,
-    label: "Overview",
+    label: "Dashboard Overview",
   },
   {
-    to: "/customer-list",
+    to: "/customer-mapping",
     icon: <List />,
-    label: "Customer List",
+    label: "Customer Mapping",
   },
   {
     to: "/customer-details",
@@ -29,15 +32,15 @@ const navItems = [
     label: "Customer Details",
   },
   {
-    to: "/task-manager",
+    to: "/recommendation-centre",
     icon: <CircleCheckBig />,
-    label: "Task Manager",
+    label: "Recommendation Centre",
   },
-  {
-    to: "/news",
-    icon: <Newspaper />,
-    label: "News",
-  },
+  // {
+  //   to: "/news",
+  //   icon: <Newspaper />,
+  //   label: "News",
+  // },
   {
     to: "/chatbot",
     icon: <Bot />,
@@ -48,7 +51,7 @@ const navItems = [
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const linkClass = "mt-2 rounded-2xl p-2 [&>svg]:!w-8 [&>svg]:!h-8 text-white";
+  const linkClass = "[&>svg]:!w-8 [&>svg]:!h-8 text-white";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -61,27 +64,47 @@ export default function Sidebar() {
         {navItems.map(({ to, icon, label }) => {
           const isActive = pathname === to;
           return (
-            <Link
+            <Tippy
               key={to}
-              href={to}
-              aria-label={label}
-              className={`${linkClass} ${isActive ? "bg-[#0077E4]" : ""}`}
+              content={label}
+              placement="right"
+              animation="shift-away"
+              arrow={true}
+              theme="dark"
+              delay={[300, 0]} // [show delay, hide delay] in ms
             >
-              {icon}
-            </Link>
+              <div
+                className={`mt-2 rounded-2xl p-2 ${
+                  isActive ? "bg-[#0077E4]" : ""
+                }`}
+              >
+                <Link href={to} aria-label={label} className={linkClass}>
+                  {icon}
+                </Link>
+              </div>
+            </Tippy>
           );
         })}
       </nav>
 
       {/* LOGOUT */}
       <div className="mt-auto">
-        <button
-          className="text-white hover:text-white cursor-pointer p-4 [&>svg]:!w-8 [&>svg]:!h-8"
-          onClick={handleLogout}
-          aria-label="Logout"
+        <Tippy
+          content="Logout"
+          placement="right"
+          animation="shift-away"
+          arrow={true}
+          theme="dark"
+          delay={[300, 0]}
         >
-          <LogOut />
-        </button>
+          <button
+            className="text-white hover:text-white cursor-pointer p-4 [&>svg]:!w-8 [&>svg]:!h-8"
+            onClick={handleLogout}
+            aria-label="Logout"
+          >
+            <LogOut />
+          </button>
+        </Tippy>
       </div>
     </aside>
   );
