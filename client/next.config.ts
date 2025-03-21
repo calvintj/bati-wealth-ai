@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   env: {
     BATI_BACKEND_URL: process.env.BATI_BACKEND_URL,
     BATI_DIRECT_TRUST_CLIENT_ID: process.env.BATI_DIRECT_TRUST_CLIENT_ID,

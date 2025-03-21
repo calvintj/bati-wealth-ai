@@ -16,9 +16,10 @@ export interface UseChatApiOptions {
   mutationConfig?: MutationConfig<typeof chatApi>;
 }
 
-interface ChatApiOptions extends FetchConfig<ChatApiRequest> {}
-
-export const chatApi = async ({ data, config }: ChatApiOptions) => {
+export const chatApi = async ({
+  data,
+  config,
+}: FetchConfig<ChatApiRequest>) => {
   const response = await fetch(Constants.BASE_API_URL + "/api_chat", {
     body: JSON.stringify(data),
     method: "POST",

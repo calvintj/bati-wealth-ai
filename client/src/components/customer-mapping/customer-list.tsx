@@ -1,6 +1,6 @@
 import { useCustomerList } from "../../hooks/customer-mapping/use-customer-list";
 import { useCertainCustomerList } from "../../hooks/customer-mapping/use-certain-customer-list";
-import { CustomerRecord } from "@/types/page/customer-list";
+import { CertainCustomerList, CustomerList } from "@/types/page/customer-list";
 
 interface CustomerListTableProps {
   propensity: string;
@@ -9,11 +9,11 @@ interface CustomerListTableProps {
 
 const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
   // Hooks
-  const customerList = useCustomerList() as unknown as CustomerRecord[];
+  const customerList = useCustomerList() as CustomerList[];
   const certainCustomerList = useCertainCustomerList(
     propensity,
     aum
-  ) as unknown as CustomerRecord[];
+  ) as CertainCustomerList[];
   const header = [
     "Customer ID",
     "Profil Resiko",

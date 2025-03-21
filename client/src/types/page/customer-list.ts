@@ -1,25 +1,31 @@
 export interface CertainCustomerList {
-  bp_number_wm_core: string;
-  risk_profile: string;
-  aum_label: string;
-  propensity: string;
-  priority_private: string;
-  customer_type: string;
-  pekerjaan: string;
-  status_nikah: string;
-  usia: number;
-  annual_income: number;
+  "Customer ID": string;
+  "Risk Profile": string;
+  "AUM Label": string;
+  Propensity: string;
+  "Priority / Private": string;
+  "Customer Type": string;
+  Pekerjaan: string;
+  "Status Nikah": string;
+  Usia: number;
+  "Annual Income": number;
+  "Total FUM": number;
+  "Total AUM": number;
+  "Total FBI": number;
 }
 
 export interface CustomerList {
-  bp_number_wm_core: string;
-  risk_profile: string;
-  aum_label: string;
-  propensity: string;
-  priority_private: string;
-  customer_type: string;
-  pekerjaan: string;
-  status_nikah: string;
-  usia: number;
-  annual_income: number;
+  "Customer ID": string;
+  "Risk Profile": string;
+  "AUM Label": string;
+  Propensity: string;
+  "Priority / Private": string;
+  "Customer Type": string;
+  Pekerjaan: string;
+  "Status Nikah": string;
+  Usia: number;
+  "Annual Income": number;
+  "Total FUM": number;
+  "Total AUM": number;
+  "Total FBI": number;
 }

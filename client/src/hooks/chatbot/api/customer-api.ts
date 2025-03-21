@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { QUERY_KEY } from "@/lib/query-key";
-import { CustomerService } from "@/services/customer-service";
+import { CustomerService } from "@/services/chatbot/customer-service";
 import { PaginatedOptions } from "@/types/paginated-options";
 
 export const useGetCustomer = (options: PaginatedOptions) => {

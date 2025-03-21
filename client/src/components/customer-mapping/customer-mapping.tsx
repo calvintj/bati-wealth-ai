@@ -28,7 +28,7 @@ ChartJS.register(
 // HOOKS
 import { useCustomerList } from "../../hooks/customer-mapping/use-customer-list";
 import { useState } from "react";
-import { CustomerRecord } from "@/types/page/customer-list";
+import { CustomerList } from "@/types/page/customer-list";
 
 interface StackedBarChartProps {
   setPropensity: (propensity: string) => void;
@@ -63,7 +63,7 @@ interface ChartContext {
 
 const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
   // Fetch customer data using a custom hook
-  const customerList = useCustomerList() as unknown as CustomerRecord[];
+  const customerList = useCustomerList() as CustomerList[];
 
   // Add state to track selected bar
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);

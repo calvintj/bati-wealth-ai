@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export const useIntersectionObserver = (options?: IntersectionObserverInit) => {
-  const ref = useRef();
+  const ref = useRef<Element>(null);
   const [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
