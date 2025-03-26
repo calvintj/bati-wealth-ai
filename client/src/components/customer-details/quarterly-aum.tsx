@@ -25,7 +25,7 @@ interface QuarterlyAUMProps {
 }
 
 const assetType = [
-  { label: "Overall", value: "Overall" },
+  { label: "Asset", value: "Overall" },
   { label: "SB", value: "SB" },
   { label: "RD", value: "RD" },
   { label: "BAC", value: "BAC" },
@@ -43,7 +43,7 @@ const QuarterlyAUM = ({ customerID }: QuarterlyAUMProps) => {
             <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-white text-white bg-[#1D283A]">
               {assetType.find((asset) => asset.value === selectedAsset)
                 ?.label || "Asset"}
-              <ChevronDownIcon className="w-5 h-5 text-white" />
+              <ChevronDownIcon className="w-5 h-5 text-white ml-2" />
             </MenuButton>
           </div>
           <MenuItems
