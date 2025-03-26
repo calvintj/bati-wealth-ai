@@ -32,8 +32,10 @@ import { navItems } from "./sidebar";
 
 export default function Navbar({
   setCustomerRisk,
+  customerRisk,
 }: {
   setCustomerRisk: (risk: string) => void;
+  customerRisk: string;
 }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -114,50 +116,45 @@ export default function Navbar({
         </Sheet>
 
         {/* Logo - visible on both mobile and desktop */}
-        <Link href="/">
-          <Image
-            src={batiTransparent}
-            alt="Bati Logo"
-            width={120}
-            height={36}
-          />
-        </Link>
-      </div>
-
-      {/* Left: Only show on /overview */}
-      <div className="flex items-center gap-2">
-        {pathname === "/overview" && (
-          <HeadlessMenu as="div" className="relative inline-block ml-2 z-10">
-            <div>
-              <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-white text-white bg-[#1D283A]">
-                Risiko
-                <ChevronDownIcon className="w-5 h-5 text-white" />
-              </MenuButton>
-            </div>
-            <MenuItems
-              transition
-              className="absolute mt-2 w-30 rounded-md text-white border-2 border-white bg-[#1D283A] transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-            >
+        <Image src={batiTransparent} alt="Bati Logo" width={120} height={36} />
+        {/* Left: Only show on /overview */}
+        <div className="flex items-center gap-2">
+          {pathname === "/dashboard-overview" && (
+            <HeadlessMenu as="div" className="relative inline-block ml-2 z-10">
               <div>
-                {riskProfile.map((risk) => (
-                  <MenuItem key={risk.value}>
-                    <button
-                      type="button"
-                      onClick={() => setCustomerRisk(risk.value)}
-                      className="cursor-pointer w-full px-4 py-2 text-left text-sm data-focus:bg-gray-100 data-focus:text-gray-900"
-                    >
-                      {risk.label}
-                    </button>
-                  </MenuItem>
-                ))}
+                <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-white text-white bg-[#1D283A]">
+                  {customerRisk === "All"
+                    ? "Risiko"
+                    : riskProfile.find((risk) => risk.value === customerRisk)
+                        ?.label}
+                  <ChevronDownIcon className="w-5 h-5 text-white" />
+                </MenuButton>
               </div>
-            </MenuItems>
-          </HeadlessMenu>
-        )}
+              <MenuItems
+                transition
+                className="absolute mt-2 w-30 rounded-md text-white border-2 border-white bg-[#1D283A] transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+              >
+                <div>
+                  {riskProfile.map((risk) => (
+                    <MenuItem key={risk.value}>
+                      <button
+                        type="button"
+                        onClick={() => setCustomerRisk(risk.value)}
+                        className="cursor-pointer w-full px-4 py-2 text-left text-sm data-focus:bg-gray-100 data-focus:text-gray-900"
+                      >
+                        {risk.label}
+                      </button>
+                    </MenuItem>
+                  ))}
+                </div>
+              </MenuItems>
+            </HeadlessMenu>
+          )}
+        </div>
       </div>
 
       {/* Add a spacer div when not on /overview to maintain layout */}
-      {pathname !== "/overview" && <div />}
+      {pathname !== "/dashboard-overview" && <div />}
 
       {/* Right: Notification, Email, RM */}
       <div className="flex items-center gap-4 mr-2">

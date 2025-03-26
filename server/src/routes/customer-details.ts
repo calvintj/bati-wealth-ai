@@ -11,6 +11,8 @@ import {
   postActivityController,
   deleteActivityController,
   updateActivityController,
+  getQuarterlyAUMController,
+  getQuarterlyFUMController,
 } from "../controllers/customer-details";
 
 const router = Router();
@@ -26,5 +28,7 @@ router.get("/get-activity", getActivityController);
 router.post("/post-activity", postActivityController);
 router.delete("/delete-activity", deleteActivityController);
 router.put("/update-activity", updateActivityController);
+router.get("/quarterly-aum", getQuarterlyAUMController);
+router.get("/quarterly-fum", getQuarterlyFUMController);
 
 export default router;

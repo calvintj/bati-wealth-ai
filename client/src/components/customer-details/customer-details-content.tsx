@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
-import { GrOptimize } from "react-icons/gr";
+// import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
+// import { GrOptimize } from "react-icons/gr";
 
 // Hooks
 import { useCustomerDetails } from "@/hooks/customer-details/use-customer-details";
-import useGetReturnPercentage from "@/hooks/customer-details/use-return-percentage";
+// import useGetReturnPercentage from "@/hooks/customer-details/use-return-percentage";
 
 // Components
 import Sidebar from "@/components/shared/sidebar";
@@ -14,14 +14,8 @@ import Navbar from "@/components/shared/navbar";
 import CustomerDropdown from "@/components/customer-details/customer-id-bar";
 import PortfolioPie from "@/components/customer-details/customer-portfolio";
 import OptimizedPortfolio from "@/components/customer-details/customer-optimized-portfolio";
-import ActivityManager from "@/components/customer-details/activity-manager";
 import OwnedProductTable from "@/components/customer-details/owned-products";
 import RecommendationProduct from "@/components/customer-details/recommendation-products";
-
-interface ReturnPercentage {
-  current_return: number;
-  expected_return: number;
-}
 
 interface CustomerDetails {
   Priority_Private: string;
@@ -52,9 +46,9 @@ const DetailRow = ({
 export default function CustomerDetailsPage() {
   const searchParams = useSearchParams();
   const [customerID, setCustomerID] = useState("1");
-  const [currentPortfolio, setCurrentPortfolio] = useState<
-    "current" | "optimized"
-  >("current");
+  // const [currentPortfolio, setCurrentPortfolio] = useState<
+  //   "current" | "optimized"
+  // >("current");
   const [, setCustomerRisk] = useState<string>("All");
 
   // Update customerID based on URL search parameter
@@ -70,30 +64,30 @@ export default function CustomerDetailsPage() {
     loading: boolean;
   };
 
-  const { data: returnPercentage } = useGetReturnPercentage(customerID);
+  // const { data: returnPercentage } = useGetReturnPercentage(customerID);
 
-  const togglePortfolio = () => {
-    setCurrentPortfolio((prev) =>
-      prev === "current" ? "optimized" : "current"
-    );
-  };
+  // const togglePortfolio = () => {
+  //   setCurrentPortfolio((prev) =>
+  //     prev === "current" ? "optimized" : "current"
+  //   );
+  // };
 
   // Safely compute return percentages with proper type checking
-  const currentReturn =
-    returnPercentage &&
-    Array.isArray(returnPercentage) &&
-    returnPercentage.length > 0
-      ? Number((returnPercentage[0] as ReturnPercentage).current_return || 0)
-      : 0;
+  // const currentReturn =
+  //   returnPercentage &&
+  //   Array.isArray(returnPercentage) &&
+  //   returnPercentage.length > 0
+  //     ? Number((returnPercentage[0] as ReturnPercentage).current_return || 0)
+  //     : 0;
 
-  const expectedReturn =
-    returnPercentage &&
-    Array.isArray(returnPercentage) &&
-    returnPercentage.length > 0
-      ? Number((returnPercentage[0] as ReturnPercentage).expected_return || 0)
-      : 0;
+  // const expectedReturn =
+  //   returnPercentage &&
+  //   Array.isArray(returnPercentage) &&
+  //   returnPercentage.length > 0
+  //     ? Number((returnPercentage[0] as ReturnPercentage).expected_return || 0)
+  //     : 0;
 
-  const returnDiff = expectedReturn - currentReturn;
+  // const returnDiff = expectedReturn - currentReturn;
 
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200">
@@ -173,17 +167,18 @@ export default function CustomerDetailsPage() {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-2 h-[420px]">
+            <div className="grid grid-cols-2 gap-2">
               {/* Portfolio Section */}
               <div className="rounded-2xl bg-[#1D283A] flex flex-col justify-between">
                 <div className="flex-1">
-                  {currentPortfolio === "optimized" ? (
+                  {/* {currentPortfolio === "optimized" ? (
                     <OptimizedPortfolio customerID={customerID} />
                   ) : (
                     <PortfolioPie customerID={customerID} />
-                  )}
+                  )} */}
+                  <PortfolioPie customerID={customerID} />
                 </div>
-                <div className="flex justify-between items-center px-4 py-4">
+                {/* <div className="flex justify-between items-center px-4 py-4">
                   <div className="flex flex-col">
                     <p className="text-sm text-white">
                       {currentPortfolio === "current"
@@ -218,12 +213,12 @@ export default function CustomerDetailsPage() {
                     className="text-[#01ACD2] text-5xl border-2 border-[#01ACD2] rounded-md p-2 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
                     onClick={togglePortfolio}
                   />
-                </div>
+                </div> */}
               </div>
 
               {/* Activity Manager Section */}
               <div className="rounded-2xl bg-[#1D283A]">
-                <ActivityManager customerID={customerID} />
+                <OptimizedPortfolio customerID={customerID} />
               </div>
             </div>
 

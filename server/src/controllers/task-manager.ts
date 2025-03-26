@@ -11,7 +11,7 @@ import {
   getReProfileRiskTarget,
   deleteTask,
   updateTask,
-} from "../models/task-manager";
+} from "../models/recommendation-centre";
 
 export const getManagedNumbersController = async (req: Request, res: Response): Promise<void> => {
   try {

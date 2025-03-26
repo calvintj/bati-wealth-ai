@@ -41,7 +41,7 @@ const ReprofileRiskTargetWrapper: FC<PaginationProps> = () => {
 
 export default function TaskManagerPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [, setCustomerRisk] = useState<string>("All");
+  const [customerRisk, setCustomerRisk] = useState<string>("All");
   // Removed unused state variable customerRisk
   const { data: managedNumbers } = useManagedNumbers();
   const { data: increasedNumbers } = useIncreasedNumbers();
@@ -111,7 +111,7 @@ export default function TaskManagerPage() {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col">
         {/* NAVBAR */}
-        <Navbar setCustomerRisk={setCustomerRisk} />
+        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
         {/* DASHBOARD CONTENT */}
         <main className="flex flex-col md:flex-row gap-2 flex-1 mr-2 my-2 overflow-scroll overscroll-contain">
@@ -271,7 +271,7 @@ export default function TaskManagerPage() {
                 </button>
               </div>
             </div>
-            <div className="flex-1 rounded-2xl bg-[#1D283A] flex flex-col">
+            <div className="rounded-2xl bg-[#1D283A]">
               <ActiveComponent
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}

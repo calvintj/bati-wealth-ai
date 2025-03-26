@@ -28,15 +28,16 @@ export const navItems = [
     label: "Customer Mapping",
   },
   {
-    to: "/customer-details",
-    icon: <User />,
-    label: "Customer Details",
-  },
-  {
     to: "/recommendation-centre",
     icon: <CircleCheckBig />,
     label: "Recommendation Centre",
   },
+  {
+    to: "/customer-details",
+    icon: <User />,
+    label: "Customer Details",
+  },
+
   // {
   //   to: "/news",
   //   icon: <Newspaper />,
@@ -61,7 +62,7 @@ export default function Sidebar() {
 
   // Only render the desktop sidebar - mobile will be handled by navbar
   return (
-    <aside className="w-15 m-2 hidden md:flex flex-col rounded-2xl items-center bg-[#1D283A]">
+    <aside className="m-2 hidden md:flex flex-col rounded-2xl items-center bg-[#1D283A]">
       <nav className="flex flex-col">
         {navItems.map(({ to, icon, label }) => {
           const isActive = pathname === to;

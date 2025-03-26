@@ -8,7 +8,8 @@ import {
   Tooltip,
 } from "recharts";
 import useCustomerPortfolio from "../../hooks/customer-details/use-customer-portfolio";
-
+import useGetReturnPercentage from "@/hooks/customer-details/use-return-percentage";
+import { ReturnPercentage } from "@/types/page/customer-details";
 const RADIAN = Math.PI / 180;
 
 const renderCustomizedLabel = ({
@@ -53,7 +54,9 @@ export default function PortfolioPie({
   colors?: string[];
   customerID: string;
 }) {
-  const [windowWidth, setWindowWidth] = React.useState(typeof window !== 'undefined' ? window.innerWidth : 768);
+  const [windowWidth, setWindowWidth] = React.useState(
+    typeof window !== "undefined" ? window.innerWidth : 768
+  );
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(0);
     window.addEventListener("resize", handleResize);
@@ -66,6 +69,15 @@ export default function PortfolioPie({
   const chartAspect = isMobile ? 1 : 1.8;
 
   const { transformedData, loading, error } = useCustomerPortfolio(customerID);
+
+  const { data: returnPercentage } = useGetReturnPercentage(customerID);
+
+  const currentReturn =
+    returnPercentage &&
+    Array.isArray(returnPercentage) &&
+    returnPercentage.length > 0
+      ? Number((returnPercentage[0] as ReturnPercentage).current_return || 0)
+      : 0;
 
   if (loading) {
     return (
@@ -92,51 +104,61 @@ export default function PortfolioPie({
   }
 
   return (
-    <div className="p-4 h-[330px] w-full">
+    <div className="p-4 w-full h-full flex flex-col">
       <p className="text-center text-xl md:text-2xl font-bold">
         Portofolio Nasabah
       </p>
       <p className="text-center text-xl text-gray-400">Berdasarkan Tipe Aset</p>
-      <ResponsiveContainer width="100%" aspect={chartAspect}>
-        <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-          <Pie
-            data={transformedData}
-            innerRadius={innerRadius}
-            outerRadius={outerRadius}
-            labelLine={false}
-            label={renderCustomizedLabel}
-            dataKey="value"
-            paddingAngle={2}
-          >
-            {transformedData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={colors[index % colors.length]}
-                stroke="none"
-              />
-            ))}
-          </Pie>
-          <Tooltip
-            formatter={(value) => `${value.toLocaleString()}`}
-            contentStyle={{
-              background: "white",
-              border: "none",
-              borderRadius: "4px",
-              color: "black",
-            }}
-          />
-          <Legend
-            layout={isMobile ? "horizontal" : "vertical"}
-            verticalAlign={isMobile ? "bottom" : "middle"}
-            align={isMobile ? "center" : "right"}
-            iconType="circle"
-            wrapperStyle={{
-              color: "#fff",
-              fontSize: isMobile ? "0.75rem" : "0.9rem",
-            }}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+      <div className="flex-1 min-h-0">
+        <ResponsiveContainer aspect={chartAspect}>
+          <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+            <Pie
+              data={transformedData}
+              innerRadius={innerRadius}
+              outerRadius={outerRadius}
+              labelLine={false}
+              label={renderCustomizedLabel}
+              dataKey="value"
+              paddingAngle={2}
+            >
+              {transformedData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={colors[index % colors.length]}
+                  stroke="none"
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value) => `${value.toLocaleString()}`}
+              contentStyle={{
+                background: "white",
+                border: "none",
+                borderRadius: "4px",
+                color: "black",
+              }}
+            />
+            <Legend
+              layout={isMobile ? "horizontal" : "vertical"}
+              verticalAlign={isMobile ? "bottom" : "middle"}
+              align={isMobile ? "center" : "right"}
+              iconType="circle"
+              wrapperStyle={{
+                color: "#fff",
+                fontSize: isMobile ? "0.75rem" : "0.9rem",
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="mt-auto pt-2 flex justify-start items-center">
+        <div className="flex flex-col">
+          <p className="text-sm text-white">Current Return</p>
+          <p className="bg-[#01ACD2] text-black rounded-md text-center w-12 py-1">
+            {(currentReturn * 100).toFixed(0)}%
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

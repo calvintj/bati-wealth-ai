@@ -28,9 +28,9 @@ export default function RecommendationProduct({
     <div>
       <ul>
         {recommendationProduct?.map((product, index) => (
-          <li key={index} className="text-md p-4">
-            <div className="py-2">
-              <p className="uppercase font-bold underline">Aksi Potensial</p>
+          <li key={index} className="text-md">
+            <div className="p-4 bg-[#1D283A] rounded-2xl mb-2">
+              <p className="uppercase font-bold text-lg mb-2">Aksi Potensial</p>
               <div className="flex justify-between items-center">
                 <div>
                   <p>{product.nama_produk}</p>
@@ -49,8 +49,8 @@ export default function RecommendationProduct({
                 </div>
               </div>
             </div>
-            <div className="py-2">
-              <p className="uppercase font-bold underline">
+            <div className="p-4 bg-[#1D283A] rounded-2xl mb-2">
+              <p className="uppercase font-bold text-lg mb-2">
                 Produk Resiko Rekomendasi
               </p>
               {product.offer_product_risk_1 === "TRUE" && (
@@ -79,8 +79,8 @@ export default function RecommendationProduct({
                 </span>
               )}
             </div>
-            <div className="py-2">
-              <p className="uppercase font-bold underline">
+            <div className="p-4 bg-[#1D283A] rounded-2xl">
+              <p className="uppercase font-bold text-lg mb-2">
                 Reprofil Rekomendasi
               </p>
               {product.offer_reprofile_risk_target === "0" && (

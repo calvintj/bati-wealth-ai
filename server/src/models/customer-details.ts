@@ -109,7 +109,7 @@ LIMIT 1;
 const getCustomerPortfolio = async (rm_number: string, customerID: string) => {
   const result = await db.query(
     `
-SELECT ca.casa, ca.sb, ca.deposito, ca.rd FROM current_allocation ca
+SELECT ca.casa, ca.sb, ca.deposito, ca.rd, ca.bac FROM current_allocation ca
 JOIN customer_info ci ON ca.bp_number_wm_core = ci.bp_number_wm_core
 WHERE ca.bp_number_wm_core = $1 AND ci.assigned_rm = $2
 ORDER BY ca.year DESC, ca.quarter DESC
@@ -123,7 +123,7 @@ LIMIT 1;
 const getOptimizedPortfolio = async (rm_number: string, customerID: string) => {
   const result = await db.query(
     `
-SELECT oa.bp_number_wm_core, oa.asset_type, oa.recommended_allocation, ci.assigned_rm
+SELECT oa.bp_number_wm_core, oa.asset_type, oa.usd_allocation, ci.assigned_rm
 FROM optimized_allocation oa
 JOIN customer_info ci ON oa.bp_number_wm_core = ci.bp_number_wm_core
 WHERE ci.assigned_rm = $1 
@@ -157,6 +157,85 @@ WHERE ci.assigned_rm = $1 AND ht.bp_number_wm_core = $2
 ORDER BY transaction_id DESC 
   `,
     [rm_number, customerID]
+  );
+  return result.rows;
+};
+
+const getQuarterlyAUM = async (customerID: string) => {
+  const result = await db.query(
+    `
+   WITH latest_quarters AS (
+    SELECT 
+        bp_number_wm_core,
+        year,
+        quarter,
+        SUM(rd) AS rd,
+        SUM(sb) AS sb,
+        SUM(bac) AS bac,
+        SUM(rd + sb + bac) AS total_aum
+    FROM 
+        current_allocation
+    WHERE 
+        bp_number_wm_core = $1
+    GROUP BY 
+        bp_number_wm_core, year, quarter
+    ORDER BY 
+        year DESC, quarter DESC
+    LIMIT 4
+)
+SELECT 
+    bp_number_wm_core,
+    year,
+    quarter,
+    rd,
+    sb,
+    bac,
+    total_aum
+FROM 
+    latest_quarters
+ORDER BY 
+    year ASC, quarter ASC;
+
+  `,
+    [customerID]
+  );
+  return result.rows;
+};
+
+const getQuarterlyFUM = async (customerID: string) => {
+  const result = await db.query(
+    `
+   WITH latest_quarters AS (
+    SELECT 
+        bp_number_wm_core,
+        year,
+        quarter,
+        SUM(casa) AS casa,
+        SUM(deposito) AS deposito,
+        SUM(casa + deposito) AS total_fum
+    FROM 
+        current_allocation
+    WHERE 
+        bp_number_wm_core = $1
+    GROUP BY 
+        bp_number_wm_core, year, quarter
+    ORDER BY 
+        year DESC, quarter DESC
+    LIMIT 4
+)
+SELECT 
+    bp_number_wm_core,
+    year,
+    quarter,
+    casa,
+    deposito,
+    total_fum
+FROM 
+    latest_quarters
+ORDER BY 
+    year ASC, quarter ASC;
+  `,
+    [customerID]
   );
   return result.rows;
 };
@@ -222,4 +301,6 @@ export {
   postActivity,
   deleteActivity,
   updateActivity,
+  getQuarterlyAUM,
+  getQuarterlyFUM,
 };

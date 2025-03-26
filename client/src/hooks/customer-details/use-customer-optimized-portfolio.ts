@@ -21,10 +21,8 @@ const useOptimizedPortfolio = (customerID: string) => {
     queryKey: ["optimizedPortfolio", customerID],
     queryFn: async () => {
       const portfolioData = await fetchOptimizedPortfolio(customerID);
-      console.log("Raw portfolio data:", portfolioData); // Debug log
 
       if (!portfolioData || portfolioData.length === 0) {
-        console.log("No portfolio data found"); // Debug log
         return {
           optimizedPortfolio: [],
           transformedData: [],
@@ -35,8 +33,11 @@ const useOptimizedPortfolio = (customerID: string) => {
         optimizedPortfolio: portfolioData,
         transformedData: portfolioData
           .map((item) => ({
-            name: item.asset_type,
-            value: Number(item.recommended_allocation),
+            name: item.asset_type === "CASA" ? "CASA" :
+                 item.asset_type === "SB" ? "Saving Bond" :
+                 item.asset_type === "Deposito" ? "Deposito" :
+                 item.asset_type === "RD" ? "Reksadana" : item.asset_type,
+            value: Number(item.usd_allocation),
           }))
           .filter((item) => item.value > 0),
       };

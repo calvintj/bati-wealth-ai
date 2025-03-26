@@ -6,7 +6,7 @@ import InputPrompt from "@/app/chatbot/_components/prompt/input-prompt";
 import Navbar from "@/components/shared/navbar";
 
 export default function ChatbotPage() {
-  const [, setCustomerRisk] = useState<string>("All");
+  const [customerRisk, setCustomerRisk] = useState<string>("All");
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200">
       {/* SIDEBAR */}
@@ -15,7 +15,10 @@ export default function ChatbotPage() {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col relative">
         {/* NAVBAR */}
-        <Navbar setCustomerRisk={setCustomerRisk} />
+        <Navbar
+          setCustomerRisk={setCustomerRisk}
+          customerRisk={customerRisk}
+        />
         {/* DASHBOARD CONTENT */}
         {/* <main> */}
         <InputPrompt />

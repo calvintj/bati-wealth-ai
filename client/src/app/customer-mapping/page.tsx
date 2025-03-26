@@ -11,13 +11,16 @@ import { useState } from "react";
 export default function CustomerListPage() {
   const [propensity, setPropensity] = useState<string>("All");
   const [aum, setAum] = useState<string>("All");
-  const [ , setCustomerRisk] = useState<string>("All");
+  const [customerRisk, setCustomerRisk] = useState<string>("All");
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200">
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
-        <Navbar setCustomerRisk={setCustomerRisk} />
+        <Navbar
+          setCustomerRisk={setCustomerRisk}
+          customerRisk={customerRisk}
+        />
 
         {/* MAIN CONTENT AREA */}
         <main className="grid grid-rows gap-2 flex-1 overflow-y-scroll mr-2 my-2 overscroll-contain">

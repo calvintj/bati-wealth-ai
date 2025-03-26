@@ -43,7 +43,7 @@ const OverviewPage = () => {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col">
         {/* NAVBAR */}
-        <Navbar setCustomerRisk={setCustomerRisk} />
+        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
         {/* DASHBOARD CONTENT */}
         <main className="flex flex-col gap-2 overflow-y-scroll my-2 mr-2 overscroll-auto w-screen md:w-auto md:overscroll-contain">
@@ -128,7 +128,7 @@ const OverviewPage = () => {
             <p className="text-2xl font-bold text-center">Customer List</p>
           </div>
           <div>
-            <section className="w-[1410px]">
+            <section className="w-full overflow-x-auto rounded-2xl">
               <CustomerList customerRisk={customerRisk} />
             </section>
           </div>

@@ -33,12 +33,13 @@ export interface CustomerPortfolio {
   sb: number;
   deposito: number;
   rd: number;
+  bac: number;
 }
 
 export interface OptimizedPortfolio {
   bp_number_wm_core: string;
   asset_type: string;
-  recommended_allocation: number;
+  usd_allocation: number;
   assigned_rm: string;
 }
 
@@ -70,5 +71,21 @@ export interface ActivityResponse {
   loading: boolean;
 }
 
+export interface QuarterlyAUM {
+  bp_number_wm_core: string;
+  year: number;
+  quarter: number;
+  rd: number;
+  sb: number;
+  bac: number;
+  total_aum: number;
+}
 
-
+export interface QuarterlyFUM {
+  bp_number_wm_core: string;
+  year: number;
+  quarter: number;
+  casa: number;
+  deposito: number;
+  total_fum: number;
+}

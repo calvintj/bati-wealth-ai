@@ -64,14 +64,14 @@ export default class FUMChart extends PureComponent<QuarterlyFUMProps> {
 
     return (
       <div className="p-4">
-        <h3 className="text-white text-xl md:text-2xl font-bold mb-4 text-center">
+        <p className="text-white text-xl md:text-2xl font-bold mb-4 text-center">
           FUM per Kuartal
-        </h3>
+        </p>
 
         <ResponsiveContainer height={300}>
           <BarChart
             data={data}
-            margin={{ top: 30, right: 50, left: 50, bottom: 20 }}
+            margin={{ top: 30, right: 50, left: 50, bottom: 30 }}
           >
             <XAxis
               dataKey="name"
@@ -80,7 +80,6 @@ export default class FUMChart extends PureComponent<QuarterlyFUMProps> {
               tick={(props) => <XAxisInformation {...props} data={data} />}
               stroke="#FFFFFF"
               interval={0}
-              tickMargin={25} // increased tick margin for extra spacing
             />
 
             <YAxis

@@ -11,6 +11,8 @@ import {
   postActivity,
   updateActivity,
   deleteActivity,
+  getQuarterlyAUM,
+  getQuarterlyFUM,
 } from "../models/customer-details";
 
 const getCustomerIDListController = async (req: Request, res: Response) => {
@@ -79,6 +81,17 @@ const updateActivityController = async (req: Request, res: Response) => {
   res.json(updatedActivity);
 };
 
+const getQuarterlyAUMController = async (req: Request, res: Response) => {
+  const { customerID } = req.query as { customerID: string };
+  const quarterlyAUM = await getQuarterlyAUM(customerID);
+  res.json(quarterlyAUM);
+};
+
+const getQuarterlyFUMController = async (req: Request, res: Response) => {
+  const { customerID } = req.query as { customerID: string };
+  const quarterlyFUM = await getQuarterlyFUM(customerID);
+  res.json(quarterlyFUM);
+};
 
 export {
   getCustomerIDListController,
@@ -92,4 +105,6 @@ export {
   postActivityController,
   deleteActivityController,
   updateActivityController,
+  getQuarterlyAUMController,
+  getQuarterlyFUMController,
 };

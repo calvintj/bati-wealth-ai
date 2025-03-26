@@ -21,15 +21,8 @@ const useCustomerPortfolio = (customerID: string) => {
     queryKey: ["customerPortfolio", customerID],
     queryFn: async () => {
       const portfolioData = await fetchCustomerPortfolio(customerID);
-      console.log("Raw portfolio data:", portfolioData);
-
+      
       const portfolio = portfolioData?.[0] || null;
-      console.log("Portfolio values:", {
-        casa: portfolio?.casa,
-        sb: portfolio?.sb,
-        deposito: portfolio?.deposito,
-        rd: portfolio?.rd,
-      });
 
       const transformedData = portfolio
         ? [
@@ -37,9 +30,9 @@ const useCustomerPortfolio = (customerID: string) => {
             { name: "Saving Bond", value: Number(portfolio.sb) || 0 },
             { name: "Deposito", value: Number(portfolio.deposito) || 0 },
             { name: "Reksadana", value: Number(portfolio.rd) || 0 },
+            { name: "BAC", value: Number(portfolio.bac) || 0 },
           ].filter((item) => item.value > 0)
         : [];
-      console.log("Chart data:", transformedData);
 
       return {
         customerPortfolio: portfolioData,

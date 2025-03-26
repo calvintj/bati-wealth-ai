@@ -7,7 +7,7 @@ import {
   getQuarterlyFUM,
   getTopProducts,
   getCertainCustomerList,
-} from "../models/overview";
+} from "../models/dashboard-overview";
 
 const getTotalCustomerController = async (req: Request, res: Response) => {
   const { rm_number } = req.query as { rm_number: string };

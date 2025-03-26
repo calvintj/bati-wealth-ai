@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getCustomerList, getCertainCustomerList } from "../models/customer-list";
+import { getCustomerList, getCertainCustomerList } from "../models/customer-mapping";
 
 const getCustomerListController = async (req: Request, res: Response) => {
   const { rm_number } = req.query as { rm_number: string };

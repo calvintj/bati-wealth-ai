@@ -51,15 +51,17 @@ const CustomerListTable = ({ customerRisk }: { customerRisk: string }) => {
   ];
 
   return (
-    <div className="w-full overflow-scroll rounded-2xl max-h-[500px]">
-      <table className="min-w-full divide-y-2 divide-gray-900 text-sm bg-[#1D283A]">
+    <div className="w-full overflow-x-auto overflow-y-auto rounded-2xl max-h-[500px]">
+      <table className="w-full table-fixed divide-y-2 divide-gray-900 text-sm bg-[#1D283A]">
         <thead>
-          <tr className="sticky top-0 z-30 bg-white dark:bg-[#1D283A]">
+          <tr className="sticky top-0 z-30 bg-[#1D283A]">
             {header.map((col, index) => (
               <th
                 key={index}
-                className={`whitespace-nowrap px-4 py-2 font-medium text-white bg-[#1D283A] ${
-                  index === 0 ? "sticky left-0 z-40 min-w-[150px]" : ""
+                className={`whitespace-nowrap px-4 py-2 font-medium text-white ${
+                  index === 0
+                    ? "sticky left-0 z-40 min-w-[150px] bg-[#1D283A]"
+                    : ""
                 }`}
               >
                 {col}

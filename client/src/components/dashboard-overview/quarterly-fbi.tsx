@@ -53,9 +53,9 @@ export default class FBIBar extends PureComponent<FBIBarProps> {
 
     return (
       <div className="p-4">
-        <h3 className="text-white text-2xl font-bold mb-4 text-center">
+        <p className="text-white text-2xl font-bold mb-4 text-center">
           FBI per Kuartal
-        </h3>
+        </p>
 
         <ResponsiveContainer width="100%" height={300}>
           <ComposedChart
