@@ -4,7 +4,7 @@ import Navbar from "@/components/shared/navbar";
 import { useState } from "react";
 
 export default function NewsPage() {
-  const [, setCustomerRisk] = useState<string>("All");
+  const [customerRisk, setCustomerRisk] = useState<string>("All");
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200">
       {/* SIDEBAR */}
@@ -13,7 +13,7 @@ export default function NewsPage() {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col">
         {/* NAVBAR */}
-        <Navbar setCustomerRisk={setCustomerRisk} />
+        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
         {/* DASHBOARD CONTENT */}
         <main className="grid grid-rows-3 gap-2 flex-1 overflow-y-auto mr-2 my-2">
