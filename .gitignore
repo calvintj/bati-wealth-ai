@@ -1,1 +1,6 @@
 key-pair-VM-Jakarta.pem
+
+# Environment variables
+.env
+
+# Docker files
