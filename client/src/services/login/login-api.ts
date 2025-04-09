@@ -1,4 +1,7 @@
 // Define the response type for login
+import api from "../api";
+import axios from "axios";
+
 interface LoginResponse {
   success: boolean;
   token: string;
@@ -19,25 +22,25 @@ export const loginService = {
    */
 
   login: async (email: string, password: string): Promise<LoginResponse> => {
-    // Fetch the login endpoint
-    const response = await fetch("http://localhost:5000/api/auth/login", {
-      // POST request
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      // Use axios to make the POST request
+      const response = await api.post("/auth/login", 
+        { email, password },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    // Parse the response as JSON
-    const data = await response.json();
-
-    // If the response is not ok, throw an error
-    if (!response.ok) {
-      throw new Error(data.error || "Login failed");
+      // Return the data from the response
+      return response.data as LoginResponse;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.error || "Login failed";
+        throw new Error(errorMessage);
+      }
+      throw new Error("An unexpected error occurred");
     }
-
-    // Return the data
-    return data as LoginResponse;
   },
 };
