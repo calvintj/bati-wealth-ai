@@ -1,6 +1,7 @@
 // Hooks
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 
 // Services
 import { loginService } from "../../services/login/login-api";
@@ -29,9 +30,14 @@ export const useLogin = () => {
     setError(null);
 
     try {
-      // Login the user
+      console.log("Attempting login with email:", email);
       const data = await loginService.login(email, password);
-      // Store token in localStorage
+      console.log("Login response:", data);
+
+      if (!data.token) {
+        throw new Error("No token received in login response");
+      }
+
       localStorage.setItem("token", data.token);
       // Set loading to false
       setLoading(false);
@@ -40,8 +46,11 @@ export const useLogin = () => {
       // Return true
       return true;
     } catch (error: unknown) {
-      // Log the error
-      console.error("Error during login:", error);
+      console.error("Detailed login error:", {
+        error,
+        message: error instanceof Error ? error.message : "Unknown error",
+        response: (error as AxiosError)?.response?.data,
+      });
       // Set the error message
       setError(
         error instanceof Error ? error.message : "An unknown error occurred"

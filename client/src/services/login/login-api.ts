@@ -23,8 +23,9 @@ export const loginService = {
 
   login: async (email: string, password: string): Promise<LoginResponse> => {
     try {
-      // Use axios to make the POST request
-      const response = await api.post("/auth/login", 
+      console.log("Making login request to server");
+      const response = await api.post(
+        "/auth/login",
         { email, password },
         {
           headers: {
@@ -33,10 +34,20 @@ export const loginService = {
         }
       );
 
-      // Return the data from the response
+      console.log("Server response:", response.data);
+
+      if (!response.data.success || !response.data.token) {
+        throw new Error("Invalid server response format");
+      }
+
       return response.data as LoginResponse;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
+        console.error("Login API error:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+        });
         const errorMessage = error.response?.data?.error || "Login failed";
         throw new Error(errorMessage);
       }

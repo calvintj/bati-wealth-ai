@@ -17,20 +17,31 @@ if (!JWT_SECRET) {
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+    console.log("Login attempt for email:", email);
+
     if (!email || !password) {
+      console.log("Missing credentials");
       res.status(400).json({ error: "Email and password are required." });
       return;
     }
 
     const account = await findAccountByEmail(email);
     if (!account) {
+      console.log("Account not found for email:", email);
       res.status(400).json({ error: "Invalid email." });
       return;
     }
 
     const isMatch = await bcrypt.compare(password, account.password_hash);
     if (!isMatch) {
+      console.log("Password mismatch for email:", email);
       res.status(400).json({ error: "Invalid password." });
+      return;
+    }
+
+    if (!JWT_SECRET) {
+      console.error("JWT_SECRET not configured");
+      res.status(500).json({ error: "Server configuration error" });
       return;
     }
 
@@ -44,6 +55,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       { expiresIn: "24h" }
     );
 
+    console.log("Login successful for email:", email);
     res.status(200).json({
       success: true,
       token,
@@ -53,11 +65,12 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         rm_number: account.rm_number,
       },
     });
-    return;
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Internal server error" });
-    return;
+    console.error("Login error:", err);
+    res.status(500).json({
+      error: "Internal server error",
+      details: err instanceof Error ? err.message : "Unknown error",
+    });
   }
 };
 
