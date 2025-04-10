@@ -48,7 +48,7 @@ const LoginForm: React.FC = () => {
           id="password"
           type="password"
           name="password"
-          placeholder="RM12345"
+          placeholder="Rm12345!"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required

@@ -4,6 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
+import { v4 as uuidv4 } from "uuid";
 
 import { ChatApiRequest, useChatApi } from "@/hooks/chatbot/api/chat-api";
 import { useListenErrorToast } from "@/hooks/chatbot/use-listen-error-toast";
@@ -104,7 +105,7 @@ export const useChat = () => {
           console.log(text, "Text");
 
           if (!currentMessageId) {
-            currentMessageId = crypto.randomUUID();
+            currentMessageId = uuidv4();
             setMessages((messages) => [
               ...messages,
               {
@@ -146,7 +147,7 @@ export const useChat = () => {
     setMessages((messages) => [
       ...messages,
       {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         content: variables?.data?.query ?? "",
         role: "user",
       },

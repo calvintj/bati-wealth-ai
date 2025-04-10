@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -9,7 +10,7 @@ const api = axios.create({
 // Request interceptor for API calls
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -31,7 +32,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       // Clear token and redirect to login
-      localStorage.removeItem("token");
+      Cookies.remove("token");
       window.location.href = "/login";
     }
 

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
+import Cookies from "js-cookie";
 
 // Services
 import { loginService } from "../../services/login/login-api";
@@ -38,7 +39,9 @@ export const useLogin = () => {
         throw new Error("No token received in login response");
       }
 
-      localStorage.setItem("token", data.token);
+      // Store token in cookie instead of localStorage
+      Cookies.set("token", data.token, { expires: 7 }); // Expires in 7 days
+
       // Set loading to false
       setLoading(false);
       // Navigate to the overview page

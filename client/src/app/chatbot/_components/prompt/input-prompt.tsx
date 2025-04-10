@@ -4,6 +4,7 @@ import { Square } from "lucide-react";
 import { useTheme } from "next-themes";
 import React, { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useResizeDetector } from "react-resize-detector";
+import { v4 as uuidv4 } from "uuid";
 
 import { suggestions } from "@/app/chatbot/_components/suggestion/suggestions";
 import Icon from "@/components/ui/icon";
@@ -46,7 +47,7 @@ export default function InputPrompt() {
 
   // Always open => no show/hide toggles
   const isOpenChatPopup = true;
-  // If needed, a small debounced “open” to pass into ChatPopup
+  // If needed, a small debounced "open" to pass into ChatPopup
   const [isOpenChatPopupDebounced] = useDebounceValue(isOpenChatPopup, 200);
 
   // Submit
@@ -65,13 +66,13 @@ export default function InputPrompt() {
       const topic = questionTopic[topicId as keyof typeof questionTopic];
       const suggestionTopic: Message = {
         content: topic,
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         role: "suggestion-topic",
       };
 
       const suggestionItems = questions[topicId as keyof typeof questions];
       const suggestionsArray: Message[] = suggestionItems.map((q) => ({
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         content: q.question,
         role: "suggestion",
       }));
@@ -241,7 +242,6 @@ export default function InputPrompt() {
                 />
               )}
             </form.Field>
-            
           </form>
           <MemoizedSuggestionLists
             onSuggestion={handleSuggestion}
