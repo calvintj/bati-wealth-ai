@@ -12,12 +12,13 @@ import session from "express-session";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
 // CORS Configuration - Moving this up before other middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    // origin: process.env.FRONTEND_URL,
+    origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
@@ -27,8 +28,8 @@ app.use(
       "X-Requested-With",
       "Accept",
     ],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
+    // preflightContinue: false,
+    // optionsSuccessStatus: 204,
   })
 );
 
@@ -49,19 +50,31 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
+        // scriptSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'"],
-        fontSrc: ["'self'"],
+        // connectSrc: ["'self'"],
+        // fontSrc: ["'self'"],
+        connectSrc: [
+          "'self'",
+          "http://server:5000",
+          "http://localhost:5000",
+          "*",
+        ],
+        fontSrc: ["'self'", "https:", "data:"],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
-        frameSrc: ["'none'"],
+        // frameSrc: ["'none'"],
+        frameSrc: ["'self'"],
       },
     },
-    crossOriginEmbedderPolicy: true,
-    crossOriginOpenerPolicy: true,
-    crossOriginResourcePolicy: { policy: "same-site" },
+    // crossOriginEmbedderPolicy: true,
+    // crossOriginOpenerPolicy: true,
+    // crossOriginResourcePolicy: { policy: "same-site" },
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false,
     dnsPrefetchControl: true,
     frameguard: { action: "deny" },
     hidePoweredBy: true,

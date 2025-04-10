@@ -1,3 +1,28 @@
+// import type { NextConfig } from "next";
+
+// const nextConfig: NextConfig = {
+//   async rewrites() {
+//     return [
+//       {
+//         source: "/api/v2/:path*",
+//         destination: process.env.BATI_BACKEND_URL + "/:path*",
+//       },
+//     ];
+//   },
+//   eslint: {
+//     ignoreDuringBuilds: true,
+//   },
+//   env: {
+//     BATI_BACKEND_URL: process.env.BATI_BACKEND_URL,
+//     BATI_DIRECT_TRUST_CLIENT_ID: process.env.BATI_DIRECT_TRUST_CLIENT_ID,
+//     BATI_DIRECT_TRUST_SECRET_VALUE: process.env.BATI_DIRECT_TRUST_SECRET_VALUE,
+//     BATI_DIRECT_TRUST_SECRET_ID: process.env.BATI_DIRECT_TRUST_SECRET_ID,
+//     BATI_DIRECT_TRUST_SUB_USER: process.env.BATI_DIRECT_TRUST_SUB_USER,
+//   },
+// };
+
+// export default nextConfig;
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -5,7 +30,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/v2/:path*",
-        destination: process.env.BATI_BACKEND_URL + "/:path*",
+        destination: "http://server:5000/api/:path*",
       },
     ];
   },
@@ -13,6 +38,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   env: {
+    NEXT_PUBLIC_API_URL: "/api/v2",
     BATI_BACKEND_URL: process.env.BATI_BACKEND_URL,
     BATI_DIRECT_TRUST_CLIENT_ID: process.env.BATI_DIRECT_TRUST_CLIENT_ID,
     BATI_DIRECT_TRUST_SECRET_VALUE: process.env.BATI_DIRECT_TRUST_SECRET_VALUE,
