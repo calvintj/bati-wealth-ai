@@ -1,59 +1,3 @@
-# services:
-#   client:
-#     container_name: Bati-WealthAI_frontend
-#     build:
-#       context: ./client
-#       dockerfile: Dockerfile
-#     env_file: ./client/.env
-#     ports:
-#       - "3000:3000"
-#     environment:
-#       - NODE_ENV=production
-#       - NEXT_PUBLIC_API_URL=http://server:5000/api
-#     depends_on:
-#       - server
-#     networks:
-#       - app_net
-
-#   server:
-#     container_name: Bati-WealthAI_backend
-#     build:
-#       context: ./server
-#       dockerfile: Dockerfile
-#     env_file: ./server/.env
-#     ports:
-#       - "5000:5000"
-#     environment:
-#       - NODE_ENV=production
-#       - DATABASE_URL=postgres://calvintj:280603@postgres:5432/bati_crm_db
-#       - JWT_SECRET=my_super_secret_key
-#     depends_on:
-#       - postgres
-#     networks:
-#       - app_net
-
-#   postgres:
-#     container_name: Bati-WealthAI_database_postgres
-#     image: postgres:13-alpine
-#     environment:
-#       POSTGRES_USER: calvintj
-#       POSTGRES_PASSWORD: 280603
-#       POSTGRES_DB: bati_crm_db
-#     volumes:
-#       - pgdata:/var/lib/postgresql/data
-#       - ./server/db-data/import/bati_crm_backup.sql:/docker-entrypoint-initdb.d/init.sql
-#     ports:
-#       - "5432:5432"
-#     networks:
-#       - app_net
-
-# volumes:
-#   pgdata:
-
-# networks:
-#   app_net:
-#     driver: bridge
-
 services:
   client:
     container_name: Bati-WealthAI_frontend
@@ -65,8 +9,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      # - NEXT_PUBLIC_API_URL=http://server:5000/api
-      - NEXT_PUBLIC_API_URL=/api/v2
+      - NEXT_PUBLIC_API_URL=http://server:5000/api
     depends_on:
       - server
     networks:
@@ -78,8 +21,8 @@ services:
       context: ./server
       dockerfile: Dockerfile
     env_file: ./server/.env
-    expose:
-      - "5000"
+    ports:
+      - "5000:5000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgres://calvintj:280603@postgres:5432/bati_crm_db
@@ -98,9 +41,9 @@ services:
       POSTGRES_DB: bati_crm_db
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./server/db-data/import:/docker-entrypoint-initdb.d
-    expose:
-      - "5432"
+      - ./server/db-data/import/bati_crm_backup.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
     networks:
       - app_net
 
