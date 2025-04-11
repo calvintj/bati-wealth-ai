@@ -13,7 +13,7 @@ import batiTransparent from "@/assets/bati-transparent-white.svg";
 // ROUTER
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-// import { ColorModeToggle } from "@/components/chatbot/color-mode-toggle";
+import { ColorModeToggle } from "@/components/chatbot/color-mode-toggle";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -158,8 +158,8 @@ export default function Navbar({
 
       {/* Right: Notification, Email, RM */}
       <div className="flex items-center gap-4 mr-2">
-        {/* <ColorModeToggle className="cursor-pointer" />
-        <Button variant="ghost" size="icon">
+        <ColorModeToggle className="cursor-pointer" />
+        {/* <Button variant="ghost" size="icon">
           <Mail />
         </Button>
         <Button variant="ghost" size="icon">

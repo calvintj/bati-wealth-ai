@@ -95,7 +95,7 @@ export default function CustomerSelect({
     >
       <SelectTrigger
         {...props}
-        className={cn("rounded-xl dark:bg-zinc-800", className)}
+        className={cn("rounded-xl", className)}
       >
         <SelectValue placeholder="Customer ID">
           {value && JSON.parse(value)?.customerId}

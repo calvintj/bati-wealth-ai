@@ -147,7 +147,7 @@ export default function InputPrompt() {
         <div
           ref={ref}
           className={cn(
-            "w-full flex flex-col mt-auto z-30 bg-background dark:bg-[#1D283A]",
+            "w-full flex flex-col mt-auto z-30 bg-[#1D283A]",
             "absolute bottom-0"
           )}
         >
@@ -173,7 +173,7 @@ export default function InputPrompt() {
                       )
                     }
                   >
-                    <SelectTrigger className="dark:bg-[#161B21] rounded-xl w-[160px]">
+                    <SelectTrigger className="bg-[#161B21] rounded-xl w-[160px]">
                       <SelectValue placeholder="Select Language" />
                     </SelectTrigger>
                     <SelectContent>
@@ -201,7 +201,7 @@ export default function InputPrompt() {
                     disabled={form.store.state.isSubmitting}
                     value={field.state.value}
                     onValueChange={(value) => field.handleChange(value)}
-                    className="w-[140px] dark:bg-[#161B21]"
+                    className="w-[140px] bg-[#161B21]"
                   />
                 )}
               </form.Field>
@@ -220,7 +220,7 @@ export default function InputPrompt() {
                   onKeyDown={handleKeyDown}
                   maxRows={4}
                   placeholder="What can I help with? Message Wealth Advisor"
-                  className="rounded-xl bg-secondary resize-none min-h-9 dark:bg-[#161B21]"
+                  className="rounded-xl resize-none min-h-9 bg-[#161B21]"
                   endAdornment={
                     <button
                       type={form.store.state.isSubmitting ? "button" : "submit"}
