@@ -35,17 +35,15 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
     propensity === "All" && aum === "All" ? customerList : certainCustomerList;
 
   return (
-    <div className="w-full overflow-scroll rounded-2xl max-h-[500px]">
-      <table className="min-w-full divide-y-2 divide-gray-900 text-sm bg-[#1D283A]">
+    <div className="w-full overflow-scroll rounded-2xl max-h-[300px]">
+      <table className="min-w-full divide-y-2 divide-gray-900 text-xs">
         <thead>
           <tr className="sticky top-0 z-30 bg-[#1D283A]">
             {header.map((col, index) => (
               <th
                 key={index}
                 className={`whitespace-nowrap px-4 py-2 font-medium text-white ${
-                  index === 0
-                    ? "sticky left-0 z-40 min-w-[150px] bg-[#1D283A]"
-                    : ""
+                  index === 0 ? "sticky left-0 z-40 bg-[#1D283A]" : ""
                 }`}
               >
                 {col}
@@ -53,48 +51,24 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y-2 divide-gray-900">
+        <tbody className="divide-y-2 divide-gray-900 whitespace-nowrap px-4 py-2 text-center">
           {displayList.map((row, index) => (
             <tr key={index}>
-              <td className="sticky left-0 z-10 px-4 py-2">
+              <td className="sticky left-0 z-10 px-4 py-2 bg-[#1D283A]">
                 {row["Customer ID"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 ">
-                {row["Risk Profile"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["AUM Label"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Propensity"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Priority / Private"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Customer Type"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Pekerjaan"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Status Nikah"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Usia"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Annual Income"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Total FUM"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Total AUM"]}
-              </td>
-              <td className="whitespace-nowrap px-4 py-2">
-                {row["Total FBI"]}
-              </td>
+              <td>{row["Risk Profile"]}</td>
+              <td>{row["AUM Label"]}</td>
+              <td>{row["Propensity"]}</td>
+              <td>{row["Priority / Private"]}</td>
+              <td>{row["Customer Type"]}</td>
+              <td>{row["Pekerjaan"]}</td>
+              <td>{row["Status Nikah"]}</td>
+              <td>{row["Usia"]}</td>
+              <td>{row["Annual Income"]}</td>
+              <td>{row["Total FUM"]}</td>
+              <td>{row["Total AUM"]}</td>
+              <td>{row["Total FBI"]}</td>
             </tr>
           ))}
         </tbody>

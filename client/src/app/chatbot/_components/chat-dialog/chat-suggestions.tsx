@@ -13,7 +13,7 @@ function NonMemoizedChatSuggestions({
   onSuggestion,
 }: ChatSuggestionsProps) {
   return (
-    <div className="grid grid-cols-1 h-fit max-h-[251px] border border-input dark:!border-zinc-900 gap-4 p-5 rounded-lg w-fit ml-auto overflow-y-auto">
+    <div className="grid grid-cols-1 h-fit max-h-[200px] md:max-h-[251px] border border-input dark:!border-zinc-900 gap-2 md:gap-4 p-3 md:p-5 rounded-lg w-full md:w-fit ml-auto overflow-y-auto">
       {messages.map((message) => (
         <ChatBubble
           isSuggestion

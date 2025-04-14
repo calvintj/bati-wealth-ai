@@ -114,9 +114,6 @@ export default function ChatPopup({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            // initial={{ y: 200 }}
-            // animate={{ y: 0 }}
-            // exit={{ y: 200 }}
             transition={{ duration: 0.1, ease: "easeInOut" }}
             className={cn(
               "p-0 flex w-full flex-1 min-h-full bg-[#181E26]",
@@ -136,32 +133,34 @@ export default function ChatPopup({
               onScroll={handleMessageContainerScroll}
               className="w-full flex relative flex-col pb-8 gap-4 overflow-y-auto chat-popup-scrollbar"
             >
-              <div className="items-center w-full flex flex-row justify-between p-4 bg-[#181E26] sticky top-0 z-[1]">
-                <div className="flex items-center gap-4">
+              <div className="items-center w-full flex flex-row justify-between p-2 md:p-4 bg-[#181E26] sticky top-0 z-[1]">
+                <div className="flex items-center gap-2 md:gap-4">
                   {!isChatSidebarOpen && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-1 md:gap-2">
                       <Button
                         size="icon"
-                        className="text-2xl"
+                        className="text-xl md:text-2xl"
                         variant="ghost"
                         onClick={toggleChatSidebarOpen}
                       >
                         <Icon
                           src="/panel-left.svg"
                           alt="Panel Left"
-                          size={20}
+                          size={18}
+                          className="md:w-5 md:h-5"
                         />
                       </Button>
                       <Button size="icon" variant="ghost" onClick={onNewChat}>
                         <Icon
                           src="/write.svg"
                           alt="Write new message"
-                          size={20}
+                          size={18}
+                          className="md:w-5 md:h-5"
                         />
                       </Button>
                     </div>
                   )}
-                  <h2 className="font-bold text-lg">WealthAI</h2>
+                  <h2 className="font-bold text-base md:text-lg">WealthAI</h2>
                 </div>
               </div>
               <Button
@@ -169,17 +168,17 @@ export default function ChatPopup({
                 size="icon"
                 variant="secondary"
                 className={cn(
-                  "rounded-3xl z-30 fixed right-8 md:right-12 hover:bg-white dark:hover:bg-zinc-900 transition-all w-10 h-10 bottom-52 dark:bg-zinc-950",
+                  "rounded-3xl z-30 fixed right-4 md:right-8 hover:bg-white dark:hover:bg-zinc-900 transition-all w-8 h-8 md:w-10 md:h-10 bottom-32 md:bottom-52 dark:bg-zinc-950",
                   isShowScrollDownButton ? "scale-100" : "scale-0",
                   isFullScreen ? "md:bottom-36" : "md:bottom-40"
                 )}
               >
-                <ArrowDown />
+                <ArrowDown className="w-4 h-4 md:w-5 md:h-5" />
               </Button>
               <MessageLists
                 onSuggestion={handleSuggestion}
                 messages={promptMessages}
-                className="max-w-5xl w-full mx-auto flex flex-1 justify-center items-center"
+                className="max-w-5xl w-full mx-auto flex flex-1 justify-center items-center px-2 md:px-4"
               />
               {isLoading && <LoadingDots />}
             </div>

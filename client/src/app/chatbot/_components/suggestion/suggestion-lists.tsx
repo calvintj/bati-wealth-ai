@@ -18,7 +18,7 @@ export default function SuggestionLists({
   onSuggestion,
 }: SuggestionListsProps) {
   return (
-    <div className="flex gap-2 p-2 overflow-x-scroll w-full hide-scrollbar mx-auto md:justify-center">
+    <div className="flex gap-1 md:gap-2 p-1 md:p-2 overflow-x-scroll w-full hide-scrollbar mx-auto md:justify-center">
       {suggestions.map((option) => (
         <SuggestionBadge
           onClick={onSuggestion}

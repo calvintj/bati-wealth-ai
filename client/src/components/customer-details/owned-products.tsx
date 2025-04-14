@@ -2,7 +2,11 @@ import useOwnedProduct from "../../hooks/customer-details/use-owned-products";
 
 const OwnedProductTable = ({ customerID }: { customerID: string }) => {
   // Hook
-  const { data: ownedProduct, isLoading: loading, error } = useOwnedProduct(customerID);
+  const {
+    data: ownedProduct,
+    isLoading: loading,
+    error,
+  } = useOwnedProduct(customerID);
 
   if (loading) {
     return (
@@ -21,8 +25,8 @@ const OwnedProductTable = ({ customerID }: { customerID: string }) => {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="overflow-auto rounded-2xl">
+    <div className="flex flex-col">
+      <div className="overflow-auto rounded-2xl h-full">
         <table className="min-w-full divide-y-2 divide-gray-900 text-sm bg-[#1D283A] text-center">
           <thead>
             <tr className="sticky top-0 z-30">

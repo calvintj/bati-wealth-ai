@@ -114,34 +114,21 @@ export default function TaskManagerPage() {
         <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
         {/* DASHBOARD CONTENT */}
-        <main className="flex flex-col md:flex-row gap-2 flex-1 mr-2 my-2 overflow-scroll overscroll-contain">
+        <main className="flex flex-col md:flex-row gap-2 flex-1 m-2 overflow-scroll overscroll-contain">
           {/* Left Column */}
-          <div className="grid grid-cols-1 gap-2 mb-2">
-            <div className="rounded-2xl bg-[#1D283A]">
-              <TaskManager selectedDate={selectedDate} />
-            </div>
-            <div className="rounded-2xl bg-[#1D283A]">
-              <Calendar
-                setSelectedDate={setSelectedDate}
-                selectedDate={selectedDate}
-              />
-            </div>
-          </div>
-
-          {/* Right Column */}
           <div className="flex-1 flex flex-col gap-2 mb-2">
             <div className="flex flex-col md:flex-row gap-2">
-              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl">
-                <h1 className="font-bold">Total AUM</h1>
-                <div className="flex flex-row items-center">
-                  <h1>
+              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl text-center md:text-left">
+                <p className="font-bold">Total AUM</p>
+                <div className="flex flex-row items-center justify-center md:justify-start">
+                  <p>
                     {managedNumbers?.all_aum
                       ? `Rp ${Number(managedNumbers.all_aum).toLocaleString(
                           "id-ID"
                         )}`
                       : "N/A"}
-                  </h1>
-                  <h1
+                  </p>
+                  <p
                     className={`text-sm ${
                       aumIncrease > 0
                         ? "text-green-500"
@@ -156,21 +143,21 @@ export default function TaskManagerPage() {
                       <ArrowDownIcon className="w-4 h-4" />
                     )}
                     {aumIncrease.toFixed(2)}%
-                  </h1>
+                  </p>
                 </div>
                 <p className="text-sm text-gray-400">vs kuartal sebelumnya</p>
               </div>
-              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl">
-                <h1 className="font-bold">Total FBI</h1>
-                <div className="flex flex-row">
-                  <h1>
+              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl text-center md:text-left">
+                <p className="font-bold">Total FBI</p>
+                <div className="flex flex-row items-center justify-center md:justify-start">
+                  <p>
                     {managedNumbers?.all_fbi
                       ? `Rp ${Number(managedNumbers.all_fbi).toLocaleString(
                           "id-ID"
                         )}`
                       : "N/A"}
-                  </h1>
-                  <h1
+                  </p>
+                  <p
                     className={`text-sm ${
                       fbiIncrease > 0
                         ? "text-green-500"
@@ -187,15 +174,15 @@ export default function TaskManagerPage() {
                       <span className="w-4 h-4" />
                     )}
                     {fbiIncrease.toFixed(2)}%
-                  </h1>
+                  </p>
                 </div>
                 <p className="text-sm text-gray-400">vs kuartal sebelumnya</p>
               </div>
-              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl">
-                <h1 className="font-bold">Total Customers</h1>
-                <div className="flex flex-row">
-                  <h1>{managedNumbers?.all_customers || "N/A"}</h1>
-                  <h1
+              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl text-center md:text-left">
+                <p className="font-bold">Total Customers</p>
+                <div className="flex flex-row items-center justify-center md:justify-start">
+                  <p>{managedNumbers?.all_customers || "N/A"}</p>
+                  <p
                     className={`text-sm ${
                       customerIncrease > 0
                         ? "text-green-500"
@@ -212,7 +199,7 @@ export default function TaskManagerPage() {
                       <span className="w-4 h-4" />
                     )}
                     {customerIncrease.toFixed(2)}%
-                  </h1>
+                  </p>
                 </div>
                 <p className="text-sm text-gray-400">vs kuartal sebelumnya</p>
               </div>
@@ -276,6 +263,20 @@ export default function TaskManagerPage() {
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
                 setPageCount={setPageCount}
+              />
+            </div>
+          </div>
+
+          {/* Right Column */}
+
+          <div className="grid grid-cols-1 gap-2 mb-2">
+            <div className="rounded-2xl bg-[#1D283A]">
+              <TaskManager selectedDate={selectedDate} />
+            </div>
+            <div className="rounded-2xl bg-[#1D283A]">
+              <Calendar
+                setSelectedDate={setSelectedDate}
+                selectedDate={selectedDate}
               />
             </div>
           </div>

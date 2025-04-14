@@ -122,8 +122,7 @@ export default function InputPrompt() {
     const element = chatPopupContainerRef.current;
     if (!element) return;
     // No toggling, just stay open
-    element.classList.add("top-0");
-    element.classList.add("md:top-28");
+    element.classList.add("top-23");
   }, []);
 
   return (
@@ -131,8 +130,7 @@ export default function InputPrompt() {
       <div
         ref={chatPopupContainerRef}
         className={cn(
-          "shadow-md absolute bottom-0 md:bottom-2 overflow-hidden inset-x-0 md:inset-x-2 flex md:rounded-lg transition-all flex-col items-center z-50 justify-between dark:shadow-none",
-          "top-0 md:top-28" // forced open
+          "shadow-md absolute bottom-0 md:bottom-2 overflow-hidden inset-x-0 md:inset-x-2 flex md:rounded-lg transition-all flex-col items-center z-40 justify-between dark:shadow-none"
         )}
       >
         <MemoizedChatPopup
@@ -153,15 +151,9 @@ export default function InputPrompt() {
         >
           <form
             onSubmit={handleSubmit}
-            style={{
-              gridTemplateAreas: `
-                "A A A A B B"
-                "D D D D D D"
-              `,
-            }}
-            className="justify-between gap-2 w-full border-b-black border-b-[1px] p-4 flex flex-row"
+            className="justify-between gap-2 w-full border-b-black border-b-[1px] p-2 md:p-4 flex flex-col md:flex-row"
           >
-            <div style={{ gridArea: "A" }} className="flex items-center gap-2">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mb-2 md:mb-0">
               <form.Field name="language" defaultValue="English">
                 {(field) => (
                   <Select
@@ -173,7 +165,7 @@ export default function InputPrompt() {
                       )
                     }
                   >
-                    <SelectTrigger className="bg-[#161B21] rounded-xl w-[160px]">
+                    <SelectTrigger className="bg-[#161B21] rounded-xl w-full md:w-[160px]">
                       <SelectValue placeholder="Select Language" />
                     </SelectTrigger>
                     <SelectContent>
@@ -201,7 +193,7 @@ export default function InputPrompt() {
                     disabled={form.store.state.isSubmitting}
                     value={field.state.value}
                     onValueChange={(value) => field.handleChange(value)}
-                    className="w-[140px] bg-[#161B21]"
+                    className="w-full md:w-[140px] bg-[#161B21]"
                   />
                 )}
               </form.Field>
@@ -211,7 +203,6 @@ export default function InputPrompt() {
               {(field) => (
                 <Textarea
                   disabled={form.store.state.isSubmitting}
-                  wrapperStyle={{ gridArea: "D" }}
                   id={field.name}
                   name={field.name}
                   value={field.state.value}
@@ -220,7 +211,7 @@ export default function InputPrompt() {
                   onKeyDown={handleKeyDown}
                   maxRows={4}
                   placeholder="What can I help with? Message Wealth Advisor"
-                  className="rounded-xl resize-none min-h-9 bg-[#161B21]"
+                  className="rounded-xl resize-none min-h-9 bg-[#161B21] w-full"
                   endAdornment={
                     <button
                       type={form.store.state.isSubmitting ? "button" : "submit"}
@@ -249,7 +240,6 @@ export default function InputPrompt() {
           />
         </div>
       </div>
-      {/* Removed the overlay that closes popup */}
     </>
   );
 }

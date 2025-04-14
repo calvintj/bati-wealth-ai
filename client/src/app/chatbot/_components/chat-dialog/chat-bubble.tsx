@@ -29,7 +29,7 @@ function NonMemoizedChatBubble({
   return (
     <div
       className={cn(
-        "flex gap-4 items-start w-full",
+        "flex gap-2 md:gap-4 items-start w-full",
         !isBot && "ml-auto justify-end",
         isSuggestion && "h-fit",
         className
@@ -37,7 +37,7 @@ function NonMemoizedChatBubble({
       {...props}
     >
       {isBot && (
-        <Avatar className="mt-4">
+        <Avatar className="mt-2 md:mt-4 w-8 h-8 md:w-10 md:h-10">
           <AvatarImage
             className="object-cover object-center"
             src="/bati-chatbot-avatar-bg-removed.png"
@@ -47,10 +47,9 @@ function NonMemoizedChatBubble({
       )}
       <div
         className={cn(
-          "rounded-xl p-4 prose-base dark:prose-invert",
-          isBot && "pl-2 w-[85%]",
+          "rounded-xl p-2 md:p-4 prose-sm md:prose-base dark:prose-invert",
+          isBot && "pl-1 md:pl-2 w-[85%]",
           !isBot && "!bg-secondary dark:!bg-accent",
-          // isBot && "prose dark:prose-invert prose-base",
           isSuggestion && "w-full"
         )}
         onClick={handleSuggestion}

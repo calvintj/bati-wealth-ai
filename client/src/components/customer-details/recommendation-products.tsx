@@ -29,7 +29,7 @@ export default function RecommendationProduct({
       <ul>
         {recommendationProduct?.map((product, index) => (
           <li key={index} className="text-md">
-            <div className="p-4 bg-[#1D283A] rounded-2xl mb-2">
+            <div className="p-4 bg-[#1D283A] rounded-2xl mb-2 h-[150px]">
               <p className="uppercase font-bold text-lg mb-2">Aksi Potensial</p>
               <div className="flex justify-between items-center">
                 <div>
@@ -49,7 +49,7 @@ export default function RecommendationProduct({
                 </div>
               </div>
             </div>
-            <div className="p-4 bg-[#1D283A] rounded-2xl mb-2">
+            <div className="p-4 bg-[#1D283A] rounded-2xl mb-2 h-[150px]">
               <p className="uppercase font-bold text-lg mb-2">
                 Produk Resiko Rekomendasi
               </p>
@@ -79,7 +79,7 @@ export default function RecommendationProduct({
                 </span>
               )}
             </div>
-            <div className="p-4 bg-[#1D283A] rounded-2xl">
+            <div className="p-4 bg-[#1D283A] rounded-2xl h-[150px]">
               <p className="uppercase font-bold text-lg mb-2">
                 Reprofil Rekomendasi
               </p>

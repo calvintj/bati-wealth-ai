@@ -8,12 +8,10 @@ import {
   ChartEvent,
   ActiveElement,
   ChartOptions,
-  // Tooltip,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-
-// IMPORT THE PLUGIN
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { useSwipeable } from "react-swipeable";
 
 // Register ChartJS components
 ChartJS.register(
@@ -21,14 +19,14 @@ ChartJS.register(
   LinearScale,
   BarElement,
   Title,
-  // Tooltip,
   ChartDataLabels
 );
 
 // HOOKS
 import { useCustomerList } from "../../hooks/customer-mapping/use-customer-list";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CustomerList } from "@/types/page/customer-list";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
 interface StackedBarChartProps {
   setPropensity: (propensity: string) => void;
@@ -68,9 +66,26 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
   // Add state to track selected bar
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
 
+  // Add state for mobile detection and carousel
+  const [isMobile, setIsMobile] = useState(false);
+  const [currentAumIndex, setCurrentAumIndex] = useState(0);
+
   // Define categories for AUM (x-axis) and Propensity (y-axis)
   const aumCategories = ["Zero", "Low", "Medium", "High"];
   const propensityCategories = ["Low", "Medium", "High", "Qualified"];
+
+  // Handle window resize for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // -- MAPPING FUNCTIONS ------------------------------------------------------
   const mapAumToCategory = (aumLabel: string) => {
@@ -152,6 +167,19 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
     };
   };
 
+  // Generate mobile carousel data for a specific AUM category
+  const generateMobileCarouselData = (aumIndex: number) => {
+    const data = generateHeatmapData();
+    return {
+      labels: [aumCategories[aumIndex]],
+      datasets: data.datasets.map((dataset) => ({
+        ...dataset,
+        data: [dataset.data[aumIndex]],
+        backgroundColor: [dataset.backgroundColor[aumIndex]],
+      })),
+    };
+  };
+
   // Chart configuration
   const options = {
     onClick: (event: ChartEvent, elements: ActiveElement[]) => {
@@ -181,14 +209,6 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
       }
     },
     plugins: {
-      title: {
-        display: true,
-        text: "Pemetaan Nasabah",
-        font: {
-          size: 24,
-        },
-        color: "white",
-      },
       datalabels: {
         // Only show the label if the bar > 0
         display: (context: ChartContext) => {
@@ -216,15 +236,6 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
           return `Total: ${actualCount}\nAUM: ${aumCategory}\nPropensity: ${propensityCategory}`;
         },
       },
-      // tooltip: {
-      //   callbacks: {
-      //     label: function (context) {
-      //       const { dataset, raw } = context;
-      //       const actualCount = raw.actualCount || 0;
-      //       return `${dataset.label} in ${context.label} AUM: ${actualCount} customers`;
-      //     },
-      //   },
-      // },
     },
     scales: {
       y: {
@@ -282,16 +293,135 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
     },
   };
 
+  // Modify the options for mobile view
+  const getMobileOptions = () => {
+    return {
+      ...options,
+      maintainAspectRatio: false,
+      scales: {
+        ...options.scales,
+        x: {
+          ...options.scales.x,
+          grid: {
+            display: false,
+          },
+        },
+        y: {
+          ...options.scales.y,
+          grid: {
+            display: false,
+          },
+        },
+      },
+    };
+  };
+
   // Generate the data for the chart
   const data = generateHeatmapData();
+  const mobileData = generateMobileCarouselData(currentAumIndex);
+  const mobileOptions = getMobileOptions();
+
+  // Handle carousel navigation
+  const handlePrevAum = () => {
+    setCurrentAumIndex((prev) =>
+      prev > 0 ? prev - 1 : aumCategories.length - 1
+    );
+  };
+
+  const handleNextAum = () => {
+    setCurrentAumIndex((prev) =>
+      prev < aumCategories.length - 1 ? prev + 1 : 0
+    );
+  };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => handleNextAum(),
+    onSwipedRight: () => handlePrevAum(),
+    preventScrollOnSwipe: true,
+    trackMouse: false,
+    swipeDuration: 500,
+    delta: 10, // minimum swipe distance
+  });
 
   return (
-    <div className="w-full h-full p-4">
-      <Bar
-        data={data}
-        options={options as unknown as ChartOptions<"bar">}
-        className="cursor-pointer"
-      />
+    <div className="w-full h-full">
+      {isMobile ? (
+        <div className="flex flex-col items-center w-full">
+          <div
+            className="relative w-full h-[60vh] min-h-[300px] touch-pan-y"
+            {...handlers}
+          >
+            <Bar
+              data={mobileData}
+              options={
+                {
+                  ...mobileOptions,
+                  maintainAspectRatio: false,
+                  responsive: true,
+                  onClick: (event: ChartEvent, elements: ActiveElement[]) => {
+                    if (elements.length > 0) {
+                      const { index: aumIndex, datasetIndex: propIndex } =
+                        elements[0];
+                      const aumCategory = aumCategories[aumIndex];
+                      const propensityCategory =
+                        propensityCategories[propIndex];
+                      setSelectedBar({ aumIndex, propIndex });
+                      setPropensity(propensityCategory);
+                      setAum(aumCategory);
+                    }
+                  },
+                } as unknown as ChartOptions<"bar">
+              }
+              className="cursor-pointer"
+            />
+            <div className="absolute inset-x-0 top-2/3 flex justify-between -translate-y-1/2 pointer-events-none">
+              <button
+                onClick={handlePrevAum}
+                className="bg-black/50 hover:bg-black/70 text-white rounded-full p-2 flex items-center justify-center shadow-lg pointer-events-auto md:hidden"
+                aria-label="Previous AUM category"
+              >
+                <ArrowLeftIcon className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleNextAum}
+                className="bg-black/50 hover:bg-black/70 text-white rounded-full p-2 flex items-center justify-center shadow-lg pointer-events-auto md:hidden"
+                aria-label="Next AUM category"
+              >
+                <ArrowRightIcon className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2">
+            {aumCategories.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentAumIndex(index)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  currentAumIndex === index ? "bg-white w-4" : "bg-white/50"
+                }`}
+                aria-label={`Go to ${aumCategories[index]} AUM category`}
+              />
+            ))}
+          </div>
+          <div className="mt-2 text-white text-center font-medium">
+            {aumCategories[currentAumIndex]} AUM
+          </div>
+        </div>
+      ) : (
+        <div className="w-full h-[60vh]">
+          <Bar
+            data={data}
+            options={
+              {
+                ...options,
+                maintainAspectRatio: false,
+                responsive: true,
+              } as unknown as ChartOptions<"bar">
+            }
+            className="cursor-pointer"
+          />
+        </div>
+      )}
     </div>
   );
 };

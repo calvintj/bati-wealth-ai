@@ -66,7 +66,7 @@ export default function PortfolioPie({
   const isMobile = windowWidth < 768;
   const innerRadius = isMobile ? 40 : 60;
   const outerRadius = isMobile ? 70 : 100;
-  const chartAspect = isMobile ? 1 : 1.8;
+  const chartAspect = isMobile ? 1.6 : 1.8;
 
   const { transformedData, loading, error } = useCustomerPortfolio(customerID);
 

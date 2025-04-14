@@ -16,24 +16,26 @@ export default function CustomerListPage() {
     <div className="flex h-screen bg-gray-900 text-gray-200">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
-        <Navbar
-          setCustomerRisk={setCustomerRisk}
-          customerRisk={customerRisk}
-        />
+      <div className="flex-1 flex flex-col min-w-0">
+        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
         {/* MAIN CONTENT AREA */}
-        <main className="grid grid-rows gap-2 flex-1 overflow-y-scroll mx-2 my-2 overscroll-contain">
+        <main className="flex flex-col gap-2 flex-1 overflow-y-auto m-2">
           {/* Stacked Bar Chart */}
-          <div className="grid rounded-2xl bg-[#1D283A]">
+          <div>
+            <p className="text-2xl font-bold text-center">Pemetaan Nasabah</p>
+          </div>
+          <div className="rounded-2xl bg-[#1D283A] p-4">
             <StackedBarChart setPropensity={setPropensity} setAum={setAum} />
           </div>
-          <div>
-            <p className="text-2xl font-bold text-center">Customer List</p>
-          </div>
           {/* Customer List Table */}
-          <div className="grid rounded-2xl overflow-x-auto">
-            <CustomerListTable propensity={propensity} aum={aum} />
+          <div>
+            <p className="text-2xl font-bold text-center">Daftar Nasabah</p>
+          </div>
+          <div>
+            <div className="rounded-2xl overflow-x-auto bg-[#1D283A]">
+              <CustomerListTable propensity={propensity} aum={aum} />
+            </div>
           </div>
         </main>
       </div>

@@ -56,31 +56,32 @@ function NonMemoizedMessageLists({
 
   const content =
     messages?.length === 0 ? (
-      <div className="px-2 flex flex-col gap-2 pt-16 text-center inset-0 justify-center items-center">
+      <div className="px-2 md:px-4 flex flex-col gap-2 pt-8 md:pt-16 text-center inset-0 justify-center items-center">
         <TypeAnimation
           sequence={["What can i help with?"]}
           wrapper="p"
           speed={50}
           style={{
-            fontSize: "1.5rem",
+            fontSize: "1.25rem",
             display: "inline-block",
             fontWeight: 700,
           }}
+          className="md:text-2xl"
           repeat={0}
         />
-        <p className="text-muted-foreground justify-center flex items-center text-center gap-2">
+        <p className="text-muted-foreground justify-center flex items-center text-center gap-2 text-sm md:text-base">
           <span>Powered by</span>
           <Icon
             src="/bati-light.svg"
-            size={52}
+            size={40}
             alt="Bati Logo"
-            className="dark:hidden"
+            className="dark:hidden md:w-[52px] md:h-[52px]"
           />
           <Icon
             src="/bati-dark.svg"
-            size={52}
+            size={40}
             alt="Bati Logo"
-            className="hidden dark:block"
+            className="hidden dark:block md:w-[52px] md:h-[52px]"
           />
         </p>
       </div>
@@ -89,7 +90,12 @@ function NonMemoizedMessageLists({
     );
 
   return (
-    <div className={cn("flex p-4 flex-col gap-8 relative", className)}>
+    <div
+      className={cn(
+        "flex p-2 md:p-4 flex-col gap-4 md:gap-8 relative",
+        className
+      )}
+    >
       {content}
     </div>
   );

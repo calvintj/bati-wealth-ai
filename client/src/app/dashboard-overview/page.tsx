@@ -125,7 +125,7 @@ const OverviewPage = () => {
           </div>
 
           <div>
-            <p className="text-2xl font-bold text-center">Customer List</p>
+            <p className="text-2xl font-bold text-center">Daftar Nasabah</p>
           </div>
           <div>
             <div className="grid rounded-2xl overflow-x-auto bg-[#1D283A]">

@@ -85,7 +85,7 @@ export default function RiskProfilePie({
   const isMobile = windowWidth < 768;
   const innerRadius = isMobile ? 40 : 60;
   const outerRadius = isMobile ? 70 : 100;
-  const chartAspect = isMobile ? 1 : 1.6;
+  const chartAspect = 1.6;
 
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(() => {
     const riskIndex = customerData

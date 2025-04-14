@@ -60,15 +60,15 @@ export default function CustomerDetailsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-200">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-900 text-gray-200 overflow-hidden">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
-        <main className="flex flex-1 overflow-y-auto mr-2 mt-2 overscroll-contain">
+        <main className="flex flex-col lg:flex-row flex-1 overflow-y-auto m-2 overscroll-contain">
           {/* Left Column */}
-          <div className="flex flex-col gap-2 w-1/4 mr-2">
+          <div className="flex flex-col gap-2 w-full lg:w-1/4 mb-2 lg:mb-0 lg:mr-2">
             <div className="rounded-2xl flex items-center justify-between p-2 bg-[#1D283A]">
               <div className="font-bold">ID Nasabah: {customerID}</div>
               <CustomerDropdown
@@ -76,7 +76,7 @@ export default function CustomerDetailsPage() {
                 setCustomerID={setCustomerID}
               />
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
               {[
                 {
                   title: "FUM",
@@ -102,7 +102,7 @@ export default function CustomerDetailsPage() {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-2xl flex flex-col justify-center items-center text-2xl p-4 bg-[#1D283A] flex-1"
+                  className="rounded-2xl flex flex-col justify-center items-center text-xl sm:text-2xl p-4 bg-[#1D283A] flex-1"
                 >
                   <h1 className="font-bold">{item.title}</h1>
                   <h1>{item.value}</h1>
@@ -137,7 +137,7 @@ export default function CustomerDetailsPage() {
 
           {/* Right Column */}
           <div className="flex flex-col gap-2 flex-1">
-            <div className="flex gap-2">
+            <div className="flex flex-col md:flex-row gap-2">
               {/* Portfolio Section */}
               <div className="rounded-2xl bg-[#1D283A] flex-1">
                 <PortfolioPie customerID={customerID} />
@@ -148,7 +148,7 @@ export default function CustomerDetailsPage() {
                 <OptimizedPortfolio customerID={customerID} />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col md:flex-row gap-2">
               <div className="rounded-2xl bg-[#1D283A] flex-1">
                 <QuarterlyAUM customerID={customerID} />
               </div>

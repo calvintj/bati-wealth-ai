@@ -115,7 +115,13 @@ export default function Navbar({
         </Sheet>
 
         {/* Logo - visible on both mobile and desktop */}
-        <Image src="/bati-dark.svg" alt="Bati Logo" width={120} height={36} />
+        <Image
+          src="/bati-dark.svg"
+          alt="Bati Logo"
+          width={100}
+          height={30}
+          className="md:w-[120px] md:h-[36px]"
+        />
         {/* Left: Only show on /overview */}
         <div className="flex items-center gap-2">
           {pathname === "/dashboard-overview" && (
@@ -156,7 +162,7 @@ export default function Navbar({
       {pathname !== "/dashboard-overview" && <div />}
 
       {/* Right: Notification, Email, RM */}
-      <div className="flex items-center gap-4 mr-2">
+      <div className="flex items-center gap-2 md:gap-4 mr-2">
         <ColorModeToggle className="cursor-pointer" />
         {/* <Button variant="ghost" size="icon">
           <Mail />
@@ -164,7 +170,7 @@ export default function Navbar({
         <Button variant="ghost" size="icon">
           <Bell />
         </Button> */}
-        <div className="bg-gray-700 text-white p-2 rounded-full w-10 h-10">
+        <div className="bg-gray-700 text-white p-1.5 md:p-2 rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-sm md:text-base">
           RM
         </div>
       </div>
