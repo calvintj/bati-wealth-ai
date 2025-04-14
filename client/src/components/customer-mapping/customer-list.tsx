@@ -56,43 +56,43 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
         <tbody className="divide-y-2 divide-gray-900">
           {displayList.map((row, index) => (
             <tr key={index}>
-              <td className="sticky left-0 z-10 whitespace-nowrap px-4 py-2 text-white bg-[#1D283A] min-w-[150px]">
+              <td className="sticky left-0 z-10 px-4 py-2">
                 {row["Customer ID"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2 ">
                 {row["Risk Profile"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["AUM Label"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Propensity"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Priority / Private"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Customer Type"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Pekerjaan"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Status Nikah"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Usia"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Annual Income"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Total FUM"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Total AUM"]}
               </td>
-              <td className="whitespace-nowrap px-4 py-2 text-white bg-[#1D283A]">
+              <td className="whitespace-nowrap px-4 py-2">
                 {row["Total FBI"]}
               </td>
             </tr>

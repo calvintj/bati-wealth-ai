@@ -46,10 +46,10 @@ const OverviewPage = () => {
         <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
         {/* DASHBOARD CONTENT */}
-        <main className="flex flex-col gap-2 overflow-y-scroll my-2 mr-2 overscroll-auto w-screen md:w-auto md:overscroll-contain">
+        <main className="flex flex-col gap-2 overflow-y-scroll m-2 md:mx-2">
           {/* Total Customer, AUM, and FBI */}
           <div className="flex flex-col md:flex-row gap-2">
-            <section
+            <div
               className="flex-1 rounded-2xl bg-[#1D283A]"
               aria-label="Total Customers"
             >
@@ -57,26 +57,26 @@ const OverviewPage = () => {
                 customerRisk={customerRisk}
                 customerData={customerData}
               />
-            </section>
+            </div>
 
-            <section
+            <div
               className="flex-1 rounded-2xl bg-[#1D283A]"
               aria-label="Total AUM"
             >
               <TotalAUM customerRisk={customerRisk} aumData={aumData} />
-            </section>
+            </div>
 
-            <section
+            <div
               className="flex-1 rounded-2xl bg-[#1D283A]"
               aria-label="Total FBI"
             >
               <TotalFBI customerRisk={customerRisk} fbiData={fbiData} />
-            </section>
+            </div>
           </div>
 
           {/* Quarterly FUM and Customer Overview */}
           <div className="flex flex-col md:flex-row gap-2">
-            <section
+            <div
               className="flex-[2] rounded-2xl bg-[#1D283A]"
               aria-label="Quarterly FUM"
             >
@@ -85,9 +85,9 @@ const OverviewPage = () => {
                 quarterlyFUM={quarterlyFUM}
                 setCustomerRisk={setCustomerRisk}
               />
-            </section>
+            </div>
 
-            <section
+            <div
               className="flex-1 rounded-2xl bg-[#1D283A]"
               aria-label="Customer Overview"
             >
@@ -96,12 +96,12 @@ const OverviewPage = () => {
                 customerData={customerData}
                 customerRisk={customerRisk}
               />
-            </section>
+            </div>
           </div>
 
           {/* Quarterly FBI and Top Products */}
           <div className="flex flex-col md:flex-row gap-2">
-            <section
+            <div
               className="flex-[2] rounded-2xl bg-[#1D283A]"
               aria-label="Quarterly FBI"
             >
@@ -111,9 +111,9 @@ const OverviewPage = () => {
                 quarterlyFUM={quarterlyFUM}
                 setCustomerRisk={setCustomerRisk}
               />
-            </section>
+            </div>
 
-            <section
+            <div
               className="flex-1 rounded-2xl bg-[#1D283A]"
               aria-label="Top Products"
             >
@@ -121,16 +121,16 @@ const OverviewPage = () => {
                 customerRisk={customerRisk}
                 topProducts={topProducts}
               />
-            </section>
+            </div>
           </div>
 
           <div>
             <p className="text-2xl font-bold text-center">Customer List</p>
           </div>
           <div>
-            <section className="w-full overflow-x-auto rounded-2xl">
+            <div className="grid rounded-2xl overflow-x-auto bg-[#1D283A]">
               <CustomerList customerRisk={customerRisk} />
-            </section>
+            </div>
           </div>
         </main>
       </div>

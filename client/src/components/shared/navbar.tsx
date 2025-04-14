@@ -7,7 +7,6 @@ import {
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 // import { Bell, Mail } from "lucide-react";
-import batiTransparent from "@/assets/bati-transparent-white.svg";
 // import { Button } from "@/components/ui/button";
 
 // ROUTER
@@ -57,7 +56,7 @@ export default function Navbar({
   };
 
   return (
-    <nav className="w-screen p-4 flex items-center justify-between bg-[#1D283A] rounded-2xl mt-2 md:mr-2 md:w-auto">
+    <nav className="w-auto p-4 mt-2 mx-2 md:mx-2 flex items-center justify-between bg-[#1D283A] rounded-2xl">
       <div className="flex items-center gap-4">
         {/* Hamburger menu for mobile */}
         <Sheet open={open} onOpenChange={setOpen}>
@@ -116,7 +115,7 @@ export default function Navbar({
         </Sheet>
 
         {/* Logo - visible on both mobile and desktop */}
-        <Image src={batiTransparent} alt="Bati Logo" width={120} height={36} />
+        <Image src="/bati-dark.svg" alt="Bati Logo" width={120} height={36} />
         {/* Left: Only show on /overview */}
         <div className="flex items-center gap-2">
           {pathname === "/dashboard-overview" && (

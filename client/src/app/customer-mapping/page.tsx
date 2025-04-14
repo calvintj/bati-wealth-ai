@@ -23,7 +23,7 @@ export default function CustomerListPage() {
         />
 
         {/* MAIN CONTENT AREA */}
-        <main className="grid grid-rows gap-2 flex-1 overflow-y-scroll mr-2 my-2 overscroll-contain">
+        <main className="grid grid-rows gap-2 flex-1 overflow-y-scroll mx-2 my-2 overscroll-contain">
           {/* Stacked Bar Chart */}
           <div className="grid rounded-2xl bg-[#1D283A]">
             <StackedBarChart setPropensity={setPropensity} setAum={setAum} />
@@ -32,7 +32,7 @@ export default function CustomerListPage() {
             <p className="text-2xl font-bold text-center">Customer List</p>
           </div>
           {/* Customer List Table */}
-          <div className="grid rounded-2xl overflow-x-auto h-[300px]">
+          <div className="grid rounded-2xl overflow-x-auto">
             <CustomerListTable propensity={propensity} aum={aum} />
           </div>
         </main>

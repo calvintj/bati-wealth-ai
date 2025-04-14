@@ -4,7 +4,6 @@ import Image from "next/image";
 import LoginForm from "@/components/login/login-form";
 
 // Assets
-import Bati from "@/assets/bati-logo.png";
 import Polygon from "@/assets/polygon-one.png";
 import Polygon2 from "@/assets/polygon-two.png";
 
@@ -20,7 +19,7 @@ const LoginPage = () => {
       <div className="w-11/12 max-w-md mx-auto my-8 md:my-0 border-2 border-white flex flex-col bg-white rounded-2xl shadow-lg overflow-hidden text-black">
         {/* Header section */}
         <div className="flex flex-col items-center justify-center p-8 bg-[#1D283A]">
-          <Image src={Bati} alt="Fund Manager CRM" width={320} height={320} />
+          <Image src="/bati-dark.svg" alt="Fund Manager CRM" width={320} height={320} />
           <p className="text-white text-center text-sm mt-2">
             Pantau interaksi dan investasi nasabah dengan lancar!
           </p>
