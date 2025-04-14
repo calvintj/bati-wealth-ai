@@ -60,17 +60,19 @@ export default function CustomerDetailsPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-white dark:bg-gray-900 text-gray-200 overflow-hidden">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-200">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col">
         <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
-        <main className="flex flex-col lg:flex-row flex-1 overflow-y-auto m-2 overscroll-contain">
+        <main className="flex flex-col lg:flex-row flex-1 overflow-y-auto p-2">
           {/* Left Column */}
           <div className="flex flex-col gap-2 w-full lg:w-1/4 mb-2 lg:mb-0 lg:mr-2">
             <div className="rounded-2xl flex items-center justify-between p-2 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
-              <div className="font-bold text-black dark:text-white">ID Nasabah: {customerID}</div>
+              <div className="font-bold text-black dark:text-white">
+                ID Nasabah: {customerID}
+              </div>
               <CustomerDropdown
                 customerID={customerID}
                 setCustomerID={setCustomerID}
@@ -104,7 +106,9 @@ export default function CustomerDetailsPage() {
                   key={item.title}
                   className="rounded-2xl flex flex-col justify-center items-center text-xl sm:text-2xl p-4 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1"
                 >
-                  <h1 className="font-bold text-black dark:text-white">{item.title}</h1>
+                  <p className="font-bold text-black dark:text-white">
+                    {item.title}
+                  </p>
                   <h1 className="text-black dark:text-white">{item.value}</h1>
                 </div>
               ))}
@@ -129,7 +133,9 @@ export default function CustomerDetailsPage() {
               )}
             </div>
 
-            <div className="ml-2 font-bold text-black dark:text-white">Rekomendasi</div>
+            <div className="ml-2 font-bold text-black dark:text-white">
+              Rekomendasi
+            </div>
             <div>
               <RecommendationProduct customerID={customerID} />
             </div>
@@ -160,9 +166,11 @@ export default function CustomerDetailsPage() {
               <p className="font-bold text-black dark:text-white">
                 Kepemilikan Produk
               </p>
-              <p className="text-sm text-gray-700 dark:text-gray-400">Kuartal Terakhir</p>
+              <p className="text-sm text-gray-700 dark:text-gray-400">
+                Kuartal Terakhir
+              </p>
             </div>
-            <div className="rounded-2xl flex-grow mb-2 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
               <OwnedProductTable customerID={customerID} />
             </div>
           </div>

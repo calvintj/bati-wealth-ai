@@ -36,7 +36,7 @@ const OverviewPage = () => {
   const topProducts = useTopProducts(customerRisk);
 
   return (
-    <div className="flex h-screen dark:bg-gray-900 text-gray-200">
+    <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">
       {/* SIDEBAR */}
       <Sidebar />
 
@@ -46,7 +46,7 @@ const OverviewPage = () => {
         <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
         {/* DASHBOARD CONTENT */}
-        <main className="flex flex-col gap-2 overflow-y-scroll m-2 md:mx-2">
+        <main className="flex flex-col gap-2 overflow-y-auto p-2 md:px-2">
           {/* Total Customer, AUM, and FBI */}
           <div className="flex flex-col md:flex-row gap-2">
             <div
@@ -130,7 +130,7 @@ const OverviewPage = () => {
             </p>
           </div>
           <div>
-            <div className="grid rounded-2xl overflow-x-auto bg-gray-100 dark:bg-[#1D283A]">
+            <div className="rounded-2xl overflow-x-auto bg-gray-100 dark:bg-[#1D283A]">
               <CustomerList customerRisk={customerRisk} />
             </div>
           </div>

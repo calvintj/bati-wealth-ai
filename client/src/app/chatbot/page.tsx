@@ -8,7 +8,7 @@ import Navbar from "@/components/shared/navbar";
 export default function ChatbotPage() {
   const [customerRisk, setCustomerRisk] = useState<string>("All");
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-white text-gray-200 dark:bg-gray-900 dark:text-gray-200">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white text-gray-200 dark:bg-gray-900 dark:text-gray-200">
       {/* SIDEBAR - hidden on mobile, shown on md screens and up */}
       <Sidebar />
 
@@ -23,7 +23,7 @@ export default function ChatbotPage() {
         </div>
 
         {/* CHATBOT CONTENT */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
           <InputPrompt />
         </div>
       </div>

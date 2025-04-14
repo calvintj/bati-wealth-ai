@@ -75,7 +75,7 @@ export default function TaskManagerPage() {
   // Component switcher state
   const [activeComponentIndex, setActiveComponentIndex] = useState(0);
   const components = [
-    { component: PotentialTransactionsWrapper, title: "Transaksi Potensial", },
+    { component: PotentialTransactionsWrapper, title: "Transaksi Potensial" },
     { component: OfferProductsRiskWrapper, title: "Prospek Penjualan" },
     { component: ReprofileRiskTargetWrapper, title: "Target Profil Ulang" },
   ];
@@ -104,7 +104,7 @@ export default function TaskManagerPage() {
   const activeTitle = components[activeComponentIndex].title;
 
   return (
-    <div className="flex h-screen dark:bg-gray-900 text-gray-200">
+    <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">
       {/* SIDEBAR */}
       <Sidebar />
 
@@ -114,7 +114,7 @@ export default function TaskManagerPage() {
         <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
 
         {/* DASHBOARD CONTENT */}
-        <main className="flex flex-col md:flex-row gap-2 flex-1 m-2 overflow-scroll overscroll-contain">
+        <main className="flex flex-col md:flex-row gap-2 flex-1 p-2 overflow-y-auto">
           {/* Left Column */}
           <div className="flex-1 flex flex-col gap-2 mb-2">
             <div className="flex flex-col md:flex-row gap-2">
@@ -213,7 +213,9 @@ export default function TaskManagerPage() {
               </div>
             </div>
             <div className="flex flex-row gap-2 items-center">
-              <p className="text-lg font-bold text-black dark:text-white">{activeTitle}</p>
+              <p className="text-lg font-bold text-black dark:text-white">
+                {activeTitle}
+              </p>
               <div className="flex justify-end items-center gap-2">
                 {/* Previous Button */}
                 <button
