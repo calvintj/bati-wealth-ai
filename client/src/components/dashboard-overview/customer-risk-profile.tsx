@@ -33,10 +33,10 @@ const renderCustomizedLabel = ({
     <text
       x={x}
       y={y}
-      fill="#fff"
+      fill="currentColor"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
-      className="text-sm md:text-base font-bold"
+      className="text-sm md:text-base font-bold text-black dark:text-white"
     >
       {`${(percent * 100).toFixed(0)}%`}
     </text>
@@ -103,7 +103,7 @@ export default function RiskProfilePie({
 
   return (
     <div className="p-4">
-      <h3 className="text-center text-xl md:text-2xl font-bold mb-4">
+      <h3 className="text-center text-xl md:text-2xl font-bold mb-4 text-black dark:text-white">
         Profil Risiko Nasabah
       </h3>
       <ResponsiveContainer width="100%" aspect={chartAspect}>
@@ -149,9 +149,9 @@ export default function RiskProfilePie({
             formatter={(value) => `${value} customers`}
             contentStyle={{
               background: "white",
-              border: "none",
+              border: "1px solid var(--border)",
               borderRadius: "4px",
-              color: "black",
+              color: "var(--foreground)",
             }}
           />
           <Legend
@@ -160,7 +160,7 @@ export default function RiskProfilePie({
             align={isMobile ? "center" : "right"}
             iconType="circle"
             wrapperStyle={{
-              color: "#fff",
+              color: "var(--foreground)",
               fontSize: isMobile ? "0.75rem" : "0.9rem",
             }}
           />

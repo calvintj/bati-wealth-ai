@@ -45,7 +45,7 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
     <div className="flex flex-col items-center justify-center">
       {/* Title above the chart */}
       <div
-        className="text-white font-semibold mt-4"
+        className="text-black dark:text-white font-semibold mt-4"
         style={{ fontSize: "1.5rem" }}
       >
         Total FBI
@@ -61,7 +61,8 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
           cy={cy}
           innerRadius={innerRadius}
           outerRadius={outerRadius}
-          stroke="none"
+          stroke="var(--border)"
+          strokeWidth={1}
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -70,9 +71,10 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
           <Label
             value={`Rp ${Math.round(currentValue / 1000)}K`}
             position="center"
+            className="text-black dark:text-white"
             dy={-10}
             style={{
-              fill: "#FFFFFF",
+              fill: "currentColor",
               fontSize: "24px",
               fontWeight: "bold",
               textAnchor: "middle",
@@ -82,9 +84,10 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
           <Label
             value={`Target: Rp ${Math.floor(targetValue / 1000)}K`}
             position="center"
+            className="text-black dark:text-white"
             dy={20}
             style={{
-              fill: "#CCCCCC",
+              fill: "currentColor",
               fontSize: "14px",
               textAnchor: "middle",
             }}
@@ -99,9 +102,9 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
           }}
           contentStyle={{
             background: "white",
-            border: "none",
+            border: "1px solid var(--border)",
             borderRadius: "4px",
-            color: "black",
+            color: "var(--foreground)",
           }}
         />
       </RePieChart>

@@ -23,38 +23,9 @@ export interface QuarterlyFUMProps {
 }
 
 export default class FUMChart extends PureComponent<QuarterlyFUMProps> {
-  // constructor(props: QuarterlyFUMProps) {
-  //   super(props);
-  //   this.state = {
-  //     windowWidth: window.innerWidth,
-  //   };
-  //   this.handleResize = this.handleResize.bind(this);
-  // }
-
-  // handleResize() {
-  //   this.setState({ windowWidth: window.innerWidth });
-  // }
-
-  // componentDidMount() {
-  //   window.addEventListener("resize", this.handleResize);
-  // }
-
-  // componentWillUnmount() {
-  //   window.removeEventListener("resize", this.handleResize);
-  // }
 
   render() {
     const { quarterlyFUM, customerRisk } = this.props;
-    // const { windowWidth } = this.state;
-
-    // // Responsive settings
-    // const isMobile = windowWidth < 768;
-    // const chartHeight = isMobile ? 250 : 300;
-    // const barSize = isMobile ? 30 : 50;
-    // // Increase bottom margin further and tickMargin for extra space for XAxis labels
-    // const margin = isMobile
-    //   ? { top: 20, right: 30, left: 30, bottom: 40 }
-    //   : { top: 30, right: 50, left: 50, bottom: 50 };
 
     const filterKey = customerRisk === "All" ? "All" : customerRisk;
 
@@ -64,7 +35,7 @@ export default class FUMChart extends PureComponent<QuarterlyFUMProps> {
 
     return (
       <div className="p-4">
-        <p className="text-white text-xl md:text-2xl font-bold mb-4 text-center">
+        <p className="text-black dark:text-white text-xl md:text-2xl font-bold mb-4 text-center">
           FUM per Kuartal
         </p>
 
@@ -78,31 +49,36 @@ export default class FUMChart extends PureComponent<QuarterlyFUMProps> {
               axisLine={true}
               tickLine={true}
               tick={(props) => <XAxisInformation {...props} data={data} />}
-              stroke="#FFFFFF"
+              stroke="currentColor"
               interval={0}
+              className="text-black dark:text-white"
             />
 
             <YAxis
               tickFormatter={(tick) => (tick / 1000000).toLocaleString()}
               tick={true}
               axisLine={true}
-              stroke="#FFFFFF"
+              className="text-black dark:text-white"
+              stroke="currentColor"
             >
               <Label
                 value="(in millions)"
                 angle={-90}
                 position="insideLeft"
-                style={{ fill: "#FFFFFF", textAnchor: "middle" }}
+                className="text-black dark:text-white"
+                style={{ fill: "currentColor", textAnchor: "middle" }}
               />
             </YAxis>
 
             <Tooltip
-              cursor={{ fill: "rgba(255,255,255,0.1)" }}
+              cursor={{ fill: "rgba(0,0,0,0.1)" }}
               contentStyle={{
-                border: "none",
+                border: "1px solid var(--border)",
                 borderRadius: "1rem",
+                background: "white",
+                color: "var(--foreground)",
               }}
-              labelStyle={{ color: "black" }}
+              labelStyle={{ color: "var(--foreground)" }}
               formatter={(val) => [val.toLocaleString(), "FUM"]}
               labelFormatter={() => ""}
             />

@@ -36,7 +36,7 @@ const OverviewPage = () => {
   const topProducts = useTopProducts(customerRisk);
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-200">
+    <div className="flex h-screen dark:bg-gray-900 text-gray-200">
       {/* SIDEBAR */}
       <Sidebar />
 
@@ -50,7 +50,7 @@ const OverviewPage = () => {
           {/* Total Customer, AUM, and FBI */}
           <div className="flex flex-col md:flex-row gap-2">
             <div
-              className="flex-1 rounded-2xl bg-[#1D283A]"
+              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
               aria-label="Total Customers"
             >
               <TotalCustomer
@@ -60,14 +60,14 @@ const OverviewPage = () => {
             </div>
 
             <div
-              className="flex-1 rounded-2xl bg-[#1D283A]"
+              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
               aria-label="Total AUM"
             >
               <TotalAUM customerRisk={customerRisk} aumData={aumData} />
             </div>
 
             <div
-              className="flex-1 rounded-2xl bg-[#1D283A]"
+              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
               aria-label="Total FBI"
             >
               <TotalFBI customerRisk={customerRisk} fbiData={fbiData} />
@@ -77,7 +77,7 @@ const OverviewPage = () => {
           {/* Quarterly FUM and Customer Overview */}
           <div className="flex flex-col md:flex-row gap-2">
             <div
-              className="flex-[2] rounded-2xl bg-[#1D283A]"
+              className="flex-[2] rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
               aria-label="Quarterly FUM"
             >
               <QuarterlyFUM
@@ -88,7 +88,7 @@ const OverviewPage = () => {
             </div>
 
             <div
-              className="flex-1 rounded-2xl bg-[#1D283A]"
+              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
               aria-label="Customer Overview"
             >
               <CustomerRiskProfile
@@ -102,7 +102,7 @@ const OverviewPage = () => {
           {/* Quarterly FBI and Top Products */}
           <div className="flex flex-col md:flex-row gap-2">
             <div
-              className="flex-[2] rounded-2xl bg-[#1D283A]"
+              className="flex-[2] rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
               aria-label="Quarterly FBI"
             >
               <QuarterlyFBI
@@ -114,7 +114,7 @@ const OverviewPage = () => {
             </div>
 
             <div
-              className="flex-1 rounded-2xl bg-[#1D283A]"
+              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
               aria-label="Top Products"
             >
               <TopProducts
@@ -125,10 +125,12 @@ const OverviewPage = () => {
           </div>
 
           <div>
-            <p className="text-2xl font-bold text-center">Daftar Nasabah</p>
+            <p className="text-2xl font-bold text-center text-black dark:text-white">
+              Daftar Nasabah
+            </p>
           </div>
           <div>
-            <div className="grid rounded-2xl overflow-x-auto bg-[#1D283A]">
+            <div className="grid rounded-2xl overflow-x-auto bg-gray-100 dark:bg-[#1D283A]">
               <CustomerList customerRisk={customerRisk} />
             </div>
           </div>

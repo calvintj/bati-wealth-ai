@@ -75,7 +75,7 @@ export default function TaskManagerPage() {
   // Component switcher state
   const [activeComponentIndex, setActiveComponentIndex] = useState(0);
   const components = [
-    { component: PotentialTransactionsWrapper, title: "Transaksi Potensial" },
+    { component: PotentialTransactionsWrapper, title: "Transaksi Potensial", },
     { component: OfferProductsRiskWrapper, title: "Prospek Penjualan" },
     { component: ReprofileRiskTargetWrapper, title: "Target Profil Ulang" },
   ];
@@ -104,7 +104,7 @@ export default function TaskManagerPage() {
   const activeTitle = components[activeComponentIndex].title;
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-200">
+    <div className="flex h-screen dark:bg-gray-900 text-gray-200">
       {/* SIDEBAR */}
       <Sidebar />
 
@@ -118,7 +118,7 @@ export default function TaskManagerPage() {
           {/* Left Column */}
           <div className="flex-1 flex flex-col gap-2 mb-2">
             <div className="flex flex-col md:flex-row gap-2">
-              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl text-center md:text-left">
+              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none">
                 <p className="font-bold">Total AUM</p>
                 <div className="flex flex-row items-center justify-center md:justify-start">
                   <p>
@@ -147,7 +147,7 @@ export default function TaskManagerPage() {
                 </div>
                 <p className="text-sm text-gray-400">vs kuartal sebelumnya</p>
               </div>
-              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl text-center md:text-left">
+              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none">
                 <p className="font-bold">Total FBI</p>
                 <div className="flex flex-row items-center justify-center md:justify-start">
                   <p>
@@ -178,7 +178,7 @@ export default function TaskManagerPage() {
                 </div>
                 <p className="text-sm text-gray-400">vs kuartal sebelumnya</p>
               </div>
-              <div className="flex-1 rounded-2xl p-4 bg-[#1D283A] text-2xl text-center md:text-left">
+              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none">
                 <p className="font-bold">Total Customers</p>
                 <div className="flex flex-row items-center justify-center md:justify-start">
                   <p>{managedNumbers?.all_customers || "N/A"}</p>
@@ -205,15 +205,15 @@ export default function TaskManagerPage() {
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-2 flex-1">
-              <div className="flex-1 rounded-2xl bg-[#1D283A]">
+              <div className="flex-1 rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
                 <ManagerPortfolio />
               </div>
-              <div className="flex-1 rounded-2xl bg-[#1D283A]">
+              <div className="flex-1 rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
                 <LastTransactions />
               </div>
             </div>
             <div className="flex flex-row gap-2 items-center">
-              <p className="text-lg font-bold">{activeTitle}</p>
+              <p className="text-lg font-bold text-black dark:text-white">{activeTitle}</p>
               <div className="flex justify-end items-center gap-2">
                 {/* Previous Button */}
                 <button
@@ -258,7 +258,7 @@ export default function TaskManagerPage() {
                 </button>
               </div>
             </div>
-            <div className="rounded-2xl bg-[#1D283A]">
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
               <ActiveComponent
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
@@ -270,10 +270,10 @@ export default function TaskManagerPage() {
           {/* Right Column */}
 
           <div className="grid grid-cols-1 gap-2 mb-2">
-            <div className="rounded-2xl bg-[#1D283A]">
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A]">
               <TaskManager selectedDate={selectedDate} />
             </div>
-            <div className="rounded-2xl bg-[#1D283A]">
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A]">
               <Calendar
                 setSelectedDate={setSelectedDate}
                 selectedDate={selectedDate}

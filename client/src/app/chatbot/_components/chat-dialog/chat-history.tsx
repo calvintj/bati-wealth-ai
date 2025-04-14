@@ -28,7 +28,7 @@ export default function ChatHistory({
       )}
       {...props}
     >
-      <p className="line-clamp-1 text-nowrap w-full">{chatContent}</p>
+      <p className="line-clamp-1 text-nowrap w-full text-black dark:text-white">{chatContent}</p>
       <div className="group-hover:hidden rounded-md bg-gradient-to-l h-8 w-8 flex justify-center items-center shadow-none absolute right-0 from-iceBlue dark:from-zinc-900 to-transparent"></div>
       <button
         onClick={handleMore}

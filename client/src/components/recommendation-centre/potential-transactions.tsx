@@ -17,8 +17,8 @@ export default function OwnedProductTable() {
     <div className="h-[310px] flex flex-col mb-3">
       <div className="flex-1 overflow-auto rounded-2xl">
         {/* <div className="rounded-2xl mx-2"> */}
-        <table className="divide-y-2 divide-gray-900 text-sm text-center w-full">
-          <thead className="sticky top-0 bg-[#1D283A] z-10">
+        <table className="divide-y-2 divide-gray-900 text-sm text-center w-full text-black dark:text-white">
+          <thead className="sticky top-0 bg-white dark:bg-[#1D283A] z-10">
             <tr>
               <th className="py-2">ID Nasabah</th>
               <th>Nama Produk</th>

@@ -39,15 +39,15 @@ const QuarterlyFUM = ({ customerID }: QuarterlyFUMProps) => {
       <div className="flex justify-between">
         <Menu as="div" className="relative inline-block z-10">
           <div>
-            <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-white text-white bg-[#1D283A]">
+            <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-gray-300 dark:ring-white text-black dark:text-white bg-white dark:bg-[#1D283A]">
               {assetType.find((asset) => asset.value === selectedAsset)
                 ?.label || "Asset"}
-              <ChevronDownIcon className="w-5 h-5 text-white ml-2" />
+              <ChevronDownIcon className="w-5 h-5 text-black dark:text-white ml-2" />
             </MenuButton>
           </div>
           <MenuItems
             transition
-            className="absolute mt-2 w-30 rounded-md text-white border-2 border-white bg-[#1D283A] transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+            className="absolute mt-2 w-30 rounded-md text-black dark:text-white border border-gray-300 dark:border-white bg-white dark:bg-[#1D283A] transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
           >
             <div>
               {assetType.map((asset) => (
@@ -64,7 +64,7 @@ const QuarterlyFUM = ({ customerID }: QuarterlyFUMProps) => {
             </div>
           </MenuItems>
         </Menu>
-        <p className="text-white text-2xl font-bold mb-4 text-center">
+        <p className="text-black dark:text-white text-2xl font-bold mb-4 text-center">
           FUM per Kuartal
         </p>
       </div>
@@ -81,7 +81,8 @@ const QuarterlyFUM = ({ customerID }: QuarterlyFUMProps) => {
             tick={(props) => (
               <XAxisInformation {...props} data={quarterlyFUM} />
             )}
-            stroke="#FFFFFF"
+            className="text-black dark:text-white"
+            stroke="currentColor"
             interval={0}
           />
           {/* Left Y-Axis for FBI values */}
@@ -89,14 +90,16 @@ const QuarterlyFUM = ({ customerID }: QuarterlyFUMProps) => {
             yAxisId="left"
             tickFormatter={(tick) => (tick / 1000).toLocaleString()}
             axisLine
-            stroke="#FFFFFF"
+            className="text-black dark:text-white"
+            stroke="currentColor"
             domain={[0, "auto"]}
           >
             <Label
               value="(in thousands)"
               angle={-90}
               position="insideLeft"
-              style={{ fill: "#FFFFFF", textAnchor: "middle" }}
+              className="text-black dark:text-white"
+              style={{ fill: "currentColor", textAnchor: "middle" }}
             />
           </YAxis>
           {/* Right Y-Axis for the ratio */}
@@ -105,13 +108,16 @@ const QuarterlyFUM = ({ customerID }: QuarterlyFUMProps) => {
             orientation="right"
             tickFormatter={(tick) => tick.toFixed(2)}
             axisLine
-            stroke="#FFFFFF"
+            className="text-black dark:text-white"
+            stroke="currentColor"
           />
           <Tooltip
             cursor={{ fill: "rgba(255,255,255,0.1)" }}
             contentStyle={{
-              border: "none",
+              border: "1px solid var(--border)",
               borderRadius: "1rem",
+              background: "white",
+              color: "var(--foreground)",
             }}
             labelStyle={{ color: "black" }}
             itemStyle={{ color: "black" }}

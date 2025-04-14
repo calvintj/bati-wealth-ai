@@ -108,7 +108,7 @@ export default function PortfolioPie({ colors = defaultColors }) {
 
   return (
     <div className="p-4">
-      <p className="text-xl md:text-2xl font-bold text-center md:text-left">Ringkasan Portofolio</p>
+      <p className="text-xl md:text-2xl font-bold text-center md:text-left text-black dark:text-white">Ringkasan Portofolio</p>
       <ResponsiveContainer width="100%" aspect={chartAspect}>
         <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
           <Pie

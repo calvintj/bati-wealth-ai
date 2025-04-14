@@ -12,6 +12,7 @@ import {
 import { Bar } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useSwipeable } from "react-swipeable";
+import { useTheme } from "next-themes";
 
 // Register ChartJS components
 ChartJS.register(
@@ -62,6 +63,7 @@ interface ChartContext {
 const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
   // Fetch customer data using a custom hook
   const customerList = useCustomerList() as CustomerList[];
+  const { theme } = useTheme();
 
   // Add state to track selected bar
   const [selectedBar, setSelectedBar] = useState<SelectedBar | null>(null);
@@ -246,7 +248,7 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
         title: {
           display: true,
           text: "Propensity",
-          color: "#FFFFFF",
+          color: theme === "dark" ? "#FFFFFF" : "#000000",
           font: {
             size: 14,
             weight: "bold",
@@ -268,7 +270,7 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
                 return "";
             }
           },
-          color: "#FFFFFF",
+          color: theme === "dark" ? "#FFFFFF" : "#000000",
         },
         grid: {
           /* ... */
@@ -279,14 +281,14 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
         title: {
           display: true,
           text: "Assets Under Management (AUM)",
-          color: "#FFFFFF",
+          color: theme === "dark" ? "#FFFFFF" : "#000000",
           font: {
             size: 14,
             weight: "bold",
           },
         },
         ticks: {
-          color: "#FFFFFF",
+          color: theme === "dark" ? "#FFFFFF" : "#000000",
         },
         /* ... */
       },
@@ -403,7 +405,7 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
               />
             ))}
           </div>
-          <div className="mt-2 text-white text-center font-medium">
+          <div className="mt-2 text-black dark:text-white text-center font-medium">
             {aumCategories[currentAumIndex]} AUM
           </div>
         </div>

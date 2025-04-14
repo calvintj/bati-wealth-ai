@@ -52,7 +52,7 @@ export default function ChatSidebar({
             </TooltipProvider>
           </div>
           <div className="pt-0 px-2 flex flex-col gap-6">
-            <p className="px-2 font-bold text-lg">History</p>
+            <p className="px-2 font-bold text-lg text-black dark:text-white">History</p>
             <HistoryLists onHistory={onHistory} chatHistories={chatHistories} />
           </div>
         </motion.div>

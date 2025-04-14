@@ -78,7 +78,7 @@ const Calendar = ({
     date.getMonth() === currentMonth.getMonth();
 
   return (
-    <div className="text-white rounded-lg w-full bg-[#1D283A] p-4 h-full">
+    <div className="text-black dark:text-white rounded-lg w-full bg-white dark:bg-[#1D283A] p-4 h-full border-1 border-gray-300 dark:border-none">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-xl font-bold">
           {format(currentMonth, "MMMM yyyy", { locale: id })}
@@ -90,7 +90,7 @@ const Calendar = ({
               setCurrentMonth(today);
               setSelectedDate(today);
             }}
-            className="cursor-pointer text-sm mr-2 bg-blue-800 px-2 py-1 rounded"
+            className="cursor-pointer text-sm mr-2 bg-blue-800 px-2 py-1 rounded text-white"
           >
             Today
           </button>

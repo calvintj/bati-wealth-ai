@@ -54,7 +54,7 @@ export default function GaugeChart({
     <div className="flex flex-col items-center justify-center w-full">
       {/* Title above the chart */}
       <div
-        className="text-white font-semibold mt-4"
+        className="text-black dark:text-white font-semibold mt-4"
         style={{ fontSize: "clamp(1rem, 4vw, 1.5rem)" }}
       >
         Jumlah Nasabah
@@ -70,7 +70,8 @@ export default function GaugeChart({
           cy={cy}
           innerRadius={innerRadius}
           outerRadius={outerRadius}
-          stroke="none"
+          stroke="var(--border)"
+          strokeWidth={1}
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -79,9 +80,10 @@ export default function GaugeChart({
           <Label
             value={currentValue}
             position="center"
+            className="text-black dark:text-white"
             dy={-10}
             style={{
-              fill: "#FFFFFF",
+              fill: "currentColor",
               fontSize: `${chartWidth * 0.08}px`,
               fontWeight: "bold",
               textAnchor: "middle",
@@ -91,9 +93,10 @@ export default function GaugeChart({
           <Label
             value={`Target: ${targetValue}`}
             position="center"
+            className="text-black dark:text-white"
             dy={20}
             style={{
-              fill: "#CCCCCC",
+              fill: "currentColor",
               fontSize: `${chartWidth * 0.047}px`,
               textAnchor: "middle",
             }}
@@ -108,9 +111,9 @@ export default function GaugeChart({
           }}
           contentStyle={{
             background: "white",
-            border: "none",
+            border: "1px solid var(--border)",
             borderRadius: "4px",
-            color: "black",
+            color: "var(--foreground)",
           }}
         />
       </RePieChart>

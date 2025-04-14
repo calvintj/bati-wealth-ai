@@ -53,7 +53,7 @@ export default class FBIBar extends PureComponent<FBIBarProps> {
 
     return (
       <div className="p-4">
-        <p className="text-white text-2xl font-bold mb-4 text-center">
+        <p className="text-black dark:text-white text-2xl font-bold mb-4 text-center">
           FBI per Kuartal
         </p>
 
@@ -69,21 +69,24 @@ export default class FBIBar extends PureComponent<FBIBarProps> {
               tick={(props) => (
                 <XAxisInformation {...props} data={mergedData} />
               )}
-              stroke="#FFFFFF"
+              stroke="currentColor"
               interval={0}
+              className="text-black dark:text-white"
             />
             {/* Left Y-Axis for FBI values */}
             <YAxis
               yAxisId="left"
               tickFormatter={(tick) => (tick / 1000).toLocaleString()}
               axisLine
-              stroke="#FFFFFF"
+              stroke="currentColor"
+              className="text-black dark:text-white"
             >
               <Label
                 value="(in thousands)"
                 angle={-90}
                 position="insideLeft"
-                style={{ fill: "#FFFFFF", textAnchor: "middle" }}
+                className="text-black dark:text-white"
+                style={{ fill: "currentColor", textAnchor: "middle" }}
               />
             </YAxis>
             {/* Right Y-Axis for the ratio */}
@@ -95,13 +98,14 @@ export default class FBIBar extends PureComponent<FBIBarProps> {
               stroke="#FFFFFF"
             />
             <Tooltip
-              cursor={{ fill: "rgba(255,255,255,0.1)" }}
+              cursor={{ fill: "rgba(0,0,0,0.1)" }}
               contentStyle={{
-                border: "none",
+                border: "1px solid var(--border)",
                 borderRadius: "1rem",
+                background: "white",
+                color: "var(--foreground)",
               }}
-              labelStyle={{ color: "black" }}
-              itemStyle={{ color: "black" }}
+              labelStyle={{ color: "var(--foreground)" }}
               formatter={(val, name) => {
                 if (name === "ratio") {
                   return [
@@ -132,7 +136,7 @@ export default class FBIBar extends PureComponent<FBIBarProps> {
               type="monotone"
               dataKey="ratio"
               yAxisId="right"
-              stroke="#FF0000"
+              stroke="red"
             />
           </ComposedChart>
         </ResponsiveContainer>

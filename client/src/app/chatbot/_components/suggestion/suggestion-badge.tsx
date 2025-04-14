@@ -22,7 +22,7 @@ export default function SuggestionBadge({
 
   return (
     <Badge
-      className="bg-[#161B21] border border-input shadow-none text-white flex gap-1 md:gap-2 items-center text-xs cursor-pointer p-2 md:p-3 py-1.5 md:py-2 whitespace-nowrap hover:bg-zinc-200 hover:dark:bg-background hover:dark:border-accent2 flex-shrink-0"
+      className="bg-white dark:bg-[#161B21] border border-input shadow-none text-black dark:text-white flex gap-1 md:gap-2 items-center text-xs cursor-pointer p-2 md:p-3 py-1.5 md:py-2 whitespace-nowrap hover:bg-zinc-200 hover:dark:bg-background hover:dark:border-accent2 flex-shrink-0"
       onClick={handleSuggestionClick}
     >
       {icon ? (

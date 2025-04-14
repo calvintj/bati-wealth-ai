@@ -53,7 +53,7 @@ export const navItems = [
 export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const linkClass = "[&>svg]:!w-8 [&>svg]:!h-8 text-white";
+  const linkClass = "[&>svg]:!w-8 [&>svg]:!h-8 text-black dark:text-white";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -62,7 +62,7 @@ export default function Sidebar() {
 
   // Only render the desktop sidebar - mobile will be handled by navbar
   return (
-    <aside className="my-2 ml-2 hidden md:flex flex-col rounded-2xl items-center bg-[#1D283A]">
+    <aside className="my-2 ml-2 hidden md:flex flex-col rounded-2xl items-center border-1 border-gray-300 dark:border-none bg-white dark:bg-[#1D283A]">
       <nav className="flex flex-col">
         {navItems.map(({ to, icon, label }) => {
           const isActive = pathname === to;
@@ -101,7 +101,7 @@ export default function Sidebar() {
           delay={[300, 0]}
         >
           <button
-            className="text-white hover:text-white cursor-pointer p-4 [&>svg]:!w-8 [&>svg]:!h-8"
+            className="text-black dark:text-white hover:text-black dark:hover:text-white cursor-pointer p-4 [&>svg]:!w-8 [&>svg]:!h-8"
             onClick={handleLogout}
             aria-label="Logout"
           >

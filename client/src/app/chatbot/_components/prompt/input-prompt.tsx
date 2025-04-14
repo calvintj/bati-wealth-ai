@@ -130,7 +130,7 @@ export default function InputPrompt() {
       <div
         ref={chatPopupContainerRef}
         className={cn(
-          "shadow-md absolute bottom-0 md:bottom-2 overflow-hidden inset-x-0 md:inset-x-2 flex md:rounded-lg transition-all flex-col items-center z-40 justify-between dark:shadow-none"
+          "border border-gray-300 dark:border-none shadow-md absolute bottom-0 md:bottom-2 overflow-hidden inset-x-0 md:inset-x-2 flex md:rounded-lg transition-all flex-col items-center z-40 justify-between dark:shadow-none"
         )}
       >
         <MemoizedChatPopup
@@ -145,15 +145,15 @@ export default function InputPrompt() {
         <div
           ref={ref}
           className={cn(
-            "w-full flex flex-col mt-auto z-30 bg-[#1D283A]",
+            "w-full flex flex-col mt-auto z-30 bg-white dark:bg-[#1D283A]",
             "absolute bottom-0"
           )}
         >
           <form
             onSubmit={handleSubmit}
-            className="justify-between gap-2 w-full border-b-black border-b-[1px] p-2 md:p-4 flex flex-col md:flex-row"
+            className="justify-between gap-2 w-full border-b-gray-300 dark:border-none border-b-[1px] border-t-gray-300 dark:border-t-none border-t-[1px] p-2 md:p-4 flex flex-col md:flex-row"
           >
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mb-2 md:mb-0">
+            <div className="flex flex-row items-center gap-2 mb-2 md:mb-0">
               <form.Field name="language" defaultValue="English">
                 {(field) => (
                   <Select
@@ -165,7 +165,7 @@ export default function InputPrompt() {
                       )
                     }
                   >
-                    <SelectTrigger className="bg-[#161B21] rounded-xl w-full md:w-[160px]">
+                    <SelectTrigger className="bg-white dark:bg-[#161B21] rounded-xl text-black dark:text-white">
                       <SelectValue placeholder="Select Language" />
                     </SelectTrigger>
                     <SelectContent>
@@ -193,7 +193,7 @@ export default function InputPrompt() {
                     disabled={form.store.state.isSubmitting}
                     value={field.state.value}
                     onValueChange={(value) => field.handleChange(value)}
-                    className="w-full md:w-[140px] bg-[#161B21]"
+                    className="bg-white dark:bg-[#161B21] text-black dark:text-white"
                   />
                 )}
               </form.Field>
@@ -211,7 +211,7 @@ export default function InputPrompt() {
                   onKeyDown={handleKeyDown}
                   maxRows={4}
                   placeholder="What can I help with? Message Wealth Advisor"
-                  className="rounded-xl resize-none min-h-9 bg-[#161B21] w-full"
+                  className="rounded-xl resize-none min-h-9 bg-white dark:bg-[#161B21] w-full text-black dark:text-white"
                   endAdornment={
                     <button
                       type={form.store.state.isSubmitting ? "button" : "submit"}

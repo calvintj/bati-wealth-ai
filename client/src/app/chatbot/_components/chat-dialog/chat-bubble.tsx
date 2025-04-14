@@ -48,8 +48,8 @@ function NonMemoizedChatBubble({
       <div
         className={cn(
           "rounded-xl p-2 md:p-4 prose-sm md:prose-base dark:prose-invert",
-          isBot && "pl-1 md:pl-2 w-[85%]",
-          !isBot && "!bg-secondary dark:!bg-accent",
+          isBot && "pl-1 md:pl-2 w-[85%] text-black dark:text-white",
+          !isBot && "!bg-secondary dark:!bg-accent text-black dark:text-white",
           isSuggestion && "w-full"
         )}
         onClick={handleSuggestion}

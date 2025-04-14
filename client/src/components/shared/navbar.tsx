@@ -6,6 +6,8 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import batiDark from "../../../public/bati-dark.svg";
+import batiLight from "../../../public/bati-light.svg";
 // import { Bell, Mail } from "lucide-react";
 // import { Button } from "@/components/ui/button";
 
@@ -56,7 +58,7 @@ export default function Navbar({
   };
 
   return (
-    <nav className="w-auto p-4 mt-2 mx-2 md:mx-2 flex items-center justify-between bg-[#1D283A] rounded-2xl">
+    <nav className="w-auto p-4 mt-2 mx-2 md:mx-2 flex items-center justify-between border-1 border-gray-300 dark:border-none dark:bg-[#1D283A] rounded-2xl">
       <div className="flex items-center gap-4">
         {/* Hamburger menu for mobile */}
         <Sheet open={open} onOpenChange={setOpen}>
@@ -68,17 +70,22 @@ export default function Navbar({
           </SheetTrigger>
           <SheetContent
             side="left"
-            className="w-[240px] p-4 bg-[#1D283A] text-white"
+            className="w-[240px] p-4 bg-white dark:bg-[#1D283A] text-black dark:text-white"
           >
             <SheetTitle>
               <VisuallyHidden>Navigation Menu</VisuallyHidden>
             </SheetTitle>
             <div className="py-4">
               <Image
-                src="/bati-dark.svg"
-                alt="Bati Logo"
-                width={120}
-                height={36}
+                src={
+                  typeof window !== "undefined" &&
+                  document.documentElement.classList.contains("dark")
+                    ? "/bati-dark.svg"
+                    : "/bati-light.svg"
+                }
+                alt="Fund Manager CRM"
+                width={320}
+                height={320}
               />
             </div>
             <nav className="flex flex-col gap-2">
@@ -116,7 +123,12 @@ export default function Navbar({
 
         {/* Logo - visible on both mobile and desktop */}
         <Image
-          src="/bati-dark.svg"
+          src={
+            typeof window !== "undefined" &&
+            document.documentElement.classList.contains("dark")
+              ? batiDark
+              : batiLight
+          }
           alt="Bati Logo"
           width={100}
           height={30}
@@ -127,12 +139,12 @@ export default function Navbar({
           {pathname === "/dashboard-overview" && (
             <HeadlessMenu as="div" className="relative inline-block ml-2 z-10">
               <div>
-                <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-white text-white bg-[#1D283A]">
+                <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-white text-black dark:text-white border-1 border-gray-300 dark:border-none dark:bg-[#1D283A]">
                   {customerRisk === "All"
                     ? "Risiko"
                     : riskProfile.find((risk) => risk.value === customerRisk)
                         ?.label}
-                  <ChevronDownIcon className="w-5 h-5 text-white" />
+                  <ChevronDownIcon className="w-5 h-5 text-black dark:text-white" />
                 </MenuButton>
               </div>
               <MenuItems
@@ -170,7 +182,7 @@ export default function Navbar({
         <Button variant="ghost" size="icon">
           <Bell />
         </Button> */}
-        <div className="bg-gray-700 text-white p-1.5 md:p-2 rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-sm md:text-base">
+        <div className="border-1 border-gray-300 dark:border-none dark:bg-gray-700 text-black dark:text-white p-1.5 md:p-2 rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-sm md:text-base">
           RM
         </div>
       </div>

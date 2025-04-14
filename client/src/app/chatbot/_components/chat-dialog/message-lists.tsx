@@ -56,7 +56,7 @@ function NonMemoizedMessageLists({
 
   const content =
     messages?.length === 0 ? (
-      <div className="px-2 md:px-4 flex flex-col gap-2 pt-8 md:pt-16 text-center inset-0 justify-center items-center">
+      <div className="px-2 md:px-4 flex flex-col gap-2 pt-8 md:pt-16 text-center inset-0 justify-center items-center text-black dark:text-white">
         <TypeAnimation
           sequence={["What can i help with?"]}
           wrapper="p"

@@ -36,7 +36,7 @@ export default function TopProducts({
 
   return (
     <div className="p-4 flex flex-col items-center justify-center">
-      <h2 className="text-white text-2xl font-bold mb-4 text-center">
+      <h2 className="text-black dark:text-white text-2xl font-bold mb-4 text-center">
         Produk Teratas
       </h2>
       <ResponsiveContainer width="90%" height={300}>
@@ -52,15 +52,17 @@ export default function TopProducts({
             type="category"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#fff" }}
+            className="text-black dark:text-white"
+            tick={{ fill: "currentColor" }}
             width={120}
           />
           <Tooltip
-            cursor={{ fill: "rgba(255,255,255,0.1)" }}
+            cursor={{ fill: "rgba(0,0,0,0.1)" }}
             contentStyle={{
-              border: "none",
+              border: "1px solid var(--border)",
               borderRadius: "1rem",
               backgroundColor: "white",
+              color: "var(--foreground)",
             }}
             labelStyle={{ color: "black" }}
             itemStyle={{ color: "black" }}

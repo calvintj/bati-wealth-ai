@@ -27,12 +27,12 @@ export default function LastTransactionComponent() {
 
   return (
     <div className="p-4">
-      <h1 className="font-bold text-2xl">Transaksi Terakhir</h1>
+      <h1 className="font-bold text-2xl text-black dark:text-white">Transaksi Terakhir</h1>
       <p className="text-gray-400">{currentDate}</p>
       {transactions.length === 0 ? (
         <p>No transactions available.</p>
       ) : (
-        <table className="divide-gray-900 text-center w-full border-separate border-spacing-y-3.5">
+        <table className="divide-gray-900 text-center w-full border-separate border-spacing-y-3.5 text-black dark:text-white">
           <thead>
             <tr>
               <th>ID Nasabah</th>

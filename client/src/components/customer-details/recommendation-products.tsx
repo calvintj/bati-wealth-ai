@@ -25,11 +25,11 @@ export default function RecommendationProduct({
     );
 
   return (
-    <div>
+    <div className="text-black dark:text-white">
       <ul>
         {recommendationProduct?.map((product, index) => (
           <li key={index} className="text-md">
-            <div className="p-4 bg-[#1D283A] rounded-2xl mb-2 h-[150px]">
+            <div className="p-4 bg-white dark:bg-[#1D283A] rounded-2xl mb-2 h-[150px] border border-gray-300 dark:border-none">
               <p className="uppercase font-bold text-lg mb-2">Aksi Potensial</p>
               <div className="flex justify-between items-center">
                 <div>
@@ -49,27 +49,27 @@ export default function RecommendationProduct({
                 </div>
               </div>
             </div>
-            <div className="p-4 bg-[#1D283A] rounded-2xl mb-2 h-[150px]">
+            <div className="p-4 bg-white dark:bg-[#1D283A] rounded-2xl mb-2 h-[150px] border border-gray-300 dark:border-none">
               <p className="uppercase font-bold text-lg mb-2">
                 Produk Resiko Rekomendasi
               </p>
               {product.offer_product_risk_1 === "TRUE" && (
-                <span className="bg-[#2ABC36] text-white px-2 py-1 rounded mr-1">
+                <span className="bg-[#2ABC36] px-2 py-1 rounded mr-1">
                   1
                 </span>
               )}
               {product.offer_product_risk_2 === "TRUE" && (
-                <span className="bg-[#73BC2A] text-white px-2 py-1 rounded mr-1">
+                <span className="bg-[#73BC2A] px-2 py-1 rounded mr-1">
                   2
                 </span>
               )}
               {product.offer_product_risk_3 === "TRUE" && (
-                <span className="bg-[#FBB716] text-white px-2 py-1 rounded mr-1">
+                <span className="bg-[#FBB716] px-2 py-1 rounded mr-1">
                   3
                 </span>
               )}
               {product.offer_product_risk_4 === "TRUE" && (
-                <span className="bg-[#FB6616] text-white px-2 py-1 rounded mr-1">
+                <span className="bg-[#FB6616] px-2 py-1 rounded mr-1">
                   4
                 </span>
               )}
@@ -79,27 +79,27 @@ export default function RecommendationProduct({
                 </span>
               )}
             </div>
-            <div className="p-4 bg-[#1D283A] rounded-2xl h-[150px]">
+            <div className="p-4 bg-white dark:bg-[#1D283A] rounded-2xl h-[150px] border border-gray-300 dark:border-none">
               <p className="uppercase font-bold text-lg mb-2">
                 Reprofil Rekomendasi
               </p>
               {product.offer_reprofile_risk_target === "0" && (
-                <span className="text-white">0 - Not Target</span>
+                <span>0 - Not Target</span>
               )}
               {product.offer_reprofile_risk_target === "1" && (
-                <span className="text-white">1 - Conservative</span>
+                <span>1 - Conservative</span>
               )}
               {product.offer_reprofile_risk_target === "2" && (
-                <span className="text-white">2 - Balanced</span>
+                <span>2 - Balanced</span>
               )}
               {product.offer_reprofile_risk_target === "3" && (
-                <span className="text-white">3 - Balanced</span>
+                <span>3 - Balanced</span>
               )}
               {product.offer_reprofile_risk_target === "4" && (
-                <span className="text-white">4 - Balanced</span>
+                <span>4 - Balanced</span>
               )}
               {product.offer_reprofile_risk_target === "5" && (
-                <span className="text-white">5 - Aggressive</span>
+                <span>5 - Aggressive</span>
               )}
             </div>
           </li>

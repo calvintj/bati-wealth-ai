@@ -2,7 +2,6 @@ import { useCustomerIDList } from "@/hooks/customer-details/use-customer-id-list
 import { CustomerDetails } from "@/types/page/customer-details";
 import { useEffect, useState, useRef } from "react";
 
-
 interface CustomerInputProps {
   customerID: string;
   setCustomerID: (customerID: string) => void;
@@ -23,7 +22,8 @@ const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
 
   const trimmedQuery = query.trim().toLowerCase();
   const filteredCustomers = customers.filter((cust) => {
-    const id = cust.bp_number_wm_core && cust.bp_number_wm_core.toString().toLowerCase();
+    const id =
+      cust.bp_number_wm_core && cust.bp_number_wm_core.toString().toLowerCase();
     return id && id.includes(trimmedQuery);
   });
 
@@ -84,11 +84,11 @@ const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
         onFocus={() => setShowSuggestions(true)}
         onBlur={handleBlur}
         placeholder="Masukkan ID Nasabah"
-        className="w-full rounded-lg p-2 text-sm font-semibold ring-1 shadow-xs ring-gray-300 ring-inset text-white bg-[#1D283A] placeholder-gray-400"
+        className="w-full rounded-lg p-2 text-sm font-semibold ring-1 shadow-xs ring-gray-300 ring-inset text-black dark:text-white bg-white dark:bg-[#1D283A] placeholder-gray-400"
       />
       {loading && <div className="text-white mt-2">Loading...</div>}
       {showSuggestions && filteredCustomers.length > 0 && (
-        <ul className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto rounded-md bg-[#1D283A] border border-white">
+        <ul className="absolute z-10 mt-1 w-full max-h-60 overflow-y-auto rounded-md bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
           {filteredCustomers.map((customer, index) => (
             <li
               key={customer.bp_number_wm_core}
@@ -97,9 +97,7 @@ const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
                 return undefined;
               }}
               onMouseDown={() => handleSelect(customer)}
-              className={`cursor-pointer px-4 py-2 text-sm text-white hover:bg-gray-700 ${
-                index === activeSuggestion ? "bg-gray-700" : ""
-              }`}
+              className="cursor-pointer px-4 py-2 text-sm text-black dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
             >
               {customer.bp_number_wm_core}
             </li>
@@ -107,8 +105,10 @@ const CustomerInput = ({ customerID, setCustomerID }: CustomerInputProps) => {
         </ul>
       )}
       {showSuggestions && query && filteredCustomers.length === 0 && (
-        <ul className="absolute z-10 mt-1 w-full rounded-md bg-[#1D283A] border border-white">
-          <li className="px-4 py-2 text-sm text-white">No customers found</li>
+        <ul className="absolute z-10 mt-1 w-full rounded-md bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
+          <li className="px-4 py-2 text-sm text-black dark:text-white">
+            No customers found
+          </li>
         </ul>
       )}
     </div>

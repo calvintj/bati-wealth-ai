@@ -19,7 +19,8 @@ export default function XAxisInformation(props: {
       <text
         x={0}
         y={18}
-        fill="#fff"
+        fill="currentColor"
+        className="text-black dark:text-white"
         textAnchor="middle"
         style={{ fontSize: "1rem" }}
       >
@@ -29,7 +30,8 @@ export default function XAxisInformation(props: {
         <text
           x={0}
           y={40}
-          fill="#fff"
+          fill="currentColor"
+          className="text-black dark:text-white"
           textAnchor="middle"
           style={{ fontSize: "1rem" }}
         >

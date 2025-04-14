@@ -35,15 +35,15 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
     propensity === "All" && aum === "All" ? customerList : certainCustomerList;
 
   return (
-    <div className="w-full overflow-scroll rounded-2xl max-h-[300px]">
+    <div className="w-full overflow-scroll rounded-2xl max-h-[300px] border-1 border-gray-300 dark:border-none">
       <table className="min-w-full divide-y-2 divide-gray-900 text-xs">
         <thead>
-          <tr className="sticky top-0 z-30 bg-[#1D283A]">
+          <tr className="sticky top-0 z-30 bg-white dark:bg-[#1D283A]">
             {header.map((col, index) => (
               <th
                 key={index}
-                className={`whitespace-nowrap px-4 py-2 font-medium text-white ${
-                  index === 0 ? "sticky left-0 z-40 bg-[#1D283A]" : ""
+                className={`whitespace-nowrap px-4 py-2 font-medium text-black dark:text-white ${
+                  index === 0 ? "sticky left-0 z-40 bg-white dark:bg-[#1D283A]" : ""
                 }`}
               >
                 {col}
@@ -51,10 +51,10 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y-2 divide-gray-900 whitespace-nowrap px-4 py-2 text-center">
+        <tbody className="divide-y-2 divide-gray-900 whitespace-nowrap px-4 py-2 text-center text-black dark:text-white">
           {displayList.map((row, index) => (
             <tr key={index}>
-              <td className="sticky left-0 z-10 px-4 py-2 bg-[#1D283A]">
+              <td className="sticky left-0 z-10 px-4 py-2 bg-white dark:bg-[#1D283A]">
                 {row["Customer ID"]}
               </td>
               <td>{row["Risk Profile"]}</td>

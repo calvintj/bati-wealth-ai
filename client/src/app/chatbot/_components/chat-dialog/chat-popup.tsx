@@ -116,7 +116,7 @@ export default function ChatPopup({
           <motion.div
             transition={{ duration: 0.1, ease: "easeInOut" }}
             className={cn(
-              "p-0 flex w-full flex-1 min-h-full bg-[#181E26]",
+              "p-0 flex w-full flex-1 min-h-full bg-white dark:bg-[#181E26]",
               className
             )}
             {...props}
@@ -133,7 +133,7 @@ export default function ChatPopup({
               onScroll={handleMessageContainerScroll}
               className="w-full flex relative flex-col pb-8 gap-4 overflow-y-auto chat-popup-scrollbar"
             >
-              <div className="items-center w-full flex flex-row justify-between p-2 md:p-4 bg-[#181E26] sticky top-0 z-[1]">
+              <div className="items-center w-full flex flex-row justify-between p-2 md:p-4 bg-white dark:bg-[#181E26] sticky top-0 z-[1]">
                 <div className="flex items-center gap-2 md:gap-4">
                   {!isChatSidebarOpen && (
                     <div className="flex gap-1 md:gap-2">
@@ -160,7 +160,7 @@ export default function ChatPopup({
                       </Button>
                     </div>
                   )}
-                  <h2 className="font-bold text-base md:text-lg">WealthAI</h2>
+                  <h2 className="font-bold text-base md:text-lg text-black dark:text-white">WealthAI</h2>
                 </div>
               </div>
               <Button

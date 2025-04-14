@@ -38,10 +38,10 @@ const renderCustomizedLabel = ({
     <text
       x={x}
       y={y}
-      fill="#fff"
+      fill="currentColor"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
-      className="text-sm md:text-base font-bold"
+      className="text-sm md:text-base font-bold text-black dark:text-white"
     >
       {`${(percent * 100).toFixed(0)}%`}
     </text>
@@ -117,7 +117,7 @@ export default function PortfolioPie({
 
   return (
     <div className="p-4 h-[330px]">
-      <p className="text-center text-xl md:text-2xl font-bold">
+      <p className="text-center text-xl md:text-2xl font-bold text-black dark:text-white">
         Portofolio Optimal
       </p>
       <p className="text-center text-xl text-gray-400">Berdasarkan Tipe Aset</p>
@@ -144,10 +144,10 @@ export default function PortfolioPie({
             <Tooltip
               formatter={(value) => `${value.toLocaleString()}`}
               contentStyle={{
+                border: "1px solid var(--border)",
+                borderRadius: "1rem",
                 background: "white",
-                border: "none",
-                borderRadius: "4px",
-                color: "black",
+                color: "var(--foreground)",
               }}
             />
             <Legend
@@ -156,7 +156,7 @@ export default function PortfolioPie({
               align={isMobile ? "center" : "right"}
               iconType="circle"
               wrapperStyle={{
-                color: "#fff",
+                color: "var(--foreground)",
                 fontSize: isMobile ? "0.75rem" : "0.9rem",
               }}
             />

@@ -25,7 +25,7 @@ export default function HistoryLists({
       {histories.map(([date, chatHistories]) => {
         return (
           <div key={date.toString()} className="flex flex-col gap-1">
-            <p className="font-bold text-sm pb-2 px-2">
+            <p className="font-bold text-sm pb-2 px-2 text-black dark:text-white">
               {formatDateRelative(date as unknown as Date)}
             </p>
             <ul className="flex flex-col text-sm gap-2">

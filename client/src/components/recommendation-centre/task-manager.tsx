@@ -56,10 +56,29 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   const togglePopup = () => {
     if (!showPopup && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPopupPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX - 120,
-      });
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const popupWidth = 240; // Width of the popup (w-60 = 15rem = 240px)
+
+      // Calculate initial position
+      let left = rect.left + window.scrollX - 120;
+      let top = rect.bottom + window.scrollY;
+
+      // Adjust horizontal position if popup would go off screen
+      if (left + popupWidth > windowWidth) {
+        left = windowWidth - popupWidth - 16; // 16px padding from edge
+      }
+      if (left < 16) {
+        left = 16; // 16px padding from edge
+      }
+
+      // Adjust vertical position if popup would go off screen
+      if (top + 400 > windowHeight) {
+        // 400px is an estimated max height of popup
+        top = rect.top + window.scrollY - 400 - 8; // Position above button
+      }
+
+      setPopupPosition({ top, left });
     }
     setShowPopup((prev) => !prev);
   };
@@ -74,7 +93,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
     setEditingTask(null);
   };
 
-  // Handle edit click
+  // Handle edit click with the same positioning logic
   const handleEdit = (task: TaskRow) => {
     setIsEditing(true);
     setEditingTask(task);
@@ -84,10 +103,25 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
 
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPopupPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX - 120,
-      });
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const popupWidth = 240;
+
+      let left = rect.left + window.scrollX - 120;
+      let top = rect.bottom + window.scrollY;
+
+      if (left + popupWidth > windowWidth) {
+        left = windowWidth - popupWidth - 16;
+      }
+      if (left < 16) {
+        left = 16;
+      }
+
+      if (top + 400 > windowHeight) {
+        top = rect.top + window.scrollY - 400 - 8;
+      }
+
+      setPopupPosition({ top, left });
     }
     setShowPopup(true);
   };
@@ -154,7 +188,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   };
 
   return (
-    <div className="relative p-4 rounded-lg text-white w-full bg-[#1D283A] h-[500px]">
+    <div className="relative p-4 rounded-lg text-black dark:text-white w-full bg-white dark:bg-[#1D283A] h-[500px] border border-gray-300 dark:border-none">
       {/* Header with date and add button */}
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-bold">
@@ -176,7 +210,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
 
       {/* Task list */}
       {tasksForSelectedDate.length === 0 ? (
-        <p className="text-center bg-gray-700 p-4 rounded-2xl">
+        <p className="text-center bg-gray-300 p-4 rounded-2xl text-black">
           Tidak ada tugas di tanggal ini!
         </p>
       ) : (
@@ -184,9 +218,9 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
           {tasksForSelectedDate.map((task, index) => (
             <li
               key={task.id || index}
-              className="bg-blue-500 pl-2 mt-2 rounded-2xl text-black"
+              className="bg-blue-500 pl-2 mt-2 rounded-2xl text-black dark:text-white"
             >
-              <div className="bg-white rounded-2xl p-2">
+              <div className="bg-white rounded-2xl p-2 text-black dark:text-white">
                 <p className="font-bold">{task.description}</p>
                 <p>Invitee: {task.invitee}</p>
                 <p>Due: {format(new Date(task.due_date), "yyyy-MM-dd")}</p>
@@ -194,13 +228,13 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
               <div className="flex gap-2 p-2">
                 <button
                   onClick={() => handleDelete(task.id)}
-                  className="text-white hover:text-gray-200"
+                  className="text-black dark:text-white hover:text-gray-200"
                 >
                   <Trash className="h-4 w-4 cursor-pointer" />
                 </button>
                 <button
                   onClick={() => handleEdit(task)}
-                  className="text-white hover:text-gray-200"
+                  className="text-black dark:text-white hover:text-gray-200"
                 >
                   <Pencil className="h-4 w-4 cursor-pointer" />
                 </button>
@@ -215,13 +249,16 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
         createPortal(
           <div
             style={{
-              position: "absolute",
+              position: "fixed",
               top: popupPosition.top,
               left: popupPosition.left,
+              zIndex: 1000,
+              maxHeight: "calc(100vh - 32px)",
+              overflowY: "auto",
             }}
-            className="bg-gray-800 p-4 rounded-lg shadow-lg w-60 border border-gray-600"
+            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg w-60 border border-gray-600 text-black dark:text-white"
           >
-            <h4 className="text-white mb-2">
+            <h4 className="text-black dark:text-white mb-2">
               {isEditing ? "Edit Tugas" : "Tambah Tugas"}
             </h4>
             <textarea
@@ -234,7 +271,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
                 }
               }}
               placeholder="Tugas"
-              className="w-full mb-2 p-2 rounded bg-white text-black"
+              className="w-full mb-2 p-2 rounded bg-white text-black dark:text-white border border-gray-600"
             />
             <input
               type="text"
@@ -247,7 +284,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
                 }
               }}
               placeholder="Undangan"
-              className="w-full mb-2 p-2 rounded bg-white text-black"
+              className="w-full mb-2 p-2 rounded bg-white text-black dark:text-white border border-gray-600"
             />
             <input
               type="date"
@@ -259,7 +296,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
                   handleSubmit();
                 }
               }}
-              className="w-full mb-2 p-2 rounded bg-white text-black"
+              className="w-full mb-2 p-2 rounded bg-white text-black dark:text-white border border-gray-600"
             />
             <div className="flex gap-2">
               <button
