@@ -27,7 +27,7 @@ export default function CustomerListPage() {
               Pemetaan Nasabah
             </p>
           </div>
-          <div className="rounded-2xl bg-white dark:bg-[#1D283A] p-4 border-1 border-gray-200 dark:border-none">
+          <div className="rounded-2xl bg-white dark:bg-[#1D283A] p-4 border-1 border-gray-200 dark:border-none shadow-lg dark:shadow-none">
             <StackedBarChart setPropensity={setPropensity} setAum={setAum} />
           </div>
           {/* Customer List Table */}
@@ -37,7 +37,7 @@ export default function CustomerListPage() {
             </p>
           </div>
           <div>
-            <div className="rounded-2xl overflow-x-auto bg-white dark:bg-[#1D283A]">
+            <div className="rounded-2xl overflow-x-auto bg-white dark:bg-[#1D283A] shadow-lg dark:shadow-none">
               <CustomerListTable propensity={propensity} aum={aum} />
             </div>
           </div>

@@ -69,7 +69,7 @@ export default function CustomerDetailsPage() {
         <main className="flex flex-col lg:flex-row flex-1 overflow-y-auto p-2">
           {/* Left Column */}
           <div className="flex flex-col gap-2 w-full lg:w-1/4 mb-2 lg:mb-0 lg:mr-2">
-            <div className="rounded-2xl flex items-center justify-between p-2 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
+            <div className="rounded-2xl flex items-center justify-between p-2 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
               <div className="font-bold text-black dark:text-white">
                 ID Nasabah: {customerID}
               </div>
@@ -84,27 +84,27 @@ export default function CustomerDetailsPage() {
                   title: "FUM",
                   value:
                     data && data.Total_FUM
-                      ? `Rp ${Number(data.Total_FUM).toLocaleString("id-ID")}`
+                      ? `$ ${Number(data.Total_FUM).toLocaleString("id-ID")}`
                       : "N/A",
                 },
                 {
                   title: "AUM",
                   value:
                     data && data.Total_AUM
-                      ? `Rp ${Number(data.Total_AUM).toLocaleString("id-ID")}`
+                      ? `$ ${Number(data.Total_AUM).toLocaleString("id-ID")}`
                       : "N/A",
                 },
                 {
                   title: "FBI",
                   value:
                     data && data.Total_FBI
-                      ? `Rp ${Number(data.Total_FBI).toLocaleString("id-ID")}`
+                      ? `$ ${Number(data.Total_FBI).toLocaleString("id-ID")}`
                       : "N/A",
                 },
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-2xl flex flex-col justify-center items-center text-xl sm:text-2xl p-4 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1"
+                  className="rounded-2xl flex flex-col justify-center items-center text-xl sm:text-2xl p-4 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1 shadow-lg dark:shadow-none"
                 >
                   <p className="font-bold text-black dark:text-white">
                     {item.title}
@@ -114,7 +114,7 @@ export default function CustomerDetailsPage() {
               ))}
             </div>
 
-            <div className="flex flex-col rounded-2xl gap-4 p-4 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none text-black dark:text-white">
+            <div className="flex flex-col rounded-2xl gap-4 p-4 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none text-black dark:text-white shadow-lg dark:shadow-none">
               {loading ? (
                 <div className="text-center">Loading...</div>
               ) : data ? (
@@ -145,20 +145,20 @@ export default function CustomerDetailsPage() {
           <div className="flex flex-col gap-2 flex-1">
             <div className="flex flex-col md:flex-row gap-2">
               {/* Portfolio Section */}
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1">
+              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1 shadow-lg dark:shadow-none">
                 <PortfolioPie customerID={customerID} />
               </div>
 
               {/* Activity Manager Section */}
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1">
+              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1 shadow-lg dark:shadow-none">
                 <OptimizedPortfolio customerID={customerID} />
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-2">
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1">
+              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1 shadow-lg dark:shadow-none">
                 <QuarterlyAUM customerID={customerID} />
               </div>
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1">
+              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1 shadow-lg dark:shadow-none">
                 <QuarterlyFUM customerID={customerID} />
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function CustomerDetailsPage() {
                 Kuartal Terakhir
               </p>
             </div>
-            <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
               <OwnedProductTable customerID={customerID} />
             </div>
           </div>

@@ -118,12 +118,12 @@ export default function TaskManagerPage() {
           {/* Left Column */}
           <div className="flex-1 flex flex-col gap-2 mb-2">
             <div className="flex flex-col md:flex-row gap-2">
-              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none">
+              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
                 <p className="font-bold">Total AUM</p>
                 <div className="flex flex-row items-center justify-center md:justify-start">
                   <p>
                     {managedNumbers?.all_aum
-                      ? `Rp ${Number(managedNumbers.all_aum).toLocaleString(
+                      ? `$ ${Number(managedNumbers.all_aum).toLocaleString(
                           "id-ID"
                         )}`
                       : "N/A"}
@@ -147,12 +147,12 @@ export default function TaskManagerPage() {
                 </div>
                 <p className="text-sm text-gray-400">vs kuartal sebelumnya</p>
               </div>
-              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none">
+              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
                 <p className="font-bold">Total FBI</p>
                 <div className="flex flex-row items-center justify-center md:justify-start">
                   <p>
                     {managedNumbers?.all_fbi
-                      ? `Rp ${Number(managedNumbers.all_fbi).toLocaleString(
+                      ? `$ ${Number(managedNumbers.all_fbi).toLocaleString(
                           "id-ID"
                         )}`
                       : "N/A"}
@@ -178,7 +178,7 @@ export default function TaskManagerPage() {
                 </div>
                 <p className="text-sm text-gray-400">vs kuartal sebelumnya</p>
               </div>
-              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none">
+              <div className="flex-1 rounded-2xl p-4 text-black dark:text-white bg-white dark:bg-[#1D283A] text-2xl text-center md:text-left border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
                 <p className="font-bold">Total Customers</p>
                 <div className="flex flex-row items-center justify-center md:justify-start">
                   <p>{managedNumbers?.all_customers || "N/A"}</p>
@@ -205,10 +205,10 @@ export default function TaskManagerPage() {
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-2 flex-1">
-              <div className="flex-1 rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
+              <div className="flex-1 rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
                 <ManagerPortfolio />
               </div>
-              <div className="flex-1 rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
+              <div className="flex-1 rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
                 <LastTransactions />
               </div>
             </div>
@@ -260,7 +260,7 @@ export default function TaskManagerPage() {
                 </button>
               </div>
             </div>
-            <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none">
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
               <ActiveComponent
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
@@ -272,10 +272,10 @@ export default function TaskManagerPage() {
           {/* Right Column */}
 
           <div className="grid grid-cols-1 gap-2 mb-2">
-            <div className="rounded-2xl bg-white dark:bg-[#1D283A]">
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A] shadow-lg dark:shadow-none">
               <TaskManager selectedDate={selectedDate} />
             </div>
-            <div className="rounded-2xl bg-white dark:bg-[#1D283A]">
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A] shadow-lg dark:shadow-none">
               <Calendar
                 setSelectedDate={setSelectedDate}
                 selectedDate={selectedDate}

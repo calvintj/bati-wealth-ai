@@ -130,7 +130,7 @@ export default function InputPrompt() {
       <div
         ref={chatPopupContainerRef}
         className={cn(
-          "border border-gray-300 dark:border-none shadow-md absolute bottom-0 md:bottom-2 overflow-hidden inset-x-0 md:inset-x-2 flex md:rounded-lg transition-all flex-col items-center z-40 justify-between dark:shadow-none"
+          "border border-gray-300 dark:border-none shadow-md absolute bottom-10 md:bottom-2 overflow-hidden inset-x-0 md:inset-x-2 flex md:rounded-lg transition-all flex-col items-center z-40 justify-between dark:shadow-none"
         )}
       >
         <MemoizedChatPopup
@@ -165,7 +165,7 @@ export default function InputPrompt() {
                       )
                     }
                   >
-                    <SelectTrigger className="bg-white dark:bg-[#161B21] rounded-xl text-black dark:text-white">
+                    <SelectTrigger className="bg-white dark:bg-[#161B21] rounded-xl w-full md:w-[160px] text-black dark:text-white">
                       <SelectValue placeholder="Select Language" />
                     </SelectTrigger>
                     <SelectContent>
@@ -193,7 +193,7 @@ export default function InputPrompt() {
                     disabled={form.store.state.isSubmitting}
                     value={field.state.value}
                     onValueChange={(value) => field.handleChange(value)}
-                    className="bg-white dark:bg-[#161B21] text-black dark:text-white"
+                    className="w-full md:w-[140px] bg-white dark:bg-[#161B21] text-black dark:text-white"
                   />
                 )}
               </form.Field>
