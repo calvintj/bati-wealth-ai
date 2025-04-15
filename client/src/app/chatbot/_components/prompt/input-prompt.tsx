@@ -130,7 +130,7 @@ export default function InputPrompt() {
       <div
         ref={chatPopupContainerRef}
         className={cn(
-          "border border-gray-300 dark:border-none shadow-md absolute bottom-10 md:bottom-2 overflow-hidden inset-x-0 md:inset-x-2 flex md:rounded-lg transition-all flex-col items-center z-40 justify-between dark:shadow-none"
+          "border border-gray-300 dark:border-none shadow-md absolute bottom-14 md:bottom-2 overflow-hidden inset-x-0 md:inset-x-2 flex md:rounded-lg transition-all flex-col items-center z-40 justify-between dark:shadow-none"
         )}
       >
         <MemoizedChatPopup
