@@ -132,7 +132,7 @@ export default function Navbar({
           alt="Bati Logo"
           width={100}
           height={30}
-          className="md:w-[120px] md:h-[36px]"
+          className="md:w-[120px] md:h-[36px] w-auto h-auto"
         />
         {/* Left: Only show on /overview */}
         <div className="flex items-center gap-2">

@@ -60,25 +60,31 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
       const windowHeight = window.innerHeight;
       const popupWidth = 240; // Width of the popup (w-60 = 15rem = 240px)
 
-      // Calculate initial position
-      let left = rect.left + window.scrollX - 120;
-      let top = rect.bottom + window.scrollY;
+      // For mobile screens (width < 768px), center the popup
+      if (windowWidth < 768) {
+        const left = (windowWidth - popupWidth) / 2;
+        const top = Math.min(rect.bottom + window.scrollY, windowHeight * 0.3); // Position at 30% from top
+        setPopupPosition({ top, left });
+      } else {
+        // Desktop positioning logic
+        let left = rect.left + window.scrollX - 120;
+        let top = rect.bottom + window.scrollY;
 
-      // Adjust horizontal position if popup would go off screen
-      if (left + popupWidth > windowWidth) {
-        left = windowWidth - popupWidth - 16; // 16px padding from edge
-      }
-      if (left < 16) {
-        left = 16; // 16px padding from edge
-      }
+        // Adjust horizontal position if popup would go off screen
+        if (left + popupWidth > windowWidth) {
+          left = windowWidth - popupWidth - 16;
+        }
+        if (left < 16) {
+          left = 16;
+        }
 
-      // Adjust vertical position if popup would go off screen
-      if (top + 400 > windowHeight) {
-        // 400px is an estimated max height of popup
-        top = rect.top + window.scrollY - 400 - 8; // Position above button
-      }
+        // Adjust vertical position if popup would go off screen
+        if (top + 400 > windowHeight) {
+          top = rect.top + window.scrollY - 400 - 8;
+        }
 
-      setPopupPosition({ top, left });
+        setPopupPosition({ top, left });
+      }
     }
     setShowPopup((prev) => !prev);
   };
@@ -191,9 +197,9 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
     <div className="relative p-4 rounded-lg text-black dark:text-white w-full bg-white dark:bg-[#1D283A] h-[500px] border border-gray-300 dark:border-none">
       {/* Header with date and add button */}
       <div className="flex justify-between items-center mb-3">
-        <h3 className="text-lg font-bold">
+        <p className="text-lg font-bold">
           {format(selectedDate, "d MMMM yyyy", { locale: id })}
-        </h3>
+        </p>
         <button
           ref={buttonRef}
           className="text-3xl text-blue-500 cursor-pointer"
@@ -250,17 +256,21 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
           <div
             style={{
               position: "fixed",
-              top: popupPosition.top,
-              left: popupPosition.left,
+              top:
+                window.innerWidth < 768 ? popupPosition.top : popupPosition.top,
               zIndex: 1000,
-              maxHeight: "calc(100vh - 32px)",
+              maxHeight:
+                window.innerWidth < 768 ? "70vh" : "calc(100vh - 32px)",
               overflowY: "auto",
+              width: window.innerWidth < 768 ? "90%" : "240px",
+              transform: window.innerWidth < 768 ? "translateX(-50%)" : "none",
+              left: window.innerWidth < 768 ? "50%" : popupPosition.left,
             }}
-            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg w-60 border border-gray-600 text-black dark:text-white"
+            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-600 text-black dark:text-white"
           >
-            <h4 className="text-black dark:text-white mb-2">
+            <p className="text-black dark:text-white mb-2">
               {isEditing ? "Edit Tugas" : "Tambah Tugas"}
-            </h4>
+            </p>
             <textarea
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
@@ -271,7 +281,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
                 }
               }}
               placeholder="Tugas"
-              className="w-full mb-2 p-2 rounded bg-white text-black dark:text-white border border-gray-600"
+              className="w-full mb-2 p-2 rounded bg-white text-black border border-gray-600"
             />
             <input
               type="text"
@@ -284,7 +294,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
                 }
               }}
               placeholder="Undangan"
-              className="w-full mb-2 p-2 rounded bg-white text-black dark:text-white border border-gray-600"
+              className="w-full mb-2 p-2 rounded bg-white text-black border border-gray-600"
             />
             <input
               type="date"
@@ -296,7 +306,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
                   handleSubmit();
                 }
               }}
-              className="w-full mb-2 p-2 rounded bg-white text-black dark:text-white border border-gray-600"
+              className="w-full mb-2 p-2 rounded bg-white text-black border border-gray-600"
             />
             <div className="flex gap-2">
               <button

@@ -54,14 +54,14 @@ export default function Navigation() {
             alt="Bati Logo"
             width={120}
             height={36}
-            className="dark:hidden"
+            className="dark:hidden w-auto h-auto"
           />
           <Image
             src="/bati-dark.svg"
             alt="Bati Logo"
             width={120}
             height={36}
-            className="hidden dark:block"
+            className="hidden dark:block w-auto h-auto"
           />
         </Link>
         {isMounted ? (
