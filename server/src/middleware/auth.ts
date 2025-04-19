@@ -33,3 +33,16 @@ export function authMiddleware(
     }
   );
 }
+
+// Admin middleware to check if user has admin role
+export function adminMiddleware(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): void {
+  if (!req.user || req.user.role !== "admin") {
+    res.status(403).json({ error: "Access denied. Admin role required." });
+    return;
+  }
+  next();
+}

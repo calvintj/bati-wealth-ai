@@ -64,7 +64,11 @@ export default function CustomerDetailsPage() {
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
-        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
+        <Navbar
+          setCustomerRisk={setCustomerRisk}
+          customerRisk={customerRisk}
+          showRiskDropdown={false}
+        />
 
         <main className="flex flex-col lg:flex-row flex-1 overflow-y-auto p-2">
           {/* Left Column */}

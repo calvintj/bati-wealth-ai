@@ -13,7 +13,11 @@ export default function NewsPage() {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col">
         {/* NAVBAR */}
-        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
+        <Navbar
+          setCustomerRisk={setCustomerRisk}
+          customerRisk={customerRisk}
+          showRiskDropdown={false}
+        />
 
         {/* DASHBOARD CONTENT */}
         <main className="grid grid-rows-3 gap-2 flex-1 overflow-y-auto mr-2 my-2">

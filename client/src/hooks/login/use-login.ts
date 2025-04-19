@@ -38,11 +38,22 @@ export const useLogin = () => {
         throw new Error("No token received in login response");
       }
 
+      // Store token in localStorage
       localStorage.setItem("token", data.token);
+
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
+
       // Set loading to false
       setLoading(false);
-      // Navigate to the overview page
-      router.push("/dashboard-overview");
+
+      // Redirect based on user role
+      if (data.user.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard-overview");
+      }
+
       // Return true
       return true;
     } catch (error: unknown) {

@@ -43,7 +43,11 @@ const OverviewPage = () => {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col">
         {/* NAVBAR */}
-        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
+        <Navbar
+          setCustomerRisk={setCustomerRisk}
+          customerRisk={customerRisk}
+          showRiskDropdown={true}
+        />
 
         {/* DASHBOARD CONTENT */}
         <main className="flex flex-col gap-2 overflow-y-scroll m-2 md:mx-2">

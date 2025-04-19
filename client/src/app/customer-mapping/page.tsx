@@ -17,7 +17,11 @@ export default function CustomerListPage() {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
+        <Navbar
+          setCustomerRisk={setCustomerRisk}
+          customerRisk={customerRisk}
+          showRiskDropdown={false}
+        />
 
         {/* MAIN CONTENT AREA */}
         <main className="flex flex-col gap-2 flex-1 overflow-y-auto p-2">

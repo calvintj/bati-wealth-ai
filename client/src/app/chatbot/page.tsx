@@ -19,6 +19,7 @@ export default function ChatbotPage() {
           <Navbar
             setCustomerRisk={setCustomerRisk}
             customerRisk={customerRisk}
+            showRiskDropdown={false}
           />
         </div>
 

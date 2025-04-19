@@ -1,25 +1,34 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+
+interface User {
+  id: string;
+  email: string;
+  rm_number?: string;
+  role: string;
+}
 
 interface SessionState {
   id: string | null;
   accessToken: string | null;
+  user: User | null;
+  setSession: (session: {
+    accessToken: string | null;
+    id: string | null;
+    user?: User | null;
+  }) => void;
 }
 
-interface SessionAction {
-  setSession: (newState: SessionState) => void;
-}
-
-export const useSessionStore = create(
-  persist<SessionState & SessionAction>(
-    (set) => ({
-      id: null,
-      accessToken: null,
-      setSession: (newState: SessionState) =>
-        set((state) => ({ ...state, ...newState })),
-    }),
-    {
-      name: "x-bati-session",
-    }
-  )
-);
+export const useSessionStore = create<SessionState>((set) => ({
+  id: null,
+  accessToken: null,
+  user: null,
+  setSession: ({
+    accessToken,
+    id,
+    user,
+  }: {
+    accessToken: string | null;
+    id: string | null;
+    user?: User | null;
+  }) => set({ accessToken, id, user: user || null }),
+}));

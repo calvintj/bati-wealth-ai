@@ -111,7 +111,11 @@ export default function TaskManagerPage() {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col">
         {/* NAVBAR */}
-        <Navbar setCustomerRisk={setCustomerRisk} customerRisk={customerRisk} />
+        <Navbar
+          setCustomerRisk={setCustomerRisk}
+          customerRisk={customerRisk}
+          showRiskDropdown={false}
+        />
 
         {/* DASHBOARD CONTENT */}
         <main className="flex flex-col md:flex-row gap-2 flex-1 p-2 overflow-y-auto">

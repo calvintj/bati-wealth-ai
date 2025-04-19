@@ -4,6 +4,8 @@ import {
   registerUser,
   updateUser,
   updatePassword,
+  getUsers,
+  deleteUser,
 } from "../controllers/auth";
 import {
   validateLogin,
@@ -24,8 +26,14 @@ router.post(
   registerUser
 );
 
+// Get all users route
+router.get("/users", getUsers);
+
 // Update user route (includes rm_number as a URL parameter)
 router.put("/update-user/:rm_number", updateUser);
+
+// Delete user route
+router.delete("/users/:rm_number", deleteUser);
 
 // Update password route
 router.put("/update-password", updatePassword);

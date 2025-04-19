@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import db from "../config/db";
 import {
   findAccountByEmail,
   createAccount,
   updateAccount,
   updatePassword as updatePasswordInDB,
+  getAllUsers,
+  deleteUserByRMNumber,
 } from "../models/rm-account";
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -50,6 +53,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         id: account.rm_account_id,
         email: account.email,
         rm_number: account.rm_number,
+        role: account.role || "user",
       },
       JWT_SECRET,
       { expiresIn: "24h" }
@@ -63,6 +67,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         id: account.rm_account_id,
         email: account.email,
         rm_number: account.rm_number,
+        role: account.role || "user",
       },
     });
   } catch (err) {
@@ -80,9 +85,11 @@ export const registerUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400).json({ error: "Email and password are required." });
+    const { email, password, role, rm_number } = req.body;
+    if (!email || !password || !rm_number) {
+      res
+        .status(400)
+        .json({ error: "Email, password, and RM number are required." });
       return;
     }
 
@@ -93,7 +100,7 @@ export const registerUser = async (
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await createAccount(email, hashedPassword);
+    await createAccount(email, rm_number, hashedPassword, role);
 
     res.status(201).json({ message: "User registered successfully." });
     return;
@@ -150,5 +157,33 @@ export const updatePassword = async (
     console.error("Update password error:", err);
     res.status(500).json({ error: "Internal server error" });
     return;
+  }
+};
+
+export const getUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const users = await getAllUsers();
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+};
+
+export const deleteUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { rm_number } = req.params;
+  try {
+    const deleted = await deleteUserByRMNumber(rm_number);
+    if (!deleted) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Failed to delete user" });
   }
 };
