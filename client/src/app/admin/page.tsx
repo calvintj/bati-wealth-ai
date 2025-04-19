@@ -189,7 +189,7 @@ const AdminPage = () => {
   return (
     <ProtectedRoute requireAdmin={true}>
       <div className="min-h-screen dark:bg-gray-900">
-        <div className="m-2 sm:m-4 flex flex-col sm:flex-row justify-between items-center mb-6 p-4 border-b-2 border-gray-300 dark:border-none dark:bg-[#1D283A] rounded-2xl gap-4">
+        <div className="p-4 mx-4 flex flex-col sm:flex-row gap-4 justify-between items-center border-b-2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-2xl">
           <Image
             src={theme === "dark" ? "/bati-dark.svg" : "/bati-light.svg"}
             alt="Bati Logo"
@@ -197,14 +197,14 @@ const AdminPage = () => {
             height={30}
           />
           <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 pb-2">
             <ColorModeToggle />
             <div className="flex items-center space-x-4">
               <UserNav />
             </div>
           </div>
         </div>
-        <main className="container mx-auto px-2 sm:px-4">
+        <main className="container mx-auto p-4 sm:px-4">
           <div className="flex flex-col gap-4 sm:gap-6">
             {/* User Management Card */}
             <div className="p-4 sm:p-6 bg-white dark:bg-[#1D283A] rounded-lg shadow hover:shadow-lg transition-shadow">
