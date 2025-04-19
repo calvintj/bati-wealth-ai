@@ -99,7 +99,18 @@ const AdminPage = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "rm_number") {
+      // Remove any leading zeros after "RM" and generate email
+      const normalizedRmNumber = value.replace(/^RM0+/, "RM");
+      const email = value ? `${normalizedRmNumber}@batiinvestasi.ai` : "";
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        email: email,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handlePasswordInputChange = (
@@ -385,19 +396,6 @@ const AdminPage = () => {
                   <div className="grid grid-cols-1 gap-4 mb-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         RM Number
                       </label>
                       <input
@@ -405,8 +403,25 @@ const AdminPage = () => {
                         name="rm_number"
                         value={formData.rm_number}
                         onChange={handleInputChange}
+                        placeholder="RM001"
+                        pattern="RM\d{3}"
+                        title="RM number must be in format RMXXX where XXX is a 3-digit number"
                         className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white bg-gray-100"
+                        required
+                        readOnly
                       />
                     </div>
                     {formMode === "create" && (
