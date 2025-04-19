@@ -8,6 +8,7 @@ import {
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import batiDark from "../../../public/bati-dark.svg";
 import batiLight from "../../../public/bati-light.svg";
+import { useTheme } from "next-themes";
 // import { Bell, Mail } from "lucide-react";
 // import { Button } from "@/components/ui/button";
 
@@ -41,6 +42,7 @@ export default function Navbar({
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { theme } = useTheme();
 
   // Array of risk options with their display labels and values
   const riskProfile = [
@@ -77,12 +79,7 @@ export default function Navbar({
             </SheetTitle>
             <div className="py-4">
               <Image
-                src={
-                  typeof window !== "undefined" &&
-                  document.documentElement.classList.contains("dark")
-                    ? "/bati-dark.svg"
-                    : "/bati-light.svg"
-                }
+                src={theme === "dark" ? "/bati-dark.svg" : "/bati-light.svg"}
                 alt="Fund Manager CRM"
                 width={320}
                 height={320}
@@ -132,7 +129,6 @@ export default function Navbar({
           alt="Bati Logo"
           width={100}
           height={30}
-          className="md:w-[120px] md:h-[36px] w-auto h-auto"
         />
         {/* Left: Only show on /overview */}
         <div className="flex items-center gap-2">
