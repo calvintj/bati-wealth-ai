@@ -28,8 +28,8 @@ function mapJsonToCustomers(jsonData: any[]): Customer[] {
 }
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
   const filePath = path.join(process.cwd(), "public/customers-1.json");
 
@@ -39,7 +39,9 @@ export async function GET(
     Array.from(JSON.parse(customersJson))
   );
 
-  const customer = customers.find((c) => c.customerId.toString() === params.id);
+  const customer = customers.find(
+    (c) => c.customerId.toString() === context.params.id
+  );
 
   if (!customer) {
     return NextResponse.json({ error: "Customer not found" }, { status: 404 });
