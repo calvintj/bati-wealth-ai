@@ -10,7 +10,7 @@ export class CustomerService extends Service {
   ): Promise<PaginatedResponse<Customer>> {
     const searchParams = this.getSearchParams(options);
     const response = await fetch(
-      "/api/v2/customers" + `?${searchParams.toString()}`
+      "/api/v1/customers" + `?${searchParams.toString()}`
     );
     const json = await response.json();
 
@@ -20,7 +20,7 @@ export class CustomerService extends Service {
   }
 
   async getCustomer(id: string): Promise<ApiResponse<Customer>> {
-    const response = await fetch(`/api/v2/customers/${id}`);
+    const response = await fetch(`/api/v1/customers/${id}`);
     const json = await response.json();
 
     if (!response.ok) throw new Error(json?.message ?? "Something went wrong");
