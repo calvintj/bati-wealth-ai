@@ -28,7 +28,7 @@ function mapJsonToCustomers(jsonData: any[]): Customer[] {
 }
 
 export async function GET(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const filePath = path.join(process.cwd(), "public/customers-1.json");
