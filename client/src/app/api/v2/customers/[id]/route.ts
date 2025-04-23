@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { Customer, TransactionLabel } from "@/types/customer-v2";
 
@@ -29,23 +29,24 @@ function mapJsonToCustomers(jsonData: any[]): Customer[] {
 
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const id = (await params).id;
+
   const filePath = path.join(process.cwd(), "public/customers-1.json");
 
   const customersJson = await fs.readFile(filePath, "utf-8");
 
-  const customers: Customer[] = mapJsonToCustomers(
+  const customer = mapJsonToCustomers(
     Array.from(JSON.parse(customersJson))
-  );
-
-  const customer = customers.find(
-    (c) => c.customerId.toString() === context.params.id
-  );
+  ).find((customer) => customer.customerId.toString() === id);
 
   if (!customer) {
-    return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+    return NextResponse.json(
+      { data: null, message: "Customer not found." },
+      { status: 404 }
+    );
   }
 
-  return NextResponse.json(customer);
+  return NextResponse.json({ data: customer, statusCode: 200 });
 }
