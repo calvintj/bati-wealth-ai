@@ -160,7 +160,9 @@ export default function ChatPopup({
                       </Button>
                     </div>
                   )}
-                  <h2 className="font-bold text-base md:text-lg text-black dark:text-white">WealthAI</h2>
+                  <h2 className="font-bold text-base md:text-lg text-black dark:text-white">
+                    WealthAI
+                  </h2>
                 </div>
               </div>
               <Button

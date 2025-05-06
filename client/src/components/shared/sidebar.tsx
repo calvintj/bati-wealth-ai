@@ -10,7 +10,7 @@ import {
   List,
   User,
   CircleCheckBig,
-  // Newspaper,
+  ChartLine,
   Bot,
   LogOut,
 } from "lucide-react";
@@ -37,12 +37,11 @@ export const navItems = [
     icon: <User />,
     label: "Customer Details",
   },
-
-  // {
-  //   to: "/news",
-  //   icon: <Newspaper />,
-  //   label: "News",
-  // },
+  {
+    to: "/market-indices",
+    icon: <ChartLine />,
+    label: "Market Indices",
+  },
   {
     to: "/chatbot",
     icon: <Bot />,
