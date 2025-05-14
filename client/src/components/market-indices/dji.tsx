@@ -10,7 +10,9 @@ import {
   Tooltip,
   CartesianGrid,
   Area,
+  ReferenceLine,
 } from "recharts";
+import { IndexCard } from "../ui/index-card";
 
 export interface DJIPoint {
   report_date: string;
@@ -26,8 +28,38 @@ export const DJIChart: React.FC = () => {
     fetcher
   );
 
-  if (error) return <div className="text-red-600">Error loading DJI data.</div>;
-  if (!data) return <div>Loading chart…</div>;
+  if (error)
+    return (
+      <div className="flex items-center justify-center h-64 text-red-600 text-center bg-red-50 dark:bg-red-900/20 rounded-md m-4">
+        <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-10 w-10 mx-auto mb-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <p>Error loading DJI data.</p>
+        </div>
+      </div>
+    );
+
+  if (!data)
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-md m-4">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-8 w-8 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin mb-2"></div>
+          <p>Loading chart data...</p>
+        </div>
+      </div>
+    );
 
   const color =
     data[data.length - 1].change_percent < 0
@@ -36,98 +68,157 @@ export const DJIChart: React.FC = () => {
       ? "#22c55e"
       : "#9ca3af";
 
+  const latestDataPoint = data[data.length - 1];
+  const previousClose = data.length > 1 ? data[data.length - 2].close_price : 0;
+  const changeValue = latestDataPoint.close_price - previousClose;
+
+  // Calculate min and max values for better visualization
+  const prices = data.map((item) => item.close_price);
+  const minValue = Math.min(...prices) * 0.995; // add 0.5% padding
+  const maxValue = Math.max(...prices) * 1.005;
+
+  const formattedDate = new Date(
+    latestDataPoint.report_date
+  ).toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
   return (
-    <div className="flex flex-col p-4">
-      <div className="flex items-center gap-4">
-        <p className="text-2xl font-bold text-black dark:text-white">
-          Dow Jones Industrial Average
-        </p>
-        <p
-          className={`text-lg font-bold ${
-            data[data.length - 1].change_percent < 0
-              ? "text-red-500"
-              : data[data.length - 1].change_percent > 0
-              ? "text-green-500"
-              : "text-gray-500"
-          }`}
-        >
-          {data[data.length - 1].change_percent.toFixed(2)}%
-        </p>
-        <p>{data[data.length - 1].report_date}</p>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <ComposedChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
-        >
-          <defs>
-            <linearGradient
-              id={`colorGradient-${color.substring(1)}`}
-              x1="0"
-              y1="0"
-              x2="0"
-              y2="1"
-            >
-              <stop offset="5%" stopColor={color} stopOpacity={0.2} />
-              <stop offset="95%" stopColor={color} stopOpacity={0.05} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="report_date"
-            tickFormatter={(dateStr) => {
-              const date = new Date(dateStr);
-              return `${date.toLocaleString("id-ID", {
-                month: "short",
-              })} ${date.getFullYear()}`;
-            }}
-            interval="preserveStartEnd"
-            minTickGap={60}
-            stroke="white"
-          />
-          <YAxis
-            domain={["auto", "auto"]}
-            tickFormatter={(val) =>
-              val.toLocaleString("id-ID", { maximumFractionDigits: 0 })
-            }
-            stroke="white"
-          />
-          <Tooltip
-            content={({ payload, label }) => {
-              if (payload && payload.length > 0 && payload[0].value != null) {
-                const date = new Date(label);
-                const formattedDate = date.toLocaleDateString("en-US", {
+    <IndexCard
+      title="Dow Jones Industrial Average"
+      symbol="DJI"
+      currentValue={latestDataPoint.close_price}
+      changeValue={changeValue}
+      changePercent={latestDataPoint.change_percent}
+      date={formattedDate}
+    >
+      <div className="p-4">
+        <ResponsiveContainer width="100%" height={300}>
+          <ComposedChart
+            data={data}
+            margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+          >
+            <defs>
+              <linearGradient
+                id={`djiGradient-${color.substring(1)}`}
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop offset="5%" stopColor={color} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={color} stopOpacity={0.05} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              vertical={false}
+              strokeDasharray="3 3"
+              stroke="rgba(156, 163, 175, 0.2)"
+            />
+            <XAxis
+              dataKey="report_date"
+              tickFormatter={(dateStr) => {
+                const date = new Date(dateStr);
+                return `${date.toLocaleString("en-US", {
                   month: "short",
                   day: "numeric",
-                  year: "numeric",
-                });
-                const value = payload[0].value as number;
-                return (
-                  <div className="bg-white p-2 rounded-md shadow text-black">
-                    {`${formattedDate} - ${value.toLocaleString("id-ID", {
-                      maximumFractionDigits: 2,
-                    })}`}
-                  </div>
-                );
+                })}`;
+              }}
+              axisLine={{ stroke: "rgba(156, 163, 175, 0.2)" }}
+              interval="preserveStartEnd"
+              minTickGap={50}
+              tick={{ fill: "#6B7280", fontSize: 12 }}
+              padding={{ left: 10, right: 10 }}
+            />
+            <YAxis
+              domain={[minValue, maxValue]}
+              tickFormatter={(val) =>
+                val.toLocaleString("en-US", { maximumFractionDigits: 0 })
               }
-              return null;
-            }}
-          />
-          <Area
-            type="monotone"
-            dataKey="close_price"
-            fill={`url(#colorGradient-${color.substring(1)})`}
-            strokeWidth={0}
-          />
-          <Line
-            type="monotone"
-            dataKey="close_price"
-            stroke={color}
-            dot={false}
-            strokeWidth={2}
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
-    </div>
+              tick={{ fill: "#6B7280", fontSize: 12 }}
+              axisLine={{ stroke: "rgba(156, 163, 175, 0.2)" }}
+              width={60}
+            />
+            <Tooltip
+              content={({ payload, label }) => {
+                if (payload && payload.length > 0 && payload[0].value != null) {
+                  const date = new Date(label);
+                  const formattedDate = date.toLocaleDateString("en-US", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  });
+                  const value = payload[0].value as number;
+                  const dataPoint = data.find((d) => d.report_date === label);
+
+                  return (
+                    <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">
+                      <div className="text-sm font-medium mb-1">
+                        {formattedDate}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex justify-between gap-4">
+                          <span className="text-gray-500 dark:text-gray-400">
+                            Close:
+                          </span>
+                          <span className="font-semibold">
+                            {value.toLocaleString("en-US", {
+                              maximumFractionDigits: 2,
+                            })}
+                          </span>
+                        </div>
+                        {dataPoint && (
+                          <div className="flex justify-between gap-4">
+                            <span className="text-gray-500 dark:text-gray-400">
+                              Change:
+                            </span>
+                            <span
+                              className={`font-semibold ${
+                                dataPoint.change_percent < 0
+                                  ? "text-red-500"
+                                  : dataPoint.change_percent > 0
+                                  ? "text-green-500"
+                                  : "text-gray-500"
+                              }`}
+                            >
+                              {dataPoint.change_percent > 0 ? "+" : ""}
+                              {dataPoint.change_percent.toFixed(2)}%
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+            <ReferenceLine
+              y={previousClose}
+              strokeDasharray="3 3"
+              stroke="#6B7280"
+              strokeWidth={1}
+            />
+            <Area
+              type="monotone"
+              dataKey="close_price"
+              fill={`url(#djiGradient-${color.substring(1)})`}
+              strokeWidth={0}
+            />
+            <Line
+              type="monotone"
+              dataKey="close_price"
+              stroke={color}
+              dot={false}
+              strokeWidth={2}
+              activeDot={{ r: 5, fill: color, stroke: "#fff", strokeWidth: 2 }}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </IndexCard>
   );
 };
