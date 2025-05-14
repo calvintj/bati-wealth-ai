@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase-client";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-export const revalidate = 60 * 60 * 12;
+export const revalidate = 43200; // 60 * 60 * 12 = 43200 seconds (12 hours)
 
 export async function GET() {
   const { data, error } = await supabase
