@@ -14,6 +14,10 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
+// Trust only first proxy in the chain - more secure than trusting all proxies
+// Only trusts the immediate proxy (nginx in this case)
+app.set("trust proxy", 1);
+
 // CORS Configuration - Moving this up before other middleware
 app.use(
   cors({
@@ -80,7 +84,23 @@ app.use(
 // 2. Rate Limiting - Prevent brute force attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // limit each IP to 100 requests per windowMs
+  max: 1000, // limit each IP to 1000 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  // Use a more specific IP extraction method that works with proxies
+  keyGenerator: (req) => {
+    // Get IP from X-Forwarded-For (first value in the header)
+    const xForwardedFor = req.get("X-Forwarded-For");
+    // Make sure we always return a string value, never undefined
+    return xForwardedFor
+      ? xForwardedFor.split(",")[0].trim()
+      : req.ip || "unknown-ip";
+  },
+  // Skip validation errors to prevent app from crashing
+  validate: {
+    trustProxy: false,
+    xForwardedForHeader: false,
+  },
 });
 app.use(limiter);
 
