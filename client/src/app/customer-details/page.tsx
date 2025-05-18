@@ -137,9 +137,6 @@ export default function CustomerDetailsPage() {
               )}
             </div>
 
-            <div className="ml-2 font-bold text-black dark:text-white">
-              Rekomendasi
-            </div>
             <div>
               <RecommendationProduct customerID={customerID} />
             </div>

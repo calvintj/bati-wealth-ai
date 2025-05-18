@@ -28,7 +28,8 @@ export const CompositeChart: React.FC = () => {
     fetcher
   );
 
-  if (error)
+  if (error) {
+    console.error("Composite Chart Error:", error);
     return (
       <div className="flex items-center justify-center h-64 text-red-600 text-center bg-red-50 dark:bg-red-900/20 rounded-md m-4">
         <div>
@@ -47,9 +48,11 @@ export const CompositeChart: React.FC = () => {
             />
           </svg>
           <p>Error loading IHSG data.</p>
+          <p className="text-sm mt-2">Error details: {error.message}</p>
         </div>
       </div>
     );
+  }
 
   if (!data)
     return (

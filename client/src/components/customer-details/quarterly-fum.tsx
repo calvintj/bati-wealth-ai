@@ -35,27 +35,35 @@ const QuarterlyFUM = ({ customerID }: QuarterlyFUMProps) => {
   const quarterlyFUM = useQuarterlyFUM(customerID, selectedAsset);
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between">
+    <div className="p-6 flex flex-col h-full">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            FUM per Kuartal
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Berdasarkan Tipe Aset
+          </p>
+        </div>
         <Menu as="div" className="relative inline-block z-10">
           <div>
-            <MenuButton className="cursor-pointer flex w-full rounded-lg p-2 text-sm font-semibold ring-2 ring-gray-300 dark:ring-white text-black dark:text-white bg-white dark:bg-[#1D283A]">
+            <MenuButton className="cursor-pointer flex items-center rounded-lg px-4 py-2 text-sm font-semibold ring-1 ring-gray-300 dark:ring-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
               {assetType.find((asset) => asset.value === selectedAsset)
                 ?.label || "Asset"}
-              <ChevronDownIcon className="w-5 h-5 text-black dark:text-white ml-2" />
+              <ChevronDownIcon className="w-5 h-5 ml-2" />
             </MenuButton>
           </div>
           <MenuItems
             transition
-            className="absolute mt-2 w-30 rounded-md text-black dark:text-white border border-gray-300 dark:border-white bg-white dark:bg-[#1D283A] transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+            className="absolute right-0 mt-2 w-40 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none"
           >
-            <div>
+            <div className="py-1">
               {assetType.map((asset) => (
                 <MenuItem key={asset.value}>
                   <button
                     type="button"
                     onClick={() => setSelectedAsset(asset.value)}
-                    className="cursor-pointer w-full px-4 py-2 text-left text-sm data-focus:bg-gray-100 data-focus:text-gray-900"
+                    className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   >
                     {asset.label}
                   </button>
@@ -64,97 +72,110 @@ const QuarterlyFUM = ({ customerID }: QuarterlyFUMProps) => {
             </div>
           </MenuItems>
         </Menu>
-        <p className="text-black dark:text-white text-2xl font-bold mb-4 text-center">
-          FUM per Kuartal
-        </p>
       </div>
 
-      <ResponsiveContainer height={300}>
-        <ComposedChart
-          data={quarterlyFUM}
-          margin={{ top: 70, right: 0, left: 50, bottom: 30 }}
-        >
-          <XAxis
-            dataKey="name"
-            axisLine
-            tickLine
-            tick={(props) => (
-              <XAxisInformation {...props} data={quarterlyFUM} />
-            )}
-            className="text-black dark:text-white"
-            stroke="currentColor"
-            interval={0}
-          />
-          {/* Left Y-Axis for FBI values */}
-          <YAxis
-            yAxisId="left"
-            tickFormatter={(tick) => (tick / 1000).toLocaleString()}
-            axisLine
-            className="text-black dark:text-white"
-            stroke="currentColor"
-            domain={[0, "auto"]}
+      <div className="flex-1">
+        <ResponsiveContainer width="100%" height={400}>
+          <ComposedChart
+            data={quarterlyFUM}
+            margin={{ top: 30, right: 30, left: 50, bottom: 30 }}
           >
-            <Label
-              value="(in thousands)"
-              angle={-90}
-              position="insideLeft"
-              className="text-black dark:text-white"
-              style={{ fill: "currentColor", textAnchor: "middle" }}
+            <XAxis
+              dataKey="name"
+              axisLine={{ stroke: "rgba(156, 163, 175, 0.2)" }}
+              tickLine={false}
+              tick={(props) => (
+                <XAxisInformation {...props} data={quarterlyFUM} />
+              )}
+              className="text-gray-600 dark:text-gray-300"
+              stroke="currentColor"
+              interval={0}
             />
-          </YAxis>
-          {/* Right Y-Axis for the ratio */}
-          <YAxis
-            yAxisId="right"
-            orientation="right"
-            tickFormatter={(tick) => tick.toFixed(2)}
-            axisLine
-            className="text-black dark:text-white"
-            stroke="currentColor"
-          />
-          <Tooltip
-            cursor={{ fill: "rgba(255,255,255,0.1)" }}
-            contentStyle={{
-              border: "1px solid var(--border)",
-              borderRadius: "1rem",
-              background: "white",
-              color: "var(--foreground)",
-            }}
-            labelStyle={{ color: "black" }}
-            itemStyle={{ color: "black" }}
-            formatter={(val, name) => {
-              if (name === "ratio") {
-                return [
-                  typeof val === "number" ? val.toFixed(4) : val,
-                  "FBI / FUM dalam %",
-                ];
-              }
-              return [
-                typeof val === "number" ? val.toLocaleString() : val,
-                name === "value" ? "FBI" : name,
-              ];
-            }}
-            labelFormatter={() => ""}
-          />
-          {/* FBI Bar using left axis */}
-          <Bar
-            dataKey="value"
-            yAxisId="left"
-            barSize={50}
-            radius={[8, 8, 0, 0]}
-          >
-            {quarterlyFUM.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={"#01ACD2"} />
-            ))}
-          </Bar>
-          {/* Ratio Line using right axis */}
-          <Line
-            type="monotone"
-            dataKey="ratio"
-            yAxisId="right"
-            stroke="#FF0000"
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
+            <YAxis
+              yAxisId="left"
+              tickFormatter={(tick) => (tick / 1000).toLocaleString()}
+              axisLine={{ stroke: "rgba(156, 163, 175, 0.2)" }}
+              tickLine={false}
+              className="text-gray-600 dark:text-gray-300"
+              stroke="currentColor"
+              domain={[0, "auto"]}
+              padding={{ top: 100 }}
+            >
+              <Label
+                value="(in thousands)"
+                angle={-90}
+                position="insideLeft"
+                className="text-gray-600 dark:text-gray-300"
+                style={{ fill: "currentColor", textAnchor: "middle" }}
+              />
+            </YAxis>
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              tickFormatter={(tick) => tick.toFixed(2)}
+              axisLine={{ stroke: "rgba(156, 163, 175, 0.2)" }}
+              tickLine={false}
+              className="text-gray-600 dark:text-gray-300"
+              stroke="currentColor"
+            />
+            <Tooltip
+              cursor={{ fill: "rgba(156, 163, 175, 0.1)" }}
+              content={({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                  const fumValue = payload.find(
+                    (p) => p.dataKey === "value"
+                  )?.value;
+
+                  return (
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        {label}
+                      </p>
+                      <div className="space-y-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          FUM:{" "}
+                          <span className="font-medium">
+                            Rp {Number(fumValue).toLocaleString("id-ID")}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+            <Bar
+              dataKey="value"
+              yAxisId="left"
+              barSize={50}
+              radius={[8, 8, 0, 0]}
+            >
+              {quarterlyFUM.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill="#01ACD2"
+                  className="transition-all duration-200 ease-in-out"
+                />
+              ))}
+            </Bar>
+            <Line
+              type="monotone"
+              dataKey="ratio"
+              yAxisId="right"
+              stroke="#FF0000"
+              strokeWidth={2}
+              dot={{ r: 4, fill: "#FF0000", strokeWidth: 2 }}
+              activeDot={{
+                r: 6,
+                fill: "#FF0000",
+                stroke: "#fff",
+                strokeWidth: 2,
+              }}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

@@ -41,7 +41,7 @@ const renderCustomizedLabel = ({
       fill="currentColor"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
-      className="text-sm md:text-base font-bold text-black dark:text-white"
+      className="text-sm md:text-base font-bold text-gray-900 dark:text-white"
     >
       {`${(percent * 100).toFixed(0)}%`}
     </text>
@@ -69,7 +69,6 @@ export default function PortfolioPie({
   const isMobile = windowWidth < 768;
   const innerRadius = isMobile ? 40 : 60;
   const outerRadius = isMobile ? 70 : 100;
-  const chartAspect = 1.8;
 
   const { transformedData, loading, error } = useOptimizedPortfolio(customerID);
 
@@ -93,90 +92,143 @@ export default function PortfolioPie({
 
   if (loading) {
     return (
-      <div className="p-4 flex justify-center items-center h-[330px]">
-        <p>Loading portfolio data...</p>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex justify-center items-center h-[400px]">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-8 w-8 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin mb-2"></div>
+          <p className="text-gray-600 dark:text-gray-300">Memuat data...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 flex justify-center items-center h-[330px]">
-        <p>Error loading portfolio data: {error.message}</p>
+      <div className="p-6 flex justify-center items-center h-[400px]">
+        <div className="text-center text-red-600 dark:text-red-400">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-10 w-10 mx-auto mb-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <p>Error memuat data portofolio</p>
+          <p className="text-sm mt-2">{error.message}</p>
+        </div>
       </div>
     );
   }
 
   if (transformedData.length === 0) {
     return (
-      <div className="p-4 flex justify-center items-center h-[330px]">
-        <p>No portfolio data available</p>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex justify-center items-center h-[400px]">
+        <p className="text-gray-600 dark:text-gray-300">
+          Tidak ada data portofolio
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 h-[330px]">
-      <p className="text-center text-xl md:text-2xl font-bold text-black dark:text-white">
-        Portofolio Optimal
-      </p>
-      <p className="text-center text-xl text-gray-400">Berdasarkan Tipe Aset</p>
-      <div className="flex-1 min-h-0">
-        <ResponsiveContainer width="100%" aspect={chartAspect}>
-          <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-            <Pie
-              data={transformedData}
-              innerRadius={innerRadius}
-              outerRadius={outerRadius}
-              labelLine={false}
-              label={renderCustomizedLabel}
-              dataKey="value"
-              paddingAngle={2}
-            >
-              {transformedData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
-                  stroke="none"
-                />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(value) => `${value.toLocaleString()}`}
-              contentStyle={{
-                border: "1px solid var(--border)",
-                borderRadius: "1rem",
-                background: "white",
-                color: "var(--foreground)",
-              }}
-            />
-            <Legend
-              layout={isMobile ? "horizontal" : "vertical"}
-              verticalAlign={isMobile ? "bottom" : "middle"}
-              align={isMobile ? "center" : "right"}
-              iconType="circle"
-              wrapperStyle={{
-                color: "var(--foreground)",
-                fontSize: isMobile ? "0.75rem" : "0.9rem",
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="mt-auto pt-2 flex justify-start items-center">
-        <div className="flex flex-col">
-          <p className="text-sm text-white">Current Return</p>
-          <div className="flex items-center gap-2">
-            <p className="bg-[#01ACD2] text-black rounded-md text-center w-12 py-1">
-              {(expectedReturn * 100).toFixed(0)}%
-            </p>
-            <p
-              className={`${returnDiff > 0 ? "text-green-500" : "text-red-500"} flex items-center justify-center rounded-md text-center w-12 py-1`}
-            >
-              {returnDiff > 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
-              {(returnDiff * 100).toFixed(0)}%
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+      <div className="flex flex-col h-full">
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Portofolio Optimal
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Berdasarkan Tipe Aset
             </p>
           </div>
+          <div className="flex flex-col items-end">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Expected Return
+            </p>
+            <div className="flex items-center gap-2">
+              <p className="bg-[#01ACD2] text-white rounded-md text-center px-3 py-1 font-semibold">
+                {(expectedReturn * 100).toFixed(0)}%
+              </p>
+              <p
+                className={`${
+                  returnDiff > 0 ? "text-green-500" : "text-red-500"
+                } flex items-center justify-center rounded-md text-center font-semibold`}
+              >
+                {returnDiff > 0 ? (
+                  <ArrowUpIcon className="h-4 w-4" />
+                ) : (
+                  <ArrowDownIcon className="h-4 w-4" />
+                )}
+                {Math.abs(returnDiff * 100).toFixed(0)}%
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 flex items-center justify-center">
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={transformedData}
+                innerRadius={innerRadius}
+                outerRadius={outerRadius}
+                labelLine={false}
+                label={renderCustomizedLabel}
+                dataKey="value"
+                paddingAngle={2}
+              >
+                {transformedData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={colors[index % colors.length]}
+                    stroke="none"
+                    className="transition-all duration-200 ease-in-out"
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-3">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                          {data.name}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          {`Rp ${data.value.toLocaleString("id-ID")}`}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend
+                layout={isMobile ? "horizontal" : "vertical"}
+                verticalAlign={isMobile ? "bottom" : "middle"}
+                align={isMobile ? "center" : "right"}
+                iconType="circle"
+                wrapperStyle={{
+                  color: "var(--foreground)",
+                  fontSize: isMobile ? "0.75rem" : "0.9rem",
+                  padding: "0 1rem",
+                }}
+                formatter={(value) => (
+                  <span className="text-gray-600 dark:text-gray-300">
+                    {value}
+                  </span>
+                )}
+              />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

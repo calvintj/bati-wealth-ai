@@ -43,7 +43,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
     setNewDueDate(format(selectedDate, "yyyy-MM-dd"));
   }, [selectedDate]);
 
-  // Filter tasks for the selecqted date using query data
+  // Filter tasks for the selected date using query data
   const dateKey = format(selectedDate, "yyyy-MM-dd");
   const tasksForSelectedDate = useMemo(() => {
     if (!taskResponse) return [];
@@ -58,16 +58,16 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
       const rect = buttonRef.current.getBoundingClientRect();
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
-      const popupWidth = 240; // Width of the popup (w-60 = 15rem = 240px)
+      const popupWidth = 320; // Increased width for better form layout
 
       // For mobile screens (width < 768px), center the popup
       if (windowWidth < 768) {
         const left = (windowWidth - popupWidth) / 2;
-        const top = Math.min(rect.bottom + window.scrollY, windowHeight * 0.3); // Position at 30% from top
+        const top = Math.min(rect.bottom + window.scrollY, windowHeight * 0.3);
         setPopupPosition({ top, left });
       } else {
         // Desktop positioning logic
-        let left = rect.left + window.scrollX - 120;
+        let left = rect.left + window.scrollX - 160;
         let top = rect.bottom + window.scrollY;
 
         // Adjust horizontal position if popup would go off screen
@@ -111,9 +111,9 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
       const rect = buttonRef.current.getBoundingClientRect();
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
-      const popupWidth = 240;
+      const popupWidth = 320;
 
-      let left = rect.left + window.scrollX - 120;
+      let left = rect.left + window.scrollX - 160;
       let top = rect.bottom + window.scrollY;
 
       if (left + popupWidth > windowWidth) {
@@ -136,7 +136,6 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   const handleDelete = async (taskId: string) => {
     try {
       await deleteData(taskId);
-      // Update cache optimistically
       queryClient.setQueryData<TaskResponse>(["task"], (oldData) => {
         if (!oldData) return oldData;
         return {
@@ -162,7 +161,6 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
         };
 
         await updateData(updatedTask);
-        // Update cache optimistically
         queryClient.setQueryData<TaskResponse>(["task"], (oldData) => {
           if (!oldData) return oldData;
           return {
@@ -178,7 +176,6 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
           invitee: newInvitee,
           due_date: newDueDate,
         });
-        // Update cache for new task
         queryClient.setQueryData<TaskResponse>(["task"], (oldData) => {
           if (!oldData) return newTaskResponse;
           return {
@@ -193,62 +190,118 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full text-gray-600 dark:text-gray-300">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-8 w-8 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin mb-2"></div>
+          <p>Loading tasks...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-full text-red-600 dark:text-red-400">
+        <div className="text-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-10 w-10 mx-auto mb-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <p>Error: {error.message}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative p-4 rounded-lg text-black dark:text-white w-full bg-white dark:bg-[#1D283A] h-[500px] border border-gray-300 dark:border-none">
-      {/* Header with date and add button */}
-      <div className="flex justify-between items-center mb-3">
-        <p className="text-lg font-bold">
-          {format(selectedDate, "d MMMM yyyy", { locale: id })}
-        </p>
+    <div className="p-6 flex flex-col h-[600px] border-1 border-gray-300 dark:border-none rounded-lg shadow-lg">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Task Manager
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            {format(selectedDate, "d MMMM yyyy", { locale: id })}
+          </p>
+        </div>
         <button
           ref={buttonRef}
-          className="text-3xl text-blue-500 cursor-pointer"
+          className="p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors cursor-pointer"
           onClick={togglePopup}
           aria-label="Add Task"
         >
-          <CirclePlus />
+          <CirclePlus className="h-6 w-6" />
         </button>
       </div>
 
-      {/* Display loading or error states */}
-      {isLoading && <p>Loading tasks...</p>}
-      {error && <p>Error: {error.message}</p>}
-
-      {/* Task list */}
-      {tasksForSelectedDate.length === 0 ? (
-        <p className="text-center bg-gray-300 p-4 rounded-2xl text-black">
-          Tidak ada tugas di tanggal ini!
-        </p>
-      ) : (
-        <ul className="mb-4 max-h-80 overflow-y-auto rounded-md">
-          {tasksForSelectedDate.map((task, index) => (
-            <li
-              key={task.id || index}
-              className="bg-blue-500 pl-2 mt-2 rounded-2xl text-black dark:text-white"
-            >
-              <div className="bg-white rounded-2xl p-2 text-black dark:text-white">
-                <p className="font-bold">{task.description}</p>
-                <p>Invitee: {task.invitee}</p>
-                <p>Due: {format(new Date(task.due_date), "yyyy-MM-dd")}</p>
+      <div className="flex-1">
+        {tasksForSelectedDate.length === 0 ? (
+          <div className="flex justify-center items-center h-full text-gray-600 dark:text-gray-300">
+            <div className="text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-10 w-10 mx-auto mb-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+              <p>Tidak ada tugas di tanggal ini!</p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto pr-2">
+            {tasksForSelectedDate.map((task, index) => (
+              <div
+                key={task.id || index}
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 transition-all duration-200 hover:shadow-xl"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {task.description}
+                  </h3>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(task)}
+                      className="p-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(task.id)}
+                      className="p-1.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  <p>Undangan: {task.invitee}</p>
+                  <p>Due: {format(new Date(task.due_date), "yyyy-MM-dd")}</p>
+                </div>
               </div>
-              <div className="flex gap-2 p-2">
-                <button
-                  onClick={() => handleDelete(task.id)}
-                  className="text-black dark:text-white hover:text-gray-200"
-                >
-                  <Trash className="h-4 w-4 cursor-pointer" />
-                </button>
-                <button
-                  onClick={() => handleEdit(task)}
-                  className="text-black dark:text-white hover:text-gray-200"
-                >
-                  <Pencil className="h-4 w-4 cursor-pointer" />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Popup */}
       {showPopup &&
@@ -262,62 +315,89 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
               maxHeight:
                 window.innerWidth < 768 ? "70vh" : "calc(100vh - 32px)",
               overflowY: "auto",
-              width: window.innerWidth < 768 ? "90%" : "240px",
+              width: window.innerWidth < 768 ? "90%" : "320px",
               transform: window.innerWidth < 768 ? "translateX(-50%)" : "none",
               left: window.innerWidth < 768 ? "50%" : popupPosition.left,
             }}
-            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-600 text-black dark:text-white"
+            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700"
           >
-            <p className="text-black dark:text-white mb-2">
-              {isEditing ? "Edit Tugas" : "Tambah Tugas"}
-            </p>
-            <textarea
-              value={newTask}
-              onChange={(e) => setNewTask(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault(); // Prevent new line in textarea
-                  handleSubmit();
-                }
-              }}
-              placeholder="Tugas"
-              className="w-full mb-2 p-2 rounded bg-white text-black border border-gray-600"
-            />
-            <input
-              type="text"
-              value={newInvitee}
-              onChange={(e) => setNewInvitee(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
-              placeholder="Undangan"
-              className="w-full mb-2 p-2 rounded bg-white text-black border border-gray-600"
-            />
-            <input
-              type="date"
-              value={newDueDate}
-              onChange={(e) => setNewDueDate(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
-              className="w-full mb-2 p-2 rounded bg-white text-black border border-gray-600"
-            />
-            <div className="flex gap-2">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                {isEditing ? "Edit Tugas" : "Tambah Tugas"}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {format(selectedDate, "d MMMM yyyy", { locale: id })}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Deskripsi Tugas
+                </label>
+                <textarea
+                  value={newTask}
+                  onChange={(e) => setNewTask(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit();
+                    }
+                  }}
+                  placeholder="Masukkan deskripsi tugas"
+                  className="w-full p-2 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Undangan
+                </label>
+                <input
+                  type="text"
+                  value={newInvitee}
+                  onChange={(e) => setNewInvitee(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSubmit();
+                    }
+                  }}
+                  placeholder="Masukkan nama undangan"
+                  className="w-full p-2 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Tanggal Jatuh Tempo
+                </label>
+                <input
+                  type="date"
+                  value={newDueDate}
+                  onChange={(e) => setNewDueDate(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSubmit();
+                    }
+                  }}
+                  className="w-full p-2 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
               <button
                 onClick={resetForm}
-                className="w-1/2 bg-gray-600 text-white p-2 rounded hover:bg-gray-700 cursor-pointer"
+                className="flex-1 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
               >
                 Batal
               </button>
               <button
                 onClick={handleSubmit}
-                className="w-1/2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700 cursor-pointer"
+                className="flex-1 px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors cursor-pointer"
               >
                 {isEditing ? "Simpan" : "Tambahkan"}
               </button>

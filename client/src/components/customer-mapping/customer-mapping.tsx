@@ -235,7 +235,7 @@ const StackedBarChart = ({ setPropensity, setAum }: StackedBarChartProps) => {
           // Get propensity category (from dataset label)
           const propensityCategory = context.dataset.label.split(" ")[0]; // Extract first word
 
-          return `Total: ${actualCount}\nAUM: ${aumCategory}\nPropensity: ${propensityCategory}`;
+          return `Total Nasabah: ${actualCount}\nAUM: ${aumCategory}\nPropensity: ${propensityCategory}`;
         },
       },
     },

@@ -18,7 +18,7 @@ export default function MarketIndicesPage() {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col relative w-full">
         {/* NAVBAR - always visible */}
-        <div className="w-full sticky top-0 z-50">
+        <div className="w-full">
           <Navbar
             setCustomerRisk={setCustomerRisk}
             customerRisk={customerRisk}
@@ -39,12 +39,10 @@ export default function MarketIndicesPage() {
         {/* Charts Grid Layout */}
         <div className="p-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Indonesian Indices */}
-          <div className="col-span-1 lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white text-center">
-                Indonesian Market
-              </h2>
-            </div>
+          <div className="w-full p-3 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white text-center">
+              Indonesian Market
+            </h2>
           </div>
 
           <div className="col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
@@ -56,23 +54,21 @@ export default function MarketIndicesPage() {
           </div>
 
           {/* US Indices */}
-          <div className="col-span-1 lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white text-center">
-                US Market
-              </h2>
-            </div>
+          <div className="w-full p-3 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white text-center">
+              US Market
+            </h2>
           </div>
 
           <div className="col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
             <SPXChart />
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="col-span-2 lg:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
             <NDXChart />
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="col-span-2 lg:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
             <DJIChart />
           </div>
         </div>

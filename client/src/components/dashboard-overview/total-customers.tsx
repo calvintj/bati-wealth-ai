@@ -103,17 +103,30 @@ export default function GaugeChart({
           />
         </Pie>
         <Tooltip
-          formatter={(value, name) => {
-            if (name === "Completed") {
-              return `${currentValue.toLocaleString()}`;
+          content={({ payload }) => {
+            if (payload && payload.length > 0) {
+              const value = payload[0].value as number;
+              const name = payload[0].name as string;
+
+              return (
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">
+                  <div className="text-sm font-medium mb-1">
+                    {name === "Completed" ? "Tercapai" : "Tersisa"}
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex justify-between gap-4">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Jumlah:
+                      </span>
+                      <span className="font-semibold">
+                        {value.toLocaleString("id-ID")} nasabah
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
             }
-            return `${(targetValue - currentValue).toLocaleString()}`;
-          }}
-          contentStyle={{
-            background: "white",
-            border: "1px solid var(--border)",
-            borderRadius: "4px",
-            color: "var(--foreground)",
+            return null;
           }}
         />
       </RePieChart>
