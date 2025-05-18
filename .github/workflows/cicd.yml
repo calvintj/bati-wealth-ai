@@ -1,4 +1,4 @@
-name: Deploy to EC2 with Docker Compose
+name: Deploy to EC2
 
 on:
   push:
@@ -6,19 +6,60 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to EC2 via SSH
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Copy code into Staging
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          source: "./"
+          target: "/home/${{ secrets.AWS_USER }}/wealth-ai"
+
+      - name: Setup Build Environtment
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USER }}
           key: ${{ secrets.AWS_SSH_KEY }}
           script: |
-            cd /home/ec2-user/wealth-ai
-            git pull origin main
-            docker compose down
-            docker compose build
-            docker compose up -d
+            cd /home/${{ secrets.AWS_USER }}/wealth-ai
+
+            docker compose pull
+
+      - name: Build and Start Docker Containers
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            cd /home/${{ secrets.AWS_USER }}/wealth-ai
+
+            docker compose up -d --build
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-and-push]
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            echo "Deploying to ${{ secrets.AWS_HOST }}..."
+            cd /home/${{ secrets.AWS_USER }}/wealth-ai
+
+            docker compose restart
+
+            echo "Deployment completed on ${{ secrets.AWS_HOST }}"
+
+            docker system prune -f --volumes

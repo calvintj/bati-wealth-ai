@@ -31,7 +31,7 @@ export default function GlobalErrorPage({
           <p className="mt-4 text-muted-foreground">{error?.message}</p>
         )}
         <div className="mt-6 flex gap-2 items-center justify-center">
-          <Link href="/dashboard" className={buttonVariants()}>
+          <Link href="/dashboard-overview" className={buttonVariants()}>
             Go to Homepage
           </Link>
           <Button onClick={reset}>Try Again</Button>
