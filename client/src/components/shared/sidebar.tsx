@@ -13,6 +13,7 @@ import {
   ChartLine,
   Bot,
   LogOut,
+  Newspaper,
 } from "lucide-react";
 
 // Export navItems so Navbar can access them
@@ -41,6 +42,11 @@ export const navItems = [
     to: "/market-indices",
     icon: <ChartLine />,
     label: "Market Indices",
+  },
+  {
+    to: "/market-news",
+    icon: <Newspaper />,
+    label: "Market News",
   },
   {
     to: "/chatbot",
