@@ -67,6 +67,7 @@
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "tippy.js": "^6.3.7",
+    "tradingeconomics": "^2.5.2",
     "uuid": "^11.1.0",
     "zod": "^3.24.2",
     "zustand": "^5.0.3"

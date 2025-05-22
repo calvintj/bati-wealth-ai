@@ -2,7 +2,7 @@
 import Sidebar from "@/components/shared/sidebar";
 // import Navbar from "@/components/shared/navbar";
 import { useState } from "react";
-import InputPrompt from "@/app/chatbot/_components/prompt/input-prompt";
+import InputPrompt from "@/components/chatbot/prompt/input-prompt";
 import Navbar from "@/components/shared/navbar";
 
 export default function ChatbotPage() {

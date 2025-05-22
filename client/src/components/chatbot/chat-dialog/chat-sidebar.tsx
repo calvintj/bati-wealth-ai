@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
-import HistoryLists from "@/app/chatbot/_components/chat-dialog/history-lists";
+import HistoryLists from "@/components/chatbot/chat-dialog/history-lists";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import {

@@ -12,8 +12,8 @@ import { useLockBodyScroll } from "@/hooks/chatbot/use-lock-body-scroll";
 import { cn } from "@/lib/utils";
 import { Message } from "@/schema/message";
 
-import ChatSidebar from "./chat-sidebar";
-import MessageLists from "./message-lists";
+import ChatSidebar from "@/components/chatbot/chat-dialog/chat-sidebar";
+import MessageLists from "@/components/chatbot/chat-dialog/message-lists";
 
 interface ChatPopupProps extends HTMLMotionProps<"div"> {
   isOpen?: boolean;

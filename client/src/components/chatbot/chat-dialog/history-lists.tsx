@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import ChatHistory from "@/app/chatbot/_components/chat-dialog/chat-history";
+import ChatHistory from "@/components/chatbot/chat-dialog/chat-history";
 import { formatDateRelative, groupResponseListByDate } from "@/lib/utils";
 import { type ChatHistory as ChatHistoryT } from "@/types/chat-history";
 

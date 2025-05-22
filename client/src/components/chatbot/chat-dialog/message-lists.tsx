@@ -1,12 +1,12 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { TypeAnimation } from "react-type-animation";
 
-import ChatSuggestions from "@/app/chatbot/_components/chat-dialog/chat-suggestions";
+import ChatSuggestions from "@/components/chatbot/chat-dialog/chat-suggestions";
 import Icon from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { Message } from "@/schema/message";
 
-import ChatBubble from "./chat-bubble";
+import ChatBubble from "@/components/chatbot/chat-dialog/chat-bubble";
 
 export interface MessageListsProps {
   messages: Message[];

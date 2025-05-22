@@ -6,7 +6,7 @@ import React, { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import { v4 as uuidv4 } from "uuid";
 
-import { suggestions } from "@/app/chatbot/_components/suggestion/suggestions";
+import { suggestions } from "@/components/chatbot/suggestion/suggestions";
 import Icon from "@/components/ui/icon";
 import {
   Select,
@@ -24,8 +24,8 @@ import { useToast } from "@/hooks/chatbot/use-toast";
 import { cn } from "@/lib/utils";
 import { Message } from "@/schema/message";
 
-import ChatPopup from "../chat-dialog/chat-popup";
-import SuggestionLists from "../suggestion/suggestion-lists";
+import ChatPopup from "@/components/chatbot/chat-dialog/chat-popup";
+import SuggestionLists from "@/components/chatbot/suggestion/suggestion-lists";
 import CustomerSelect from "./customer-select";
 
 const MemoizedSuggestionLists = memo(SuggestionLists);
