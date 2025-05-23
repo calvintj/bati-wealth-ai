@@ -31,6 +31,7 @@ import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { UserNav } from "@/components/ui/user-nav";
 // Import the navigation items from sidebar
 import { navItems } from "./sidebar";
+import { useLogout } from "@/hooks/login/use-logout";
 
 // Extract RiskDropdown into a separate component
 const RiskDropdown = ({
@@ -95,11 +96,7 @@ export default function Navbar({
   const router = useRouter();
   const pathname = usePathname();
   const { theme } = useTheme();
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    router.push("/");
-  };
+  const { handleLogout } = useLogout();
 
   return (
     <nav className="w-auto p-4 mt-2 mx-2 md:mx-2 flex items-center justify-between border-1 border-gray-300 dark:border-none dark:bg-[#1D283A] rounded-2xl">

@@ -1,4 +1,5 @@
 // PieChart.js
+import { useState, useEffect } from "react";
 import { PieChart as RePieChart, Pie, Cell, Label, Tooltip } from "recharts";
 import { DataEntry } from "@/types/page/overview";
 
@@ -8,28 +9,43 @@ interface GaugeChartProps {
 }
 
 export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
-  const currentValue = (() => {
-    const aumValue =
-      customerRisk === "All"
-        ? aumData.find((item) => item.name === "All")
-        : aumData.find((item) => item.name === customerRisk);
-    return aumValue ? aumValue.value : 0;
-  })();
-  const targetValue = 500000000;
+  const [chartData, setChartData] = useState<
+    { name: string; value: number; color: string }[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Two slices: "Completed" vs. "Remaining"
-  const data = [
-    {
-      name: "Completed",
-      value: currentValue > targetValue ? targetValue : currentValue,
-      color: "#2ABC36",
-    },
-    {
-      name: "Remaining",
-      value: currentValue >= targetValue ? 0 : targetValue - currentValue,
-      color: "#FFFFFF",
-    },
-  ];
+  // Process data in useEffect to allow for animation
+  useEffect(() => {
+    setIsLoading(true);
+
+    // Add a small delay to ensure animation plays
+    const timer = setTimeout(() => {
+      const currentValue = (() => {
+        const aumValue =
+          customerRisk === "All"
+            ? aumData.find((item) => item.name === "All")
+            : aumData.find((item) => item.name === customerRisk);
+        return aumValue ? aumValue.value : 0;
+      })();
+      const targetValue = 500000000;
+
+      setChartData([
+        {
+          name: "Completed",
+          value: currentValue > targetValue ? targetValue : currentValue,
+          color: "#2ABC36",
+        },
+        {
+          name: "Remaining",
+          value: currentValue >= targetValue ? 0 : targetValue - currentValue,
+          color: "#FFFFFF",
+        },
+      ]);
+      setIsLoading(false);
+    }, 100); // 100ms delay
+
+    return () => clearTimeout(timer);
+  }, [aumData, customerRisk]);
 
   // Dimensions for the chart
   const chartWidth = 300;
@@ -41,6 +57,39 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
 
   const innerRadius = 75;
   const outerRadius = 95;
+
+  // Get current value for display
+  const currentValue = chartData[0]?.value || 0;
+  const targetValue = 500000000;
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <div
+          className="text-black dark:text-white font-semibold mt-4"
+          style={{ fontSize: "1.5rem" }}
+        >
+          Total AUM
+        </div>
+        <RePieChart width={chartWidth} height={chartHeight}>
+          <Pie
+            dataKey="value"
+            data={[{ name: "Empty", value: 0, color: "#FFFFFF" }]}
+            startAngle={180}
+            endAngle={0}
+            cx={cx}
+            cy={cy}
+            innerRadius={innerRadius}
+            outerRadius={outerRadius}
+            stroke="var(--border)"
+            strokeWidth={1}
+          >
+            <Cell fill="#FFFFFF" />
+          </Pie>
+        </RePieChart>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -55,7 +104,7 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
       <RePieChart width={chartWidth} height={chartHeight}>
         <Pie
           dataKey="value"
-          data={data}
+          data={chartData}
           startAngle={180}
           endAngle={0}
           cx={cx}
@@ -64,13 +113,17 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
           outerRadius={outerRadius}
           stroke="var(--border)"
           strokeWidth={1}
+          isAnimationActive={true}
+          animationDuration={1500}
+          animationBegin={0}
+          animationEasing="ease-out"
         >
-          {data.map((entry, index) => (
+          {chartData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
           {/* Main value */}
           <Label
-            value={`Rp ${Math.floor(currentValue / 1000000)}M`}
+            value={`Rp ${Math.round(currentValue / 1000000)}M`}
             position="center"
             className="text-black dark:text-white"
             dy={-10}
@@ -83,10 +136,10 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
           />
           {/* Target label */}
           <Label
-            value={`Target: Rp ${Math.round(targetValue / 1000000)}M`}
+            value={`Target: Rp ${Math.floor(targetValue / 1000000)}M`}
             position="center"
-            dy={20}
             className="text-black dark:text-white"
+            dy={20}
             style={{
               fill: "currentColor",
               fontSize: "14px",
@@ -95,30 +148,17 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
           />
         </Pie>
         <Tooltip
-          content={({ payload }) => {
-            if (payload && payload.length > 0) {
-              const value = payload[0].value as number;
-              const name = payload[0].name as string;
-
-              return (
-                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">
-                  <div className="text-sm font-medium mb-1">
-                    {name === "Completed" ? "Tercapai" : "Tersisa"}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between gap-4">
-                      <span className="text-gray-500 dark:text-gray-400">
-                        Nilai:
-                      </span>
-                      <span className="font-semibold">
-                        Rp {value.toLocaleString("id-ID")}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
+          formatter={(value, name) => {
+            if (name === "Completed") {
+              return `Rp ${currentValue.toLocaleString()}`;
             }
-            return null;
+            return `Rp ${(targetValue - currentValue).toLocaleString()}`;
+          }}
+          contentStyle={{
+            background: "white",
+            border: "1px solid var(--border)",
+            borderRadius: "4px",
+            color: "var(--foreground)",
           }}
         />
       </RePieChart>

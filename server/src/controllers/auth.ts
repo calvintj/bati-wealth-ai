@@ -56,7 +56,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         role: account.role || "user",
       },
       JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "1h" }
     );
 
     console.log("Login successful for email:", email);

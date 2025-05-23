@@ -3,6 +3,7 @@ import Link from "next/link";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
+import { useLogout } from "@/hooks/login/use-logout";
 
 // ICONS
 import {
@@ -59,11 +60,7 @@ export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const linkClass = "[&>svg]:!w-8 [&>svg]:!h-8 text-black dark:text-white";
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    router.push("/");
-  };
+  const { handleLogout } = useLogout();
 
   // Only render the desktop sidebar - mobile will be handled by navbar
   return (

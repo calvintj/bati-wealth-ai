@@ -8,6 +8,8 @@ import { useTheme } from "next-themes";
 // Assets
 import Polygon from "@/assets/polygon-one.png";
 import Polygon2 from "@/assets/polygon-two.png";
+import BatiLight from "@/assets/bati-light.svg";
+import BatiDark from "@/assets/bati-dark.svg";
 
 const LoginPage = () => {
   const { theme } = useTheme();
@@ -30,7 +32,7 @@ const LoginPage = () => {
           <div className="flex flex-col items-center justify-center p-8 dark:bg-[#1D283A]">
             {/* Use light or dark logo based on theme */}
             <Image
-              src={theme === "dark" ? "/bati-dark.svg" : "/bati-light.svg"}
+              src={theme === "dark" ? BatiDark : BatiLight}
               alt="Fund Manager CRM"
               width={320}
               height={320}

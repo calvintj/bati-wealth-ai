@@ -9,6 +9,7 @@ interface LoginResponse {
     id: string;
     email: string;
     rm_number?: string;
+    role: string;
     [key: string]: string | number | boolean | undefined; // For any additional user properties
   };
 }

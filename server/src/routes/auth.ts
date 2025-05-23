@@ -33,14 +33,9 @@ router.get("/users", getUsers);
 router.put("/update-user/:rm_number", updateUser);
 
 // Delete user route
-router.delete("/users/:rm_number", deleteUser);
+router.delete("/delete-user/:rm_number", deleteUser);
 
 // Update password route
 router.put("/update-password", updatePassword);
-
-// Logout route - no need to clear cookies
-router.post("/logout", (req, res) => {
-  res.status(200).json({ success: true });
-});
 
 export default router;

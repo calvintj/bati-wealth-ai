@@ -16,13 +16,16 @@ export function useTotalCustomer(customerRisk: string): DataEntry[] {
           { name: "Growth", value: result.growth || 0 },
           { name: "Aggressive", value: result.aggressive || 0 },
         ];
-        console.log("Formatted data:", formattedData);
         return formattedData;
       } catch (error) {
         console.error("Error fetching customer data:", error);
         return [];
       }
     },
+    staleTime: 0, // Consider data stale immediately
+    gcTime: 0, // Don't keep data in cache
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 
   return chartData;

@@ -11,7 +11,7 @@ export default function Authorization({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (!sessionId) {
-      router.push("/login");
+      router.push("/");
     }
   }, [sessionId]);
 

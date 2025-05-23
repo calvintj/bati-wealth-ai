@@ -5,6 +5,7 @@ import ReactQueryProvider from "@/providers/react-query-provider";
 import AppProvider from "@/providers/app-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { cookies } from "next/headers";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

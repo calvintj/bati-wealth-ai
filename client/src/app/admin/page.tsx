@@ -13,6 +13,7 @@ import {
   Key,
   X,
   Trash2,
+  ScrollText,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import api from "@/services/api";
@@ -200,6 +201,12 @@ const AdminPage = () => {
           <div className="flex items-center space-x-4 pb-2">
             <ColorModeToggle />
             <div className="flex items-center space-x-4">
+              <a
+                href="/logs"
+                className="flex items-center px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 cursor-pointer text-sm sm:text-base"
+              >
+                <ScrollText className="h-4 w-4 mr-1" /> View Logs
+              </a>
               <UserNav />
             </div>
           </div>

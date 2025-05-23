@@ -18,7 +18,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     const userStr = localStorage.getItem("user");
 
     if (!token || !userStr) {
-      router.push("/login");
+      router.push("/");
       return;
     }
 
@@ -41,7 +41,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       }
     } catch (error) {
       console.error("Error parsing user data:", error);
-      router.push("/login");
+      router.push("/");
     }
   }, [router, requireAdmin, pathname]);
 

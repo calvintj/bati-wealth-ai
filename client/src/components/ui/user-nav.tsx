@@ -12,9 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { useLogout } from "@/hooks/login/use-logout";
 
 export function UserNav() {
   const router = useRouter();
+  const { handleLogout } = useLogout();
 
   // Get user data from localStorage
   const userStr = localStorage.getItem("user");
@@ -29,20 +31,13 @@ export function UserNav() {
     }
   }
 
-  // Handle logout
-  const handleLogout = () => {
-    // Clear localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    // Redirect to login page
-    router.push("/");
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full cursor-pointer">
+        <Button
+          variant="ghost"
+          className="relative h-10 w-10 rounded-full cursor-pointer"
+        >
           <Avatar className="h-10 w-10">
             {/* <AvatarImage
               src="/avatars/01.png"

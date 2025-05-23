@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
+import { logger } from "@/utils/logger";
+import { useSessionStore } from "@/stores/use-session-store";
 
 // Services
 import { loginService } from "../../services/login/login-api";
@@ -16,8 +18,9 @@ export const useLogin = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Navigation
+  // Navigation and session
   const router = useRouter();
+  const setSession = useSessionStore((state) => state.setSession);
 
   // Functions
   const handleLogin = async (
@@ -30,19 +33,33 @@ export const useLogin = () => {
     setError(null);
 
     try {
-      console.log("Attempting login with email:", email);
+      logger.info("Login attempt", { email });
       const data = await loginService.login(email, password);
-      console.log("Login response:", data);
 
       if (!data.token) {
+        logger.error("No token received in login response");
         throw new Error("No token received in login response");
       }
 
-      // Store token in localStorage
+      // Store token in localStorage and cookies
       localStorage.setItem("token", data.token);
+      document.cookie = `token=${data.token}; path=/`;
 
       // Store user data in localStorage
       localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Update session store
+      setSession({
+        accessToken: data.token,
+        id: data.user.id,
+        user: data.user,
+      });
+
+      logger.info("Login successful", {
+        email,
+        role: data.user.role,
+        rm_number: data.user.rm_number,
+      });
 
       // Set loading to false
       setLoading(false);
@@ -56,27 +73,19 @@ export const useLogin = () => {
 
       // Return true
       return true;
-    } catch (error: unknown) {
-      console.error("Detailed login error:", {
-        error,
-        message: error instanceof Error ? error.message : "Unknown error",
-        response: (error as AxiosError)?.response?.data,
-      });
-      // Set the error message
-      setError(
-        error instanceof Error ? error.message : "An unknown error occurred"
-      );
-      // Set loading to false
+    } catch (error) {
       setLoading(false);
-      // Return false
+      if (error instanceof AxiosError) {
+        setError(
+          error.response?.data?.error || "An error occurred during login"
+        );
+      } else {
+        setError("An unexpected error occurred");
+      }
+      logger.error("Login failed", { error });
       return false;
     }
   };
 
-  // Return the functions and state
-  return {
-    handleLogin,
-    error,
-    loading,
-  };
+  return { handleLogin, error, loading };
 };
