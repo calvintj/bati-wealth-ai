@@ -60,16 +60,10 @@ export function useQuarterlyFUM(customerRisk: string): DataEntry[] {
     },
   });
 
-  if (isLoading) {
-    console.log("Loading quarterly FBI data...");
-    return [];
-  }
-
   if (error) {
     console.error("Error fetching quarterly FBI data:", error);
     return [];
   }
 
-  console.log("Formatted data:", data);
   return data || [];
 }

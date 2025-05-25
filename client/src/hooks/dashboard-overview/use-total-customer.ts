@@ -22,10 +22,6 @@ export function useTotalCustomer(customerRisk: string): DataEntry[] {
         return [];
       }
     },
-    staleTime: 0, // Consider data stale immediately
-    gcTime: 0, // Don't keep data in cache
-    refetchOnMount: true, // Refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 
   return chartData;

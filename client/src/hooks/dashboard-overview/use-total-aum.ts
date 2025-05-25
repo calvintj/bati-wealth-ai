@@ -16,7 +16,6 @@ export function useTotalAUM(customerRisk: string): DataEntry[] {
           { name: "Growth", value: result.growth || 0 },
           { name: "Aggressive", value: result.aggressive || 0 },
         ];
-        console.log("Formatted data:", formattedData);
         return formattedData;
       } catch (error) {
         console.error("Error fetching customer data:", error);

@@ -31,7 +31,6 @@ export function useCertainCustomerList(customerRisk: string) {
     enabled: customerRisk !== "All", // Only fetch data if the customerRisk is valid
   });
 
-  if (isLoading) return { customerList: [], isLoading, error };
   if (error) return { customerList: [], error, isLoading };
 
   return { customerList: data ?? [], isLoading, error };

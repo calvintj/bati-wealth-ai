@@ -24,21 +24,14 @@ export function useTopProducts(customerRisk: string): TopProduct[] {
       } else if (customerRisk === "Aggressive") {
         filteredData = data.aggressive;
       }
-
       return filteredData;
     },
   });
-
-  if (isLoading) {
-    console.log("Loading top products...");
-    return [];
-  }
 
   if (error) {
     console.error("Error loading top products:", error);
     return [];
   }
 
-  console.log("Top products data:", data);
   return data || [];
 }
