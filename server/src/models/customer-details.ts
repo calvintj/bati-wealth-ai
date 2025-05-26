@@ -272,7 +272,7 @@ const postActivity = async (activity: any) => {
 const deleteActivity = async (activityID: string) => {
   const result = await db.query(
     `
-    DELETE FROM customer_activity WHERE id = $1
+    DELETE FROM customer_activity WHERE id = $1 RETURNING *
   `,
     [activityID]
   );
@@ -282,7 +282,7 @@ const deleteActivity = async (activityID: string) => {
 const updateActivity = async (activity: any) => {
   const result = await db.query(
     `
-    UPDATE customer_activity SET title = $1, description = $2, date = $3 WHERE id = $4
+    UPDATE customer_activity SET title = $1, description = $2, date = $3 WHERE id = $4 RETURNING *
   `,
     [activity.title, activity.description, activity.date, activity.id]
   );
