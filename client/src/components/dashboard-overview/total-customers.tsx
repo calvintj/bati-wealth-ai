@@ -11,64 +11,50 @@ export default function GaugeChart({
   customerData,
   customerRisk,
 }: GaugeChartProps) {
-  // Use state to store chart width to avoid SSR issues with window
-  const [chartWidth, setChartWidth] = useState(300);
   const [chartData, setChartData] = useState<
     { name: string; value: number; color: string }[]
   >([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setChartWidth(Math.min(300, window.innerWidth * 0.8));
-    }
-  }, []);
+    const currentValue = (() => {
+      const customerValue =
+        customerRisk === "All"
+          ? customerData.find((item) => item.name === "All")
+          : customerData.find((item) => item.name === customerRisk);
+      return customerValue ? customerValue.value : 0;
+    })();
+    const targetValue = 500;
 
-  // Process data in useEffect to allow for animation
-  useEffect(() => {
-    setIsLoading(true);
-
-    // Add a small delay to ensure animation plays
-    const timer = setTimeout(() => {
-      const currentValue = (() => {
-        const customerValue =
-          customerRisk === "All"
-            ? customerData.find((item) => item.name === "All")
-            : customerData.find((item) => item.name === customerRisk);
-        return customerValue ? customerValue.value : 0;
-      })();
-
-      const targetValue = 500;
-
-      setChartData([
-        {
-          name: "Completed",
-          value: currentValue > targetValue ? targetValue : currentValue,
-          color: "#F52720",
-        },
-        {
-          name: "Remaining",
-          value: currentValue >= targetValue ? 0 : targetValue - currentValue,
-          color: "#FFFFFF",
-        },
-      ]);
-      setIsLoading(false);
-    }, 100); // 100ms delay
-
-    return () => clearTimeout(timer);
+    setChartData([
+      {
+        name: "Completed",
+        value: currentValue > targetValue ? targetValue : currentValue,
+        color: "#F52720",
+      },
+      {
+        name: "Remaining",
+        value: currentValue >= targetValue ? 0 : targetValue - currentValue,
+        color: "#FFFFFF",
+      },
+    ]);
   }, [customerData, customerRisk]);
 
-  const chartHeight = chartWidth * 0.5;
-  const cx = chartWidth / 2;
-  const cy = chartHeight * 0.7;
-  const innerRadius = chartWidth * 0.25;
-  const outerRadius = chartWidth * 0.32;
+  // Dimensions for the chart
+  const chartWidth = 300;
+  const chartHeight = 150;
+
+  // Center x/y
+  const cx = 150; // half of chartWidth
+  const cy = 105; // lower this if you see it's cut off
+
+  const innerRadius = 75;
+  const outerRadius = 95;
 
   // Get current value for display
   const currentValue = chartData[0]?.value || 0;
   const targetValue = 500;
 
-  if (isLoading) {
+  if (!chartData.length) {
     return (
       <div className="flex flex-col items-center justify-center w-full">
         <div
@@ -79,6 +65,7 @@ export default function GaugeChart({
         </div>
         <RePieChart width={chartWidth} height={chartHeight}>
           <Pie
+            key={chartData.map((d) => d.value).join(",")}
             dataKey="value"
             data={[{ name: "Empty", value: 0, color: "#FFFFFF" }]}
             startAngle={180}
@@ -99,7 +86,6 @@ export default function GaugeChart({
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      {/* Title above the chart */}
       <div
         className="text-black dark:text-white font-semibold mt-4"
         style={{ fontSize: "clamp(1rem, 4vw, 1.5rem)" }}
@@ -127,7 +113,6 @@ export default function GaugeChart({
           {chartData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
-          {/* Main value */}
           <Label
             value={currentValue}
             position="center"
@@ -140,7 +125,6 @@ export default function GaugeChart({
               textAnchor: "middle",
             }}
           />
-          {/* Target label */}
           <Label
             value={`Target: ${targetValue}`}
             position="center"

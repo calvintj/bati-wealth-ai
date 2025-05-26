@@ -1,4 +1,3 @@
-// PieChart.js
 import { useState, useEffect } from "react";
 import { PieChart as RePieChart, Pie, Cell, Label, Tooltip } from "recharts";
 import { DataEntry } from "@/types/page/overview";
@@ -12,39 +11,29 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
   const [chartData, setChartData] = useState<
     { name: string; value: number; color: string }[]
   >([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Process data in useEffect to allow for animation
   useEffect(() => {
-    setIsLoading(true);
+    const currentValue = (() => {
+      const aumValue =
+        customerRisk === "All"
+          ? aumData.find((item) => item.name === "All")
+          : aumData.find((item) => item.name === customerRisk);
+      return aumValue ? aumValue.value : 0;
+    })();
+    const targetValue = 500000000;
 
-    // Add a small delay to ensure animation plays
-    const timer = setTimeout(() => {
-      const currentValue = (() => {
-        const aumValue =
-          customerRisk === "All"
-            ? aumData.find((item) => item.name === "All")
-            : aumData.find((item) => item.name === customerRisk);
-        return aumValue ? aumValue.value : 0;
-      })();
-      const targetValue = 500000000;
-
-      setChartData([
-        {
-          name: "Completed",
-          value: currentValue > targetValue ? targetValue : currentValue,
-          color: "#2ABC36",
-        },
-        {
-          name: "Remaining",
-          value: currentValue >= targetValue ? 0 : targetValue - currentValue,
-          color: "#FFFFFF",
-        },
-      ]);
-      setIsLoading(false);
-    }, 100); // 100ms delay
-
-    return () => clearTimeout(timer);
+    setChartData([
+      {
+        name: "Completed",
+        value: currentValue > targetValue ? targetValue : currentValue,
+        color: "#2ABC36",
+      },
+      {
+        name: "Remaining",
+        value: currentValue >= targetValue ? 0 : targetValue - currentValue,
+        color: "#FFFFFF",
+      },
+    ]);
   }, [aumData, customerRisk]);
 
   // Dimensions for the chart
@@ -62,7 +51,7 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
   const currentValue = chartData[0]?.value || 0;
   const targetValue = 500000000;
 
-  if (isLoading) {
+  if (!chartData.length) {
     return (
       <div className="flex flex-col items-center justify-center">
         <div
@@ -93,7 +82,6 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      {/* Title above the chart */}
       <div
         className="text-black dark:text-white font-semibold mt-4"
         style={{ fontSize: "1.5rem" }}
@@ -121,7 +109,6 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
           {chartData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
-          {/* Main value */}
           <Label
             value={`Rp ${Math.round(currentValue / 1000000)}M`}
             position="center"
@@ -134,7 +121,6 @@ export default function GaugeChart({ aumData, customerRisk }: GaugeChartProps) {
               textAnchor: "middle",
             }}
           />
-          {/* Target label */}
           <Label
             value={`Target: Rp ${Math.floor(targetValue / 1000000)}M`}
             position="center"

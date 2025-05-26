@@ -130,6 +130,11 @@ app.use("/api/customer-list", customerListRoutes);
 app.use("/api/customer-details", customerDetailsRoutes);
 app.use("/api/task-manager", taskManagerRoutes);
 
+// Health check endpoint
+app.get("/health", (req: Request, res: Response) => {
+  res.status(200).json({ status: "healthy" });
+});
+
 // 404 Handler
 app.use((req: Request, res: Response) => {
   res.status(404).json({ message: "Resource not found" });

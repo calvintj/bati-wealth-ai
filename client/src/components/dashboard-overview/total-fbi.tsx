@@ -11,57 +11,42 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
   const [chartData, setChartData] = useState<
     { name: string; value: number; color: string }[]
   >([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Process data in useEffect to allow for animation
   useEffect(() => {
-    setIsLoading(true);
+    const currentValue = (() => {
+      const fbiValue =
+        customerRisk === "All"
+          ? fbiData.find((item) => item.name === "All")
+          : fbiData.find((item) => item.name === customerRisk);
+      return fbiValue ? fbiValue.value : 0;
+    })();
+    const targetValue = 800000;
 
-    // Add a small delay to ensure animation plays
-    const timer = setTimeout(() => {
-      const currentValue = (() => {
-        const fbiValue =
-          customerRisk === "All"
-            ? fbiData.find((item) => item.name === "All")
-            : fbiData.find((item) => item.name === customerRisk);
-        return fbiValue ? fbiValue.value : 0;
-      })();
-      const targetValue = 800000;
-
-      setChartData([
-        {
-          name: "Completed",
-          value: currentValue > targetValue ? targetValue : currentValue,
-          color: "#01ACD2",
-        },
-        {
-          name: "Remaining",
-          value: currentValue >= targetValue ? 0 : targetValue - currentValue,
-          color: "#FFFFFF",
-        },
-      ]);
-      setIsLoading(false);
-    }, 100); // 100ms delay
-
-    return () => clearTimeout(timer);
+    setChartData([
+      {
+        name: "Completed",
+        value: currentValue > targetValue ? targetValue : currentValue,
+        color: "#01ACD2",
+      },
+      {
+        name: "Remaining",
+        value: currentValue >= targetValue ? 0 : targetValue - currentValue,
+        color: "#FFFFFF",
+      },
+    ]);
   }, [fbiData, customerRisk]);
 
-  // Dimensions for the chart
   const chartWidth = 300;
   const chartHeight = 150;
-
-  // Center x/y
-  const cx = 150; // half of chartWidth
-  const cy = 105; // lower this if you see it's cut off
-
+  const cx = 150;
+  const cy = 105;
   const innerRadius = 75;
   const outerRadius = 95;
 
-  // Get current value for display
   const currentValue = chartData[0]?.value || 0;
   const targetValue = 800000;
 
-  if (isLoading) {
+  if (!chartData.length) {
     return (
       <div className="flex flex-col items-center justify-center">
         <div
@@ -92,7 +77,6 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      {/* Title above the chart */}
       <div
         className="text-black dark:text-white font-semibold mt-4"
         style={{ fontSize: "1.5rem" }}
@@ -120,7 +104,6 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
           {chartData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
-          {/* Main value */}
           <Label
             value={`Rp ${Math.round(currentValue / 1000)}K`}
             position="center"
@@ -133,7 +116,6 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
               textAnchor: "middle",
             }}
           />
-          {/* Target label */}
           <Label
             value={`Target: Rp ${Math.floor(targetValue / 1000)}K`}
             position="center"

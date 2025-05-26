@@ -16,7 +16,7 @@ import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { ColorModeToggle } from "@/components/chatbot/color-mode-toggle";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, Menu } from "lucide-react";
@@ -83,19 +83,29 @@ const RiskDropdown = ({
   );
 };
 
-export default function Navbar({
-  setCustomerRisk,
-  customerRisk,
-  showRiskDropdown = false,
-}: {
-  setCustomerRisk: (risk: string) => void;
-  customerRisk: string;
-  showRiskDropdown?: boolean;
-}) {
+const Navbar = () => {
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // After mounting, we can safely show the theme-dependent UI
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Preload both images
+  useEffect(() => {
+    const preloadImages = () => {
+      const img1 = new window.Image();
+      img1.src = batiDark;
+      const img2 = new window.Image();
+      img2.src = batiLight;
+    };
+    preloadImages();
+  }, []);
+
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { theme } = useTheme();
   const { handleLogout } = useLogout();
 
   return (
@@ -159,25 +169,19 @@ export default function Navbar({
 
         {/* Logo - visible on both mobile and desktop */}
         <Image
-          src={
-            typeof window !== "undefined" &&
-            document.documentElement.classList.contains("dark")
-              ? batiDark
-              : batiLight
-          }
+          src={mounted && resolvedTheme === "dark" ? batiDark : batiLight}
           alt="Bati Logo"
           width={100}
           height={30}
+          priority
         />
 
         {/* Left: Risk dropdown (conditionally rendered based on prop) */}
         <div className="flex items-center gap-2">
-          {showRiskDropdown && (
-            <RiskDropdown
-              customerRisk={customerRisk}
-              setCustomerRisk={setCustomerRisk}
-            />
-          )}
+          {/* <RiskDropdown
+            customerRisk={customerRisk}
+            setCustomerRisk={setCustomerRisk}
+          /> */}
         </div>
       </div>
 
@@ -194,4 +198,6 @@ export default function Navbar({
       </div>
     </nav>
   );
-}
+};
+
+export default Navbar;
