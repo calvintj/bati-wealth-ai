@@ -45,7 +45,7 @@ const postTask = async (
 const deleteTask = async (id: string): Promise<TaskResponse> => {
   const result = await db.query(
     `
-    DELETE FROM rm_task_manager WHERE id = $1
+    DELETE FROM rm_task_manager WHERE id = $1 RETURNING *
     `,
     [id]
   );
@@ -57,7 +57,7 @@ const deleteTask = async (id: string): Promise<TaskResponse> => {
 const updateTask = async (task: any): Promise<TaskResponse> => {
   const result = await db.query(
     `
-    UPDATE rm_task_manager SET description = $1, due_date = $2, invitee = $3 WHERE id = $4
+    UPDATE rm_task_manager SET description = $1, due_date = $2, invitee = $3 WHERE id = $4 RETURNING *
     `,
     [task.description, task.due_date, task.invitee, task.id]
   );

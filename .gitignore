@@ -1,4 +1,5 @@
 key-pair-VM-Jakarta.pem
+backup_wealth_platform.sql
 
 # Environment variables
 .env

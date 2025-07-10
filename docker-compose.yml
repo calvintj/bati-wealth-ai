@@ -10,8 +10,11 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://server:5000/api
+      - NEXT_PUBLIC_BASE_API_URL=http://fastapi:8000
+      - BATI_BACKEND_URL=http://fastapi:8000
     depends_on:
       - server
+      - fastapi
     networks:
       - app_net
 
@@ -25,10 +28,32 @@ services:
       - "5000:5000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgres://calvintj:280603@postgres:5432/bati_crm_db
+      - DATABASE_URL=postgres://postgres:password@postgres:5432/wealth_platform
       - JWT_SECRET=my_super_secret_key
     depends_on:
       - postgres
+    networks:
+      - app_net
+
+  fastapi:
+    container_name: Bati-WealthAI_fastapi
+    build:
+      context: ./fastapi
+      dockerfile: Dockerfile
+    env_file: ./fastapi/.env
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=wealth_platform
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/wealth_platform
+    depends_on:
+      - postgres
+    volumes:
+      - ./fastapi/data:/app/data
     networks:
       - app_net
 
@@ -36,9 +61,9 @@ services:
     container_name: Bati-WealthAI_database_postgres
     image: postgres:13-alpine
     environment:
-      POSTGRES_USER: calvintj
-      POSTGRES_PASSWORD: 280603
-      POSTGRES_DB: bati_crm_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: wealth_platform
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./server/db-data/bati_wealthai_db.sql:/docker-entrypoint-initdb.d/init.sql
