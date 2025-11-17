@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { SuggestionOptions } from "@/app/chatbot/_components/suggestion/suggestion-lists";
+import { SuggestionOptions } from "@/components/chatbot/suggestion/suggestion-lists";
 
 export const suggestions: SuggestionOptions[] = [
   {

@@ -9,9 +9,9 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://server:5000/api
-      - NEXT_PUBLIC_BASE_API_URL=http://fastapi:8000
-      - BATI_BACKEND_URL=http://fastapi:8000
+      - NEXT_PUBLIC_API_URL=http://localhost:5000/api
+      - NEXT_PUBLIC_BASE_API_URL=http://localhost:8000
+      - BATI_BACKEND_URL=http://localhost:8000
     depends_on:
       - server
       - fastapi
@@ -28,7 +28,7 @@ services:
       - "5000:5000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgres://postgres:password@postgres:5432/wealth_platform
+      - DATABASE_URL=postgres://postgres:yourpassword@postgres:5432/wealth_platform
       - JWT_SECRET=my_super_secret_key
     depends_on:
       - postgres
@@ -48,7 +48,7 @@ services:
       - DB_PORT=5432
       - DB_NAME=wealth_platform
       - DB_USER=postgres
-      - DB_PASSWORD=password
+      - DB_PASSWORD=yourpassword
       - DATABASE_URL=postgresql://postgres:password@postgres:5432/wealth_platform
     depends_on:
       - postgres
@@ -62,7 +62,7 @@ services:
     image: postgres:13-alpine
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: yourpassword
       POSTGRES_DB: wealth_platform
     volumes:
       - pgdata:/var/lib/postgresql/data

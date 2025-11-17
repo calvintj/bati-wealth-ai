@@ -83,7 +83,15 @@ const RiskDropdown = ({
   );
 };
 
-const Navbar = () => {
+const Navbar = ({
+  setCustomerRisk,
+  customerRisk,
+  showRiskDropdown = false,
+}: {
+  setCustomerRisk?: (risk: string) => void;
+  customerRisk?: string;
+  showRiskDropdown?: boolean;
+} = {}) => {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -178,10 +186,12 @@ const Navbar = () => {
 
         {/* Left: Risk dropdown (conditionally rendered based on prop) */}
         <div className="flex items-center gap-2">
-          {/* <RiskDropdown
-            customerRisk={customerRisk}
-            setCustomerRisk={setCustomerRisk}
-          /> */}
+          {showRiskDropdown && setCustomerRisk && customerRisk && (
+            <RiskDropdown
+              customerRisk={customerRisk}
+              setCustomerRisk={setCustomerRisk}
+            />
+          )}
         </div>
       </div>
 
