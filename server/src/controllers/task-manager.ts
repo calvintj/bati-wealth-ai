@@ -112,8 +112,15 @@ export const postTaskController = async (req: Request, res: Response): Promise<v
 
 export const deleteTaskController = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.query as { id: string };
-    const deletedTask = await deleteTask(id);
+    const { id, task_id } = req.query as { id?: string; task_id?: string };
+    const taskId = id || task_id; // Support both parameter names for compatibility
+    
+    if (!taskId) {
+      res.status(400).json({ error: "Task ID is required" });
+      return;
+    }
+    
+    const deletedTask = await deleteTask(taskId);
     res.json(deletedTask);
     return;
   } catch (error) {

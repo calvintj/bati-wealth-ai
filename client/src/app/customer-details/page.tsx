@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Pencil } from "lucide-react";
 
@@ -20,6 +20,7 @@ import QuarterlyFUM from "@/components/customer-details/quarterly-fum";
 import ActivityManager from "@/components/customer-details/activity-manager";
 import CustomerEditModal from "@/components/dashboard-overview/customer-edit-modal";
 import { CertainCustomerList } from "@/types/page/overview";
+
 interface CustomerDetails {
   Priority_Private: string;
   Risk_Profile: string;
@@ -30,23 +31,34 @@ interface CustomerDetails {
   Usia: string;
   Vintage: string;
 }
-// A small reusable component to display customer detail rows.
-const DetailRow = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number | undefined;
-}) => (
-  <div className="bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-between p-3 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600">
-    <h2 className="pl-2 font-semibold text-sm text-gray-700 dark:text-gray-300">
-      {label}
-    </h2>
-    <h2 className="pr-2 font-medium text-sm text-black dark:text-white">
-      {value !== undefined && value !== null ? value : "N/A"}
-    </h2>
-  </div>
+
+// Helper function to format currency
+const formatCurrency = (value: string | undefined): string => {
+  if (!value) return "N/A";
+  return `$ ${Number(value).toLocaleString("id-ID")}`;
+};
+
+// Memoized DetailRow component
+const DetailRow = memo(
+  ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string | number | undefined;
+  }) => (
+    <div className="bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-between p-3 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600">
+      <h2 className="pl-2 font-semibold text-sm text-gray-700 dark:text-gray-300">
+        {label}
+      </h2>
+      <h2 className="pr-2 font-medium text-sm text-black dark:text-white">
+        {value !== undefined && value !== null ? value : "N/A"}
+      </h2>
+    </div>
+  )
 );
+
+DetailRow.displayName = "DetailRow";
 
 export default function CustomerDetailsPage() {
   const searchParams = useSearchParams();
@@ -64,10 +76,39 @@ export default function CustomerDetailsPage() {
     }
   }, [searchParams]);
 
+  // Fetch customer details - must be declared before using 'data'
   const { data, loading } = useCustomerDetails(customerID) as unknown as {
     data: CustomerDetails;
     loading: boolean;
   };
+
+  // Memoized event handlers
+  const handleEditClick = useCallback(() => {
+    setIsEditModalOpen(true);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setIsEditModalOpen(false);
+  }, []);
+
+  // Memoized metrics data - now 'data' is available
+  const metricsData = useMemo(
+    () => [
+      {
+        title: "FUM",
+        value: formatCurrency(data?.Total_FUM),
+      },
+      {
+        title: "AUM",
+        value: formatCurrency(data?.Total_AUM),
+      },
+      {
+        title: "FBI",
+        value: formatCurrency(data?.Total_FBI),
+      },
+    ],
+    [data?.Total_FUM, data?.Total_AUM, data?.Total_FBI]
+  );
 
   // Find customer data for editing
   const customerForEdit = useMemo(() => {
@@ -100,27 +141,28 @@ export default function CustomerDetailsPage() {
     <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-200">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <Navbar
           setCustomerRisk={setCustomerRisk}
           customerRisk={customerRisk}
           showRiskDropdown={false}
         />
 
-        <main className="flex flex-col lg:flex-row flex-1 overflow-y-auto p-2 gap-2">
+        <main className="flex flex-col lg:flex-row flex-1 overflow-y-auto p-4 md:p-6 gap-4 bg-gray-50 dark:bg-gray-900">
           {/* Left Sidebar - Customer Info & Quick Actions */}
-          <div className="flex flex-col gap-2 w-full lg:w-80 flex-shrink-0">
+          <div className="flex flex-col gap-4 w-full lg:w-80 flex-shrink-0">
             {/* Customer ID Header */}
-            <div className="rounded-2xl flex items-center justify-between p-3 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
+            <div className="rounded-xl flex items-center justify-between p-3 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl">
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="font-bold text-black dark:text-white text-sm truncate">
                   ID: {customerID}
                 </div>
                 {customerForEdit && (
                   <button
-                    onClick={() => setIsEditModalOpen(true)}
+                    onClick={handleEditClick}
                     className="p-1.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 flex-shrink-0"
                     title="Edit customer"
+                    aria-label="Edit customer information"
                   >
                     <Pencil size={16} />
                   </button>
@@ -135,33 +177,11 @@ export default function CustomerDetailsPage() {
             </div>
 
             {/* Key Metrics */}
-            <div className="grid grid-cols-3 lg:grid-cols-1 gap-2">
-              {[
-                {
-                  title: "FUM",
-                  value:
-                    data && data.Total_FUM
-                      ? `$ ${Number(data.Total_FUM).toLocaleString("id-ID")}`
-                      : "N/A",
-                },
-                {
-                  title: "AUM",
-                  value:
-                    data && data.Total_AUM
-                      ? `$ ${Number(data.Total_AUM).toLocaleString("id-ID")}`
-                      : "N/A",
-                },
-                {
-                  title: "FBI",
-                  value:
-                    data && data.Total_FBI
-                      ? `$ ${Number(data.Total_FBI).toLocaleString("id-ID")}`
-                      : "N/A",
-                },
-              ].map((item) => (
+            <div className="grid grid-cols-3 lg:grid-cols-1 gap-4">
+              {metricsData.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-xl flex flex-col justify-center items-center p-3 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none transition-all hover:shadow-xl dark:hover:shadow-lg"
+                  className="rounded-xl flex flex-col justify-center items-center p-3 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-all hover:shadow-xl"
                 >
                   <p className="font-bold text-black dark:text-white text-xs mb-1">
                     {item.title}
@@ -178,7 +198,7 @@ export default function CustomerDetailsPage() {
             </div>
 
             {/* Customer Details */}
-            <div className="flex flex-col rounded-2xl gap-3 p-4 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none text-black dark:text-white shadow-lg dark:shadow-none">
+            <div className="flex flex-col rounded-xl gap-3 p-4 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 text-black dark:text-white shadow-lg transition-shadow hover:shadow-xl">
               <h3 className="font-bold text-sm mb-1 text-gray-700 dark:text-gray-300">
                 Informasi Nasabah
               </h3>
@@ -208,42 +228,42 @@ export default function CustomerDetailsPage() {
             </div>
 
             {/* Activity Manager */}
-            <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none overflow-hidden flex-1 flex flex-col min-h-0">
+            <div className="rounded-xl bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl overflow-hidden flex-1 flex flex-col min-h-0">
               <ActivityManager customerID={customerID} />
             </div>
           </div>
 
           {/* Main Content Area */}
-          <div className="flex flex-col gap-2 flex-1 min-w-0">
+          <div className="flex flex-col gap-4 flex-1 min-w-0">
             {/* Portfolio Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-xl bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl overflow-hidden">
                 <PortfolioPie customerID={customerID} />
               </div>
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none overflow-hidden">
+              <div className="rounded-xl bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl overflow-hidden">
                 <OptimizedPortfolio customerID={customerID} />
               </div>
             </div>
 
             {/* Quarterly Trends */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-xl bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl overflow-hidden">
                 <QuarterlyAUM customerID={customerID} />
               </div>
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none overflow-hidden">
+              <div className="rounded-xl bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl overflow-hidden">
                 <QuarterlyFUM customerID={customerID} />
               </div>
             </div>
 
             {/* Product Information Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Recommendations */}
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none overflow-hidden">
+              <div className="rounded-xl bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl overflow-hidden">
                 <RecommendationProduct customerID={customerID} />
               </div>
 
               {/* Owned Products */}
-              <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none overflow-hidden">
+              <div className="rounded-xl bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl overflow-hidden">
                 <OwnedProductTable customerID={customerID} />
               </div>
             </div>
@@ -256,7 +276,7 @@ export default function CustomerDetailsPage() {
         <CustomerEditModal
           customer={customerForEdit}
           isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={handleModalClose}
         />
       )}
     </div>

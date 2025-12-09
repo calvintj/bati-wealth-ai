@@ -48,10 +48,10 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
 
   if (!chartData.length) {
     return (
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center w-full">
         <div
           className="text-black dark:text-white font-semibold mt-4"
-          style={{ fontSize: "1.5rem" }}
+          style={{ fontSize: "clamp(1rem, 4vw, 1.5rem)" }}
         >
           Total FBI
         </div>
@@ -76,10 +76,10 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center w-full">
       <div
         className="text-black dark:text-white font-semibold mt-4"
-        style={{ fontSize: "1.5rem" }}
+        style={{ fontSize: "clamp(1rem, 4vw, 1.5rem)" }}
       >
         Total FBI
       </div>
@@ -129,17 +129,32 @@ export default function GaugeChart({ fbiData, customerRisk }: GaugeChartProps) {
           />
         </Pie>
         <Tooltip
-          formatter={(value, name) => {
-            if (name === "Completed") {
-              return `Rp ${currentValue.toLocaleString()}`;
+          content={({ payload }) => {
+            if (payload && payload.length > 0) {
+              const value = payload[0].value as number;
+              const name = payload[0].name as string;
+
+              return (
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">
+                  <div className="text-sm font-medium mb-1">
+                    {name === "Completed" ? "Tercapai" : "Tersisa"}
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex justify-between gap-4">
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Jumlah:
+                      </span>
+                      <span className="font-semibold">
+                        {name === "Completed"
+                          ? `Rp ${currentValue.toLocaleString("id-ID")}`
+                          : `Rp ${(targetValue - currentValue).toLocaleString("id-ID")}`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
             }
-            return `Rp ${(targetValue - currentValue).toLocaleString()}`;
-          }}
-          contentStyle={{
-            background: "white",
-            border: "1px solid var(--border)",
-            borderRadius: "4px",
-            color: "var(--foreground)",
+            return null;
           }}
         />
       </RePieChart>

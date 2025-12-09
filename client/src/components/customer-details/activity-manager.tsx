@@ -138,7 +138,7 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   };
 
   return (
-    <div className="relative p-4 rounded-lg text-white w-full h-full bg-[#1D283A] flex flex-col min-h-0">
+    <div className="relative p-4 rounded-lg w-full h-full bg-white dark:bg-[#1D283A] text-gray-900 dark:text-white flex flex-col min-h-0">
       {/* Header */}
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <h2 className="text-lg font-semibold">Aktivitas</h2>
@@ -156,8 +156,9 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
           <button
             ref={buttonRef}
             onClick={togglePopup}
-            className="text-2xl hover:text-gray-300 cursor-pointer transition-colors"
+            className="text-2xl text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300 cursor-pointer transition-colors"
             title={isEditing ? "Edit Activity" : "Add Activity"}
+            aria-label={isEditing ? "Edit Activity" : "Add Activity"}
           >
             <CirclePlus />
           </button>
@@ -176,7 +177,7 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
           </div>
         ) : localActivity.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-center bg-gray-700 p-4 rounded-2xl">
+            <p className="text-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 p-4 rounded-2xl">
               Tidak ada aktivitas tersedia !
             </p>
           </div>
@@ -185,27 +186,29 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
             {localActivity.map((activity, index) => (
               <li
                 key={index}
-                className="bg-gray-700 p-4 rounded-md hover:bg-gray-600 transition-colors flex justify-between items-center"
+                className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex justify-between items-center"
               >
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold truncate">{activity.title}</h3>
-                  <p className="text-sm text-gray-300 line-clamp-2">{activity.description}</p>
+                  <h3 className="font-semibold truncate text-gray-900 dark:text-white">{activity.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{activity.description}</p>
                 </div>
                 <div className="flex flex-row gap-2 items-center flex-shrink-0 ml-2">
-                  <p className="text-xs text-gray-400 whitespace-nowrap">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     {activity.date.split("T")[0]}
                   </p>
                   <button
-                    className="text-gray-100 hover:text-gray-300 cursor-pointer transition-colors"
+                    className="text-gray-600 dark:text-gray-100 hover:text-gray-800 dark:hover:text-gray-300 cursor-pointer transition-colors"
                     onClick={() => handleEdit(activity)}
                     title="Edit activity"
+                    aria-label="Edit activity"
                   >
                     <Pencil size={16} />
                   </button>
                   <button
-                    className="text-gray-100 hover:text-gray-300 cursor-pointer transition-colors"
+                    className="text-gray-600 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400 cursor-pointer transition-colors"
                     onClick={() => deleteActivity(activity.id)}
                     title="Delete activity"
+                    aria-label="Delete activity"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -225,9 +228,9 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
               top: popupPosition.top,
               left: popupPosition.left,
             }}
-            className="bg-gray-800 p-4 rounded-lg shadow-lg w-60 border border-gray-600"
+            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg w-60 border border-gray-200 dark:border-gray-600"
           >
-            <h4 className="text-white mb-2">
+            <h4 className="text-gray-900 dark:text-white mb-2 font-semibold">
               {isEditing ? "Edit Aktivitas" : "Tambah Aktivitas"}
             </h4>
             <input
@@ -241,7 +244,7 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
                 }
               }}
               placeholder="Aktivitas"
-              className="w-full mb-2 p-2 rounded bg-white text-black"
+              className="w-full mb-2 p-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <textarea
               value={newDescription}
@@ -253,7 +256,7 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
                 }
               }}
               placeholder="Deskripsi"
-              className="w-full mb-2 p-2 rounded bg-white text-black"
+              className="w-full mb-2 p-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="date"
@@ -265,18 +268,18 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
                   handleActivitySubmit();
                 }
               }}
-              className="w-full mb-2 p-2 rounded bg-white text-black"
+              className="w-full mb-2 p-2 rounded bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <div className="flex gap-2">
               <button
                 onClick={resetForm}
-                className="w-1/2 bg-gray-600 text-white p-2 rounded hover:bg-gray-700 cursor-pointer"
+                className="w-1/2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white p-2 rounded hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer transition-colors"
               >
                 Batal
               </button>
               <button
                 onClick={handleActivitySubmit}
-                className="w-1/2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700 cursor-pointer"
+                className="w-1/2 bg-blue-600 text-white p-2 rounded hover:bg-blue-700 cursor-pointer transition-colors"
               >
                 {isEditing ? "Simpan" : "Tambahkan"}
               </button>

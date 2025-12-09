@@ -16,6 +16,8 @@ import customerDetailsRoutes from "./routes/customer-details";
 import taskManagerRoutes from "./routes/task-manager";
 import marketIndicesRoutes from "./routes/market-indices";
 import dashboardTargetsRoutes from "./routes/dashboard-targets";
+import economicIndicatorsRoutes from "./routes/economic-indicators";
+import marketNewsRoutes from "./routes/market-news";
 
 dotenv.config();
 
@@ -133,6 +135,8 @@ app.use("/api/customer-details", customerDetailsRoutes);
 app.use("/api/task-manager", taskManagerRoutes);
 app.use("/api/market-indices", marketIndicesRoutes);
 app.use("/api/dashboard-targets", dashboardTargetsRoutes);
+app.use("/api/economic-indicators", economicIndicatorsRoutes);
+app.use("/api/market-news", marketNewsRoutes);
 
 // Health check endpoint
 app.get("/health", (req: Request, res: Response) => {

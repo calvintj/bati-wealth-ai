@@ -1,17 +1,17 @@
 "use client";
+import { useState } from "react";
+
 // Components
 import Sidebar from "@/components/shared/sidebar";
 import Navbar from "@/components/shared/navbar";
 import StackedBarChart from "@/components/customer-mapping/customer-mapping";
 import CustomerListTable from "@/components/customer-mapping/customer-list";
 
-// HOOKS
-import { useState } from "react";
-
 export default function CustomerListPage() {
   const [propensity, setPropensity] = useState<string>("All");
   const [aum, setAum] = useState<string>("All");
   const [customerRisk, setCustomerRisk] = useState<string>("All");
+
   return (
     <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">
       <Sidebar />
@@ -24,19 +24,27 @@ export default function CustomerListPage() {
         />
 
         {/* MAIN CONTENT AREA */}
-        <main className="flex flex-col gap-2 flex-1 overflow-y-auto p-2">
-          {/* Stacked Bar Chart */}
-          <div>
-            <p className="text-2xl font-bold text-center text-black dark:text-white">
-              Pemetaan Nasabah
-            </p>
-          </div>
-          <div className="rounded-2xl bg-white dark:bg-[#1D283A] p-4 border-1 border-gray-200 dark:border-none shadow-lg dark:shadow-none">
-            <StackedBarChart setPropensity={setPropensity} setAum={setAum} />
-          </div>
-          {/* Customer List Table */}
-          <div className="rounded-2xl overflow-x-auto bg-white dark:bg-[#1D283A] shadow-lg dark:shadow-none">
-            <CustomerListTable propensity={propensity} aum={aum} />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900">
+          <div className="max-w-[1920px] mx-auto space-y-4">
+            {/* Page Header */}
+            <div className="px-2">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+                Pemetaan Nasabah
+              </h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Visualisasi dan manajemen data nasabah berdasarkan propensity dan AUM
+              </p>
+            </div>
+
+            {/* Stacked Bar Chart Section */}
+            <section className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg transition-shadow hover:shadow-xl overflow-hidden">
+              <StackedBarChart setPropensity={setPropensity} setAum={setAum} />
+            </section>
+
+            {/* Customer List Table Section */}
+            <section className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg overflow-hidden">
+              <CustomerListTable propensity={propensity} aum={aum} />
+            </section>
           </div>
         </main>
       </div>

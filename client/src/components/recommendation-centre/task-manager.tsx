@@ -136,14 +136,19 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   const handleDelete = async (taskId: string) => {
     try {
       await deleteData(taskId);
+      // Update local cache immediately for better UX
       queryClient.setQueryData<TaskResponse>(["task"], (oldData) => {
         if (!oldData) return oldData;
         return {
           task: oldData.task.filter((t) => t.id !== taskId),
         };
       });
+      // Invalidate query to ensure fresh data on next fetch
+      queryClient.invalidateQueries({ queryKey: ["task"] });
     } catch (err) {
       console.error("Failed to delete task:", err);
+      // Show error to user
+      alert("Failed to delete task. Please try again.");
     }
   };
 

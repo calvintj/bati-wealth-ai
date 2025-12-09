@@ -1,5 +1,4 @@
 import { FormEvent } from "react";
-import Link from "next/link";
 import { useLogin } from "@/hooks/login/use-login";
 import { useForm } from "react-hook-form";
 
@@ -94,21 +93,15 @@ const LoginForm: React.FC = () => {
         </div>
       )}
 
-      {/* LOGIN BUTTON & FORGOT PASSWORD LINK */}
-      <div className="flex justify-between items-center">
+      {/* LOGIN BUTTON */}
+      <div className="flex justify-center">
         <button
           type="submit"
-          className="cursor-pointer py-2 px-4 text-white font-bold rounded-md bg-blue-600 hover:bg-blue-500 transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full cursor-pointer py-2 px-4 text-white font-bold rounded-md bg-blue-600 hover:bg-blue-500 transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
         </button>
-        <Link
-          href="/forgot-password"
-          className="text-sm text-blue-600 hover:underline cursor-pointer"
-        >
-          Forgot password?
-        </Link>
       </div>
     </form>
   );

@@ -62,7 +62,7 @@ const postTask = async (task: TaskRow): Promise<TaskResponse> => {
 const deleteTask = async (task_id: string): Promise<TaskResponse> => {
   try {
     const response = await api.delete("/task-manager/delete-task", {
-      params: { task_id },
+      params: { id: task_id }, // Backend expects 'id' not 'task_id'
     });
     return response.data as TaskResponse;
   } catch (error: unknown) {

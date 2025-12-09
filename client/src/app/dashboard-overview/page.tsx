@@ -36,12 +36,12 @@ const OverviewPage = () => {
   const topProducts = useTopProducts(customerRisk);
 
   return (
-    <div className="flex h-screen dark:bg-gray-900 text-gray-200">
+    <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">
       {/* SIDEBAR */}
       <Sidebar />
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* NAVBAR */}
         <Navbar
           setCustomerRisk={setCustomerRisk}
@@ -50,88 +50,89 @@ const OverviewPage = () => {
         />
 
         {/* DASHBOARD CONTENT */}
-        <main className="flex flex-col gap-2 overflow-y-scroll m-2 md:mx-2">
-          {/* Total Customer, AUM, and FBI */}
-          <div className="flex flex-col md:flex-row gap-2">
-            <div
-              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
-              aria-label="Total Customers"
-            >
-              <TotalCustomer
-                customerRisk={customerRisk}
-                customerData={customerData}
-              />
-            </div>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900">
+          <div className="max-w-[1920px] mx-auto space-y-4">
+            {/* Key Metrics Section */}
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div
+                className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg transition-shadow hover:shadow-xl"
+                aria-label="Total Customers"
+              >
+                <TotalCustomer
+                  customerRisk={customerRisk}
+                  customerData={customerData}
+                />
+              </div>
 
-            <div
-              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
-              aria-label="Total AUM"
-            >
-              <TotalAUM customerRisk={customerRisk} aumData={aumData} />
-            </div>
+              <div
+                className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg transition-shadow hover:shadow-xl"
+                aria-label="Total AUM"
+              >
+                <TotalAUM customerRisk={customerRisk} aumData={aumData} />
+              </div>
 
-            <div
-              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
-              aria-label="Total FBI"
-            >
-              <TotalFBI customerRisk={customerRisk} fbiData={fbiData} />
-            </div>
-          </div>
+              <div
+                className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg transition-shadow hover:shadow-xl"
+                aria-label="Total FBI"
+              >
+                <TotalFBI customerRisk={customerRisk} fbiData={fbiData} />
+              </div>
+            </section>
 
-          {/* Quarterly FUM and Customer Overview */}
-          <div className="flex flex-col md:flex-row gap-2">
-            <div
-              className="flex-[2] rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
-              aria-label="Quarterly FUM"
-            >
-              <QuarterlyFUM
-                customerRisk={customerRisk}
-                quarterlyFUM={quarterlyFUM}
-                setCustomerRisk={setCustomerRisk}
-              />
-            </div>
+            {/* Charts Section - Row 1 */}
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div
+                className="lg:col-span-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg transition-shadow hover:shadow-xl"
+                aria-label="Quarterly FUM"
+              >
+                <QuarterlyFUM
+                  customerRisk={customerRisk}
+                  quarterlyFUM={quarterlyFUM}
+                  setCustomerRisk={setCustomerRisk}
+                />
+              </div>
 
-            <div
-              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
-              aria-label="Customer Overview"
-            >
-              <CustomerRiskProfile
-                setCustomerRisk={setCustomerRisk}
-                customerData={customerData}
-                customerRisk={customerRisk}
-              />
-            </div>
-          </div>
+              <div
+                className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg transition-shadow hover:shadow-xl"
+                aria-label="Customer Risk Profile"
+              >
+                <CustomerRiskProfile
+                  setCustomerRisk={setCustomerRisk}
+                  customerData={customerData}
+                  customerRisk={customerRisk}
+                />
+              </div>
+            </section>
 
-          {/* Quarterly FBI and Top Products */}
-          <div className="flex flex-col md:flex-row gap-2">
-            <div
-              className="flex-[2] rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
-              aria-label="Quarterly FBI"
-            >
-              <QuarterlyFBI
-                customerRisk={customerRisk}
-                quarterlyFBI={quarterlyFBI}
-                quarterlyFUM={quarterlyFUM}
-                setCustomerRisk={setCustomerRisk}
-              />
-            </div>
+            {/* Charts Section - Row 2 */}
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div
+                className="lg:col-span-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg transition-shadow hover:shadow-xl"
+                aria-label="Quarterly FBI"
+              >
+                <QuarterlyFBI
+                  customerRisk={customerRisk}
+                  quarterlyFBI={quarterlyFBI}
+                  quarterlyFUM={quarterlyFUM}
+                  setCustomerRisk={setCustomerRisk}
+                />
+              </div>
 
-            <div
-              className="flex-1 rounded-2xl border-1 border-gray-300 shadow-lg dark:border-none dark:bg-[#1D283A]"
-              aria-label="Top Products"
-            >
-              <TopProducts
-                customerRisk={customerRisk}
-                topProducts={topProducts}
-              />
-            </div>
-          </div>
+              <div
+                className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg transition-shadow hover:shadow-xl"
+                aria-label="Top Products"
+              >
+                <TopProducts
+                  customerRisk={customerRisk}
+                  topProducts={topProducts}
+                />
+              </div>
+            </section>
 
-          <div>
-            <div className="grid rounded-2xl overflow-x-auto bg-gray-100 dark:bg-[#1D283A] shadow-lg dark:shadow-none">
+            {/* Customer List Section */}
+            <section className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1D283A] shadow-lg overflow-hidden">
               <CustomerList customerRisk={customerRisk} />
-            </div>
+            </section>
           </div>
         </main>
       </div>

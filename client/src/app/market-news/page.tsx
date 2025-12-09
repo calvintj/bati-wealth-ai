@@ -1,182 +1,195 @@
 "use client";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 // Components
 import Sidebar from "@/components/shared/sidebar";
 import Navbar from "@/components/shared/navbar";
 import News from "@/components/market-news/news";
+import ProductPicks from "@/components/market-news/product-picks";
+import NewsNotes from "@/components/market-news/news-notes";
 
-const tradingEconomicsApiKey = "49819214053e444:ltdrsnaggcft8yc";
+// Hooks
+import { useEconomicIndicators } from "@/hooks/market-news/use-economic-indicators";
 
 export default function MarketNewsPage() {
   const [customerRisk, setCustomerRisk] = useState<string>("All");
-  const [gdpGrowth, setGdpGrowth] = useState<number | null>(null);
-  const [gdpGrowthLoading, setGdpGrowthLoading] = useState(true);
-  const [gdpGrowthError, setGdpGrowthError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchGdpGrowth = async () => {
-      try {
-        console.log("Fetching GDP growth data...");
-        const corsProxy = "https://cors-anywhere.herokuapp.com/";
-        const apiUrl = `https://api.tradingeconomics.com/historical/country/Indonesia/indicator/GDP%20Growth%20Rate?c=${tradingEconomicsApiKey}`;
-
-        const response = await axios.get(corsProxy + apiUrl, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Origin: window.location.origin,
-          },
-        });
-        console.log("API Response:", response);
-        if (response.data && response.data.length > 0) {
-          setGdpGrowth(response.data[0].value);
-        } else {
-          console.log("No data received from API");
-          setGdpGrowthError("No GDP growth data available");
-        }
-      } catch (error: any) {
-        console.error("Detailed error:", {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-          headers: error.response?.headers,
-        });
-        setGdpGrowthError(`Failed to fetch GDP growth data: ${error.message}`);
-      } finally {
-        setGdpGrowthLoading(false);
-      }
-    };
-
-    fetchGdpGrowth();
-  }, []);
+  const { data: indicators, isLoading, error } = useEconomicIndicators();
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen h-screen overflow-hidden bg-white dark:bg-gray-900 text-gray-200">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <Navbar
           setCustomerRisk={setCustomerRisk}
           customerRisk={customerRisk}
           showRiskDropdown={false}
         />
 
-        <main className="flex flex-1 flex-col lg:flex-row p-2 overflow-hidden">
-          {/* Left Column */}
-          <div className="flex flex-col gap-2 w-auto lg:w-[300px] lg:mr-2">
-            <div className="flex flex-col gap-2 flex-1">
-              <div className="h-12 text-center rounded-2xl p-2 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none font-semibold">
+        <main className="flex flex-1 flex-col lg:flex-row p-4 md:p-6 gap-4 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+          {/* Left Sidebar */}
+          <div className="flex flex-col gap-4 w-full lg:w-80 flex-shrink-0">
+            {/* Macroeconomic Indicators Section */}
+            <section className="space-y-4">
+              <div className="text-center rounded-xl p-3 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg font-semibold text-gray-800 dark:text-white">
                 Macroeconomic Indicators
               </div>
-              <div className="flex flex-col gap-2 flex-1">
+              <div className="flex flex-col gap-3">
                 {/* GDP Growth Card */}
-                <div className="flex-1 rounded-2xl flex flex-col gap-1 p-3 bg-[#232B38] text-white shadow-lg min-h-0">
-                  <div className="text-base">GDP Growth</div>
+                <div className="rounded-xl flex flex-col gap-2 p-4 bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 text-white shadow-lg transition-shadow hover:shadow-xl">
+                  <div className="text-sm font-medium opacity-90">
+                    GDP Growth
+                  </div>
                   <div className="flex items-end gap-2">
-                    {gdpGrowthLoading ? (
-                      <div className="animate-pulse h-8 w-24 bg-gray-700 rounded"></div>
-                    ) : gdpGrowthError ? (
-                      <span className="text-red-500 text-sm">
-                        {gdpGrowthError}
+                    {isLoading ? (
+                      <div className="animate-pulse h-8 w-24 bg-blue-400/50 dark:bg-blue-500/50 rounded"></div>
+                    ) : error || !indicators?.gdpGrowth ? (
+                      <span className="text-red-100 dark:text-red-200 text-sm font-medium">
+                        {error?.message || "Data unavailable"}
                       </span>
                     ) : (
                       <>
                         <span className="text-3xl font-bold">
-                          {gdpGrowth?.toFixed(2)}%
+                          {indicators.gdpGrowth.value.toFixed(2)}%
                         </span>
-                        <span className="flex items-center text-sm text-green-500 font-semibold">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                        {indicators.gdpGrowth.change !== undefined && (
+                          <span
+                            className={`flex items-center gap-1 text-sm font-semibold mb-1 ${
+                              indicators.gdpGrowth.change > 0
+                                ? "text-green-100 dark:text-green-200"
+                                : indicators.gdpGrowth.change < 0
+                                ? "text-red-100 dark:text-red-200"
+                                : "text-white/80 dark:text-gray-200"
+                            }`}
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                            />
-                          </svg>
-                          Latest
-                        </span>
+                            {indicators.gdpGrowth.change > 0 ? (
+                              <TrendingUp size={14} />
+                            ) : indicators.gdpGrowth.change < 0 ? (
+                              <TrendingDown size={14} />
+                            ) : (
+                              <Minus size={14} />
+                            )}
+                            {indicators.gdpGrowth.change > 0 ? "+" : ""}
+                            {indicators.gdpGrowth.change.toFixed(2)}%
+                          </span>
+                        )}
                       </>
                     )}
                   </div>
                 </div>
+
                 {/* BI Rate Card */}
-                <div className="flex-1 rounded-2xl flex flex-col gap-1 p-3 bg-[#232B38] text-white shadow-lg min-h-0">
-                  <div className="text-base">BI Rate</div>
+                <div className="rounded-xl flex flex-col gap-2 p-4 bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-700 dark:to-purple-800 text-white shadow-lg transition-shadow hover:shadow-xl">
+                  <div className="text-sm font-medium opacity-90">BI Rate</div>
                   <div className="flex items-end gap-2">
-                    <span className="text-3xl font-bold">6.00</span>
-                    <span className="flex items-center text-sm text-gray-300 font-semibold">
-                      0,0%
-                    </span>
+                    {isLoading ? (
+                      <div className="animate-pulse h-8 w-24 bg-purple-400/50 dark:bg-purple-500/50 rounded"></div>
+                    ) : error || !indicators?.biRate ? (
+                      <span className="text-red-100 dark:text-red-200 text-sm font-medium">
+                        {error?.message || "Data unavailable"}
+                      </span>
+                    ) : (
+                      <>
+                        <span className="text-3xl font-bold">
+                          {indicators.biRate.value.toFixed(2)}%
+                        </span>
+                        {indicators.biRate.change !== undefined && (
+                          <span
+                            className={`flex items-center gap-1 text-sm font-semibold mb-1 ${
+                              indicators.biRate.change > 0
+                                ? "text-red-100 dark:text-red-200"
+                                : indicators.biRate.change < 0
+                                ? "text-green-100 dark:text-green-200"
+                                : "text-white/80 dark:text-gray-200"
+                            }`}
+                          >
+                            {indicators.biRate.change > 0 ? (
+                              <TrendingUp size={14} />
+                            ) : indicators.biRate.change < 0 ? (
+                              <TrendingDown size={14} />
+                            ) : (
+                              <Minus size={14} />
+                            )}
+                            {indicators.biRate.change > 0 ? "+" : ""}
+                            {indicators.biRate.change.toFixed(2)}%
+                          </span>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
+
                 {/* Inflation Rate Card */}
-                <div className="flex-1 rounded-2xl flex flex-col gap-1 p-3 bg-[#232B38] text-white shadow-lg min-h-0">
-                  <div className="text-base">Inflation Rate</div>
+                <div className="rounded-xl flex flex-col gap-2 p-4 bg-gradient-to-br from-green-500 to-green-600 dark:from-green-700 dark:to-green-800 text-white shadow-lg transition-shadow hover:shadow-xl">
+                  <div className="text-sm font-medium opacity-90">
+                    Inflation Rate
+                  </div>
                   <div className="flex items-end gap-2">
-                    <span className="text-3xl font-bold">1.55</span>
-                    <span className="flex items-center text-sm text-green-500 font-semibold">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 15l7-7 7 7"
-                        />
-                      </svg>
-                      0,5%
-                    </span>
+                    {isLoading ? (
+                      <div className="animate-pulse h-8 w-24 bg-green-400/50 dark:bg-green-500/50 rounded"></div>
+                    ) : error || !indicators?.inflationRate ? (
+                      <span className="text-red-100 dark:text-red-200 text-sm font-medium">
+                        {error?.message || "Data unavailable"}
+                      </span>
+                    ) : (
+                      <>
+                        <span className="text-3xl font-bold">
+                          {indicators.inflationRate.value.toFixed(2)}%
+                        </span>
+                        {indicators.inflationRate.change !== undefined && (
+                          <span
+                            className={`flex items-center gap-1 text-sm font-semibold mb-1 ${
+                              indicators.inflationRate.change > 0
+                                ? "text-red-100 dark:text-red-200"
+                                : indicators.inflationRate.change < 0
+                                ? "text-green-100 dark:text-green-200"
+                                : "text-white/80 dark:text-gray-200"
+                            }`}
+                          >
+                            {indicators.inflationRate.change > 0 ? (
+                              <TrendingUp size={14} />
+                            ) : indicators.inflationRate.change < 0 ? (
+                              <TrendingDown size={14} />
+                            ) : (
+                              <Minus size={14} />
+                            )}
+                            {indicators.inflationRate.change > 0 ? "+" : ""}
+                            {indicators.inflationRate.change.toFixed(2)}%
+                          </span>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-2 flex-1 mt-2">
-              <div className="text-center rounded-2xl p-2 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none font-semibold">
-                Today's Product Pick
+            </section>
+
+            {/* Today's Product Pick Section */}
+            <section className="space-y-4 flex-1 flex flex-col min-h-0">
+              <div className="flex-1 rounded-xl p-4 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl min-h-0">
+                <ProductPicks />
               </div>
-              <div className="grid grid-cols-2 gap-2 flex-1 min-h-0">
-                <div className="rounded-2xl flex items-center justify-center p-6 bg-[#232B38] text-white shadow-lg flex-1 min-h-0">
-                  BBCA
-                </div>
-                <div className="rounded-2xl flex items-center justify-center p-6 bg-[#232B38] text-white shadow-lg flex-1 min-h-0">
-                  BBNI
-                </div>
-                <div className="rounded-2xl flex items-center justify-center p-6 bg-[#232B38] text-white shadow-lg flex-1 min-h-0">
-                  BMRN
-                </div>
-                <div className="rounded-2xl flex items-center justify-center p-6 bg-[#232B38] text-white shadow-lg flex-1 min-h-0">
-                  BTPN
-                </div>
-                <div className="rounded-2xl flex items-center justify-center p-6 bg-[#232B38] text-white shadow-lg flex-1 min-h-0">
-                  DCII
-                </div>
-                <div className="rounded-2xl flex items-center justify-center p-6 bg-[#232B38] text-white shadow-lg flex-1 min-h-0">
-                  ADRO
-                </div>
-              </div>
-            </div>
+            </section>
           </div>
 
-          {/* Right Column */}
-          <div className="flex flex-col gap-2 flex-1 mt-2 lg:mt-0">
-            <div className="h-12 rounded-2xl flex items-center justify-between p-2 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
-              News Summary
+          {/* Right Column - News and Notes */}
+          <div className="flex flex-col gap-4 flex-1 min-w-0">
+            {/* News Summary */}
+            <div className="flex flex-col gap-4 flex-1 min-w-0">
+              <div className="rounded-xl flex items-center justify-between p-4 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg">
+                <h2 className="text-lg font-bold text-gray-800 dark:text-white">
+                  News Summary
+                </h2>
+              </div>
+              <div className="flex-1 rounded-xl overflow-hidden bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl min-h-0">
+                <News />
+              </div>
             </div>
-            <div className="overflow-hidden flex-1 rounded-2xl flex items-center justify-between p-2 bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
-              <News />
+
+            {/* News Notes */}
+            <div className="rounded-xl p-4 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl h-64 flex-shrink-0">
+              <NewsNotes />
             </div>
           </div>
         </main>
