@@ -35,15 +35,8 @@ export default function CustomerListPage() {
             <StackedBarChart setPropensity={setPropensity} setAum={setAum} />
           </div>
           {/* Customer List Table */}
-          <div>
-            <p className="text-2xl font-bold text-center text-black dark:text-white">
-              Daftar Nasabah
-            </p>
-          </div>
-          <div>
-            <div className="rounded-2xl overflow-x-auto bg-white dark:bg-[#1D283A] shadow-lg dark:shadow-none">
-              <CustomerListTable propensity={propensity} aum={aum} />
-            </div>
+          <div className="rounded-2xl overflow-x-auto bg-white dark:bg-[#1D283A] shadow-lg dark:shadow-none">
+            <CustomerListTable propensity={propensity} aum={aum} />
           </div>
         </main>
       </div>

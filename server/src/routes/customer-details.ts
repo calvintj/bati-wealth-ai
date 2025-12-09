@@ -13,7 +13,10 @@ import {
   updateActivityController,
   getQuarterlyAUMController,
   getQuarterlyFUMController,
+  updateCustomerInfoController,
+  bulkUpdateCustomersController,
 } from "../controllers/customer-details";
+import { authMiddleware } from "../middleware/auth";
 
 const router = Router();
 
@@ -30,5 +33,7 @@ router.delete("/delete-activity", deleteActivityController);
 router.put("/update-activity", updateActivityController);
 router.get("/quarterly-aum", getQuarterlyAUMController);
 router.get("/quarterly-fum", getQuarterlyFUMController);
+router.put("/update-customer-info", authMiddleware, updateCustomerInfoController);
+router.put("/bulk-update-customers", authMiddleware, bulkUpdateCustomersController);
 
 export default router;

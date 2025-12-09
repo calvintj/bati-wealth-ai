@@ -55,14 +55,19 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
                 className: "mb-4",
               },
             },
+            thead: {
+              props: {
+                className: "bg-secondary dark:bg-accent",
+              },
+            },
             td: {
               props: {
-                className: "border px-3 py-2",
+                className: "border px-3 py-2 text-black dark:text-white",
               },
             },
             th: {
               props: {
-                className: "border px-3 py-2",
+                className: "border px-3 py-2 font-medium text-black dark:text-accent-foreground",
               },
             },
             li: {

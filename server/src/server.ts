@@ -14,6 +14,8 @@ import overviewRoutes from "./routes/overview";
 import customerListRoutes from "./routes/customer-list";
 import customerDetailsRoutes from "./routes/customer-details";
 import taskManagerRoutes from "./routes/task-manager";
+import marketIndicesRoutes from "./routes/market-indices";
+import dashboardTargetsRoutes from "./routes/dashboard-targets";
 
 dotenv.config();
 
@@ -129,6 +131,8 @@ app.use("/api/overview", overviewRoutes);
 app.use("/api/customer-list", customerListRoutes);
 app.use("/api/customer-details", customerDetailsRoutes);
 app.use("/api/task-manager", taskManagerRoutes);
+app.use("/api/market-indices", marketIndicesRoutes);
+app.use("/api/dashboard-targets", dashboardTargetsRoutes);
 
 // Health check endpoint
 app.get("/health", (req: Request, res: Response) => {

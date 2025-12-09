@@ -10,8 +10,11 @@ from fastapi import FastAPI
 # Load environment variables
 dotenv.load_dotenv()
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("BATI_OPENAI_API_KEY"))
+# Initialize DeepInfra client (OpenAI-compatible API)
+client = OpenAI(
+    api_key=os.getenv("DEEPINFRA_API_KEY"),
+    base_url="https://api.deepinfra.com/v1/openai",
+)
 
 # FastAPI app
 app = FastAPI()

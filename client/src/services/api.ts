@@ -88,12 +88,17 @@ api.interceptors.response.use(
       }
     }
 
-    logger.error("API response error", {
+    // Safely serialize error data
+    const errorData = {
       status: error.response?.status,
       url: originalRequest?.url,
       method: originalRequest?.method,
       error: error.message,
-    });
+      statusText: error.response?.statusText,
+      data: error.response?.data ? JSON.stringify(error.response.data) : undefined,
+    };
+    
+    logger.error("API response error", errorData);
 
     return Promise.reject(error);
   }

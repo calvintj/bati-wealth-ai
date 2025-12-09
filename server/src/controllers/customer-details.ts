@@ -13,6 +13,8 @@ import {
   deleteActivity,
   getQuarterlyAUM,
   getQuarterlyFUM,
+  updateCustomerInfo,
+  bulkUpdateCustomers,
 } from "../models/customer-details";
 
 const getCustomerIDListController = async (req: Request, res: Response) => {
@@ -93,6 +95,40 @@ const getQuarterlyFUMController = async (req: Request, res: Response) => {
   res.json(quarterlyFUM);
 };
 
+const updateCustomerInfoController = async (req: Request, res: Response) => {
+  try {
+    const { customerID, ...updateData } = req.body;
+    if (!customerID) {
+      res.status(400).json({ error: "customerID is required" });
+      return;
+    }
+    const updatedCustomer = await updateCustomerInfo(customerID, updateData);
+    res.json(updatedCustomer);
+  } catch (error) {
+    console.error("Error in updateCustomerInfoController:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const bulkUpdateCustomersController = async (req: Request, res: Response) => {
+  try {
+    const { customerIDs, ...updateData } = req.body;
+    if (!customerIDs || !Array.isArray(customerIDs) || customerIDs.length === 0) {
+      res.status(400).json({ error: "customerIDs array is required" });
+      return;
+    }
+    const result = await bulkUpdateCustomers(customerIDs, updateData);
+    res.json(result);
+  } catch (error: any) {
+    console.error("Error in bulkUpdateCustomersController:", error);
+    console.error("Error stack:", error.stack);
+    res.status(500).json({ 
+      error: error.message || "Internal server error",
+      details: process.env.NODE_ENV === "development" ? error.stack : undefined
+    });
+  }
+};
+
 export {
   getCustomerIDListController,
   getCustomerDetailsController,
@@ -107,4 +143,6 @@ export {
   updateActivityController,
   getQuarterlyAUMController,
   getQuarterlyFUMController,
+  updateCustomerInfoController,
+  bulkUpdateCustomersController,
 };

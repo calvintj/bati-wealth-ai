@@ -289,6 +289,221 @@ const updateActivity = async (activity: any) => {
   return result.rows[0];
 };
 
+const updateCustomerInfo = async (
+  customerID: string,
+  updateData: {
+    risk_profile?: string;
+    aum_label?: string;
+    propensity?: string;
+    priority_private?: string;
+    customer_type?: string;
+    pekerjaan?: string;
+    status_nikah?: string;
+    usia?: string;
+    annual_income?: string;
+    assigned_rm?: string;
+  }
+): Promise<any> => {
+  const fields: string[] = [];
+  const values: any[] = [];
+  let paramIndex = 1;
+
+  if (updateData.risk_profile !== undefined) {
+    fields.push(`risk_profile = $${paramIndex}`);
+    values.push(updateData.risk_profile);
+    paramIndex++;
+  }
+  if (updateData.aum_label !== undefined) {
+    fields.push(`aum_label = $${paramIndex}`);
+    values.push(updateData.aum_label);
+    paramIndex++;
+  }
+  if (updateData.propensity !== undefined) {
+    fields.push(`propensity = $${paramIndex}`);
+    values.push(updateData.propensity);
+    paramIndex++;
+  }
+  if (updateData.priority_private !== undefined) {
+    fields.push(`priority_private = $${paramIndex}`);
+    values.push(updateData.priority_private);
+    paramIndex++;
+  }
+  if (updateData.customer_type !== undefined) {
+    fields.push(`customer_type = $${paramIndex}`);
+    values.push(updateData.customer_type);
+    paramIndex++;
+  }
+  if (updateData.pekerjaan !== undefined) {
+    fields.push(`pekerjaan = $${paramIndex}`);
+    values.push(updateData.pekerjaan);
+    paramIndex++;
+  }
+  if (updateData.status_nikah !== undefined) {
+    fields.push(`status_nikah = $${paramIndex}`);
+    values.push(updateData.status_nikah);
+    paramIndex++;
+  }
+  if (updateData.usia !== undefined) {
+    fields.push(`usia = $${paramIndex}`);
+    values.push(updateData.usia);
+    paramIndex++;
+  }
+  if (updateData.annual_income !== undefined) {
+    fields.push(`annual_income = $${paramIndex}`);
+    // Parse as float to ensure proper numeric type
+    values.push(
+      updateData.annual_income ? parseFloat(updateData.annual_income) : null
+    );
+    paramIndex++;
+  }
+  if (updateData.assigned_rm !== undefined) {
+    fields.push(`assigned_rm = $${paramIndex}`);
+    values.push(updateData.assigned_rm);
+    paramIndex++;
+  }
+
+  if (fields.length === 0) {
+    throw new Error("No fields to update");
+  }
+
+  values.push(customerID);
+  const query = `
+    UPDATE customer_info 
+    SET ${fields.join(", ")}
+    WHERE bp_number_wm_core = $${paramIndex}
+    RETURNING *
+  `;
+
+  const result = await db.query(query, values);
+  return result.rows[0];
+};
+
+const bulkUpdateCustomers = async (
+  customerIDs: string[],
+  updateData: {
+    risk_profile?: string;
+    aum_label?: string;
+    propensity?: string;
+    priority_private?: string;
+    customer_type?: string;
+    pekerjaan?: string;
+    status_nikah?: string;
+    usia?: string;
+    annual_income?: string;
+    assigned_rm?: string;
+  }
+): Promise<{ updated: number; failed: number; errors: string[] }> => {
+  const fields: string[] = [];
+  const values: any[] = [];
+  let paramIndex = 1;
+
+  if (updateData.risk_profile !== undefined && updateData.risk_profile !== "") {
+    fields.push(`risk_profile = $${paramIndex}::text`);
+    values.push(String(updateData.risk_profile));
+    paramIndex++;
+  }
+  if (updateData.aum_label !== undefined && updateData.aum_label !== "") {
+    fields.push(`aum_label = $${paramIndex}::text`);
+    values.push(String(updateData.aum_label));
+    paramIndex++;
+  }
+  if (updateData.propensity !== undefined && updateData.propensity !== "") {
+    fields.push(`propensity = $${paramIndex}::text`);
+    values.push(String(updateData.propensity));
+    paramIndex++;
+  }
+  if (
+    updateData.priority_private !== undefined &&
+    updateData.priority_private !== ""
+  ) {
+    fields.push(`priority_private = $${paramIndex}::text`);
+    values.push(String(updateData.priority_private));
+    paramIndex++;
+  }
+  if (
+    updateData.customer_type !== undefined &&
+    updateData.customer_type !== ""
+  ) {
+    fields.push(`customer_type = $${paramIndex}::text`);
+    values.push(String(updateData.customer_type));
+    paramIndex++;
+  }
+  if (updateData.pekerjaan !== undefined && updateData.pekerjaan !== "") {
+    fields.push(`pekerjaan = $${paramIndex}::text`);
+    values.push(String(updateData.pekerjaan));
+    paramIndex++;
+  }
+  if (updateData.status_nikah !== undefined && updateData.status_nikah !== "") {
+    fields.push(`status_nikah = $${paramIndex}::text`);
+    values.push(String(updateData.status_nikah));
+    paramIndex++;
+  }
+  if (updateData.usia !== undefined && updateData.usia !== "") {
+    fields.push(`usia = $${paramIndex}::integer`);
+    const parsedUsia = parseInt(updateData.usia, 10);
+    if (isNaN(parsedUsia)) {
+      throw new Error("Age (usia) must be a valid number");
+    }
+    values.push(parsedUsia);
+    paramIndex++;
+  }
+  if (
+    updateData.annual_income !== undefined &&
+    updateData.annual_income !== ""
+  ) {
+    fields.push(`annual_income = $${paramIndex}::numeric`);
+    // Parse as float to ensure proper numeric type
+    const parsedValue = parseFloat(updateData.annual_income);
+    if (isNaN(parsedValue)) {
+      throw new Error("Annual income must be a valid number");
+    }
+    values.push(parsedValue);
+    paramIndex++;
+  }
+  if (updateData.assigned_rm !== undefined && updateData.assigned_rm !== "") {
+    fields.push(`assigned_rm = $${paramIndex}::text`);
+    values.push(String(updateData.assigned_rm));
+    paramIndex++;
+  }
+
+  if (fields.length === 0) {
+    throw new Error("No fields to update");
+  }
+
+  if (customerIDs.length === 0) {
+    throw new Error("No customers selected");
+  }
+
+  // Create placeholders for customer IDs
+  // paramIndex is already the next available index, so use it directly
+  const idPlaceholders = customerIDs
+    .map((_, index) => `$${paramIndex + index}`)
+    .join(", ");
+  // Ensure customer IDs are strings (bp_number_wm_core is stored as text)
+  values.push(...customerIDs.map((id) => String(id)));
+
+  const query = `
+    UPDATE customer_info 
+    SET ${fields.join(", ")}
+    WHERE bp_number_wm_core IN (${idPlaceholders})
+    RETURNING bp_number_wm_core
+  `;
+
+  try {
+    console.log("Bulk update query:", query);
+    console.log("Bulk update values:", values);
+    const result = await db.query(query, values);
+    return {
+      updated: result.rows.length,
+      failed: customerIDs.length - result.rows.length,
+      errors: [],
+    };
+  } catch (error: any) {
+    console.error("Bulk update database error:", error);
+    throw new Error(`Bulk update failed: ${error.message}`);
+  }
+};
+
 export {
   getCustomerIDList,
   getCustomerDetails,
@@ -303,4 +518,6 @@ export {
   updateActivity,
   getQuarterlyAUM,
   getQuarterlyFUM,
+  updateCustomerInfo,
+  bulkUpdateCustomers,
 };

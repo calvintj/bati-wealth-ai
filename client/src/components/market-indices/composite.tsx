@@ -54,7 +54,7 @@ export const CompositeChart: React.FC = () => {
     );
   }
 
-  if (!data)
+  if (!data || data.length === 0)
     return (
       <div className="flex items-center justify-center h-64 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-md m-4">
         <div className="animate-pulse flex flex-col items-center">
@@ -64,14 +64,21 @@ export const CompositeChart: React.FC = () => {
       </div>
     );
 
+  const latestDataPoint = data[data.length - 1];
+  if (!latestDataPoint || latestDataPoint.change_percent === undefined) {
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-md m-4">
+        <p>No data available</p>
+      </div>
+    );
+  }
+
   const color =
-    data[data.length - 1].change_percent < 0
+    latestDataPoint.change_percent < 0
       ? "#ef4444"
-      : data[data.length - 1].change_percent > 0
+      : latestDataPoint.change_percent > 0
       ? "#22c55e"
       : "#9ca3af";
-
-  const latestDataPoint = data[data.length - 1];
   const previousClose = data.length > 1 ? data[data.length - 2].close_price : 0;
   const changeValue = latestDataPoint.close_price - previousClose;
 
@@ -173,7 +180,7 @@ export const CompositeChart: React.FC = () => {
                             })}
                           </span>
                         </div>
-                        {dataPoint && (
+                        {dataPoint && dataPoint.change_percent !== undefined && (
                           <div className="flex justify-between gap-4">
                             <span className="text-gray-500 dark:text-gray-400">
                               Change:

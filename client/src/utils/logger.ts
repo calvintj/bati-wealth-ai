@@ -74,10 +74,17 @@ class Logger {
           : level === "debug"
           ? "debug"
           : "log";
-      console[consoleMethod](
-        `[${level.toUpperCase()}] ${message}`,
-        sanitizedData || ""
-      );
+      
+      // Ensure consoleMethod is valid
+      if (typeof console[consoleMethod as keyof Console] === "function") {
+        console[consoleMethod as keyof Console](
+          `[${level.toUpperCase()}] ${message}`,
+          sanitizedData || ""
+        );
+      } else {
+        // Fallback to console.log if method doesn't exist
+        console.log(`[${level.toUpperCase()}] ${message}`, sanitizedData || "");
+      }
     } else if (this.isProduction && level === "error") {
       // In production, only log errors to console
       console.error(`[${level.toUpperCase()}] ${message}`, sanitizedData || "");

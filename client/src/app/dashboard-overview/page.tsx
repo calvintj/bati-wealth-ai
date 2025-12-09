@@ -129,11 +129,6 @@ const OverviewPage = () => {
           </div>
 
           <div>
-            <p className="text-2xl font-bold text-center text-black dark:text-white">
-              Daftar Nasabah
-            </p>
-          </div>
-          <div>
             <div className="grid rounded-2xl overflow-x-auto bg-gray-100 dark:bg-[#1D283A] shadow-lg dark:shadow-none">
               <CustomerList customerRisk={customerRisk} />
             </div>

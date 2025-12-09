@@ -15,6 +15,7 @@ import OwnedProductTable from "@/components/customer-details/owned-products";
 import RecommendationProduct from "@/components/customer-details/recommendation-products";
 import QuarterlyAUM from "@/components/customer-details/quarterly-aum";
 import QuarterlyFUM from "@/components/customer-details/quarterly-fum";
+import ActivityManager from "@/components/customer-details/activity-manager";
 interface CustomerDetails {
   Priority_Private: string;
   Risk_Profile: string;
@@ -150,7 +151,7 @@ export default function CustomerDetailsPage() {
                 <PortfolioPie customerID={customerID} />
               </div>
 
-              {/* Activity Manager Section */}
+              {/* Optimized Portfolio Section */}
               <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1 shadow-lg dark:shadow-none">
                 <OptimizedPortfolio customerID={customerID} />
               </div>
@@ -162,6 +163,10 @@ export default function CustomerDetailsPage() {
               <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none flex-1 shadow-lg dark:shadow-none">
                 <QuarterlyFUM customerID={customerID} />
               </div>
+            </div>
+            {/* Activity Manager Section */}
+            <div className="rounded-2xl bg-white dark:bg-[#1D283A] border border-gray-300 dark:border-none shadow-lg dark:shadow-none">
+              <ActivityManager customerID={customerID} />
             </div>
             <div className="ml-2">
               <p className="font-bold text-black dark:text-white">
