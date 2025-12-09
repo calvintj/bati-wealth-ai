@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { CirclePlus, Trash2, Pencil } from "lucide-react";
+import { CirclePlus, Trash2, Pencil, Download } from "lucide-react";
 import {
   useGetActivity,
   usePostActivity,
@@ -8,6 +8,7 @@ import {
   useUpdateActivity,
 } from "@/hooks/customer-details/use-activity-manager";
 import { Activity } from "@/types/page/customer-details";
+import { exportToCSV } from "@/utils/csv-export";
 
 const ActivityManager = ({ customerID }: { customerID: string }) => {
   const {
@@ -125,61 +126,95 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
     });
   };
 
+  const handleExport = () => {
+    if (localActivity.length === 0) return;
+    
+    const exportData = localActivity.map((activity) => ({
+      "Title": activity.title,
+      "Description": activity.description,
+      "Date": activity.date.split("T")[0],
+    }));
+    exportToCSV(exportData, `activities_${customerID}`);
+  };
+
   return (
-    <div className="relative p-4 rounded-lg text-white w-full bg-[#1D283A]">
+    <div className="relative p-4 rounded-lg text-white w-full h-full bg-[#1D283A] flex flex-col min-h-0">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <h2 className="text-lg font-semibold">Aktivitas</h2>
-        <button
-          ref={buttonRef}
-          onClick={togglePopup}
-          className="text-2xl hover:text-gray-300 cursor-pointer"
-        >
-          <CirclePlus />
-        </button>
+        <div className="flex items-center gap-2">
+          {localActivity.length > 0 && (
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-1 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-xs"
+              title="Export to CSV"
+            >
+              <Download size={14} />
+              <span>Export</span>
+            </button>
+          )}
+          <button
+            ref={buttonRef}
+            onClick={togglePopup}
+            className="text-2xl hover:text-gray-300 cursor-pointer transition-colors"
+            title={isEditing ? "Edit Activity" : "Add Activity"}
+          >
+            <CirclePlus />
+          </button>
+        </div>
       </div>
 
       {/* Activity List */}
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>Error: {error.message}</p>
-      ) : localActivity.length === 0 ? (
-        <p className="text-center bg-gray-700 p-4 rounded-2xl">
-          Tidak ada aktivitas tersedia !
-        </p>
-      ) : (
-        <ul className="mb-4 max-h-80 overflow-y-auto rounded-md">
-          {localActivity.map((activity, index) => (
-            <li
-              key={index}
-              className="bg-gray-700 p-4 mb-2 rounded-md hover:bg-gray-600 transition-colors flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-semibold">{activity.title}</h3>
-                <p className="text-sm text-gray-300">{activity.description}</p>
-              </div>
-              <div className="flex flex-row gap-2">
-                <p className="text-xs text-gray-400">
-                  {activity.date.split("T")[0]}
-                </p>
-                <button
-                  className="text-gray-100 hover:text-gray-300 cursor-pointer"
-                  onClick={() => handleEdit(activity)}
-                >
-                  <Pencil />
-                </button>
-                <button
-                  className="text-gray-100 hover:text-gray-300 cursor-pointer"
-                  onClick={() => deleteActivity(activity.id)}
-                >
-                  <Trash2 />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <p>Loading...</p>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-full">
+            <p>Error: {error.message}</p>
+          </div>
+        ) : localActivity.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-center bg-gray-700 p-4 rounded-2xl">
+              Tidak ada aktivitas tersedia !
+            </p>
+          </div>
+        ) : (
+          <ul className="space-y-2 pr-2">
+            {localActivity.map((activity, index) => (
+              <li
+                key={index}
+                className="bg-gray-700 p-4 rounded-md hover:bg-gray-600 transition-colors flex justify-between items-center"
+              >
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold truncate">{activity.title}</h3>
+                  <p className="text-sm text-gray-300 line-clamp-2">{activity.description}</p>
+                </div>
+                <div className="flex flex-row gap-2 items-center flex-shrink-0 ml-2">
+                  <p className="text-xs text-gray-400 whitespace-nowrap">
+                    {activity.date.split("T")[0]}
+                  </p>
+                  <button
+                    className="text-gray-100 hover:text-gray-300 cursor-pointer transition-colors"
+                    onClick={() => handleEdit(activity)}
+                    title="Edit activity"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    className="text-gray-100 hover:text-gray-300 cursor-pointer transition-colors"
+                    onClick={() => deleteActivity(activity.id)}
+                    title="Delete activity"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {/* Add Activity Popup */}
       {showPopup &&
