@@ -25,16 +25,21 @@ export const usePostActivity = () => {
     mutationFn: postActivity,
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
-      // Only show toast if it's not a permission error (already shown by interceptor)
-      if (
-        !errorMessage.toLowerCase().includes("permission") &&
-        !errorMessage.toLowerCase().includes("access denied")
-      ) {
-        toast.error("Failed to create activity", {
-          description: errorMessage,
-          duration: 5000,
-        });
+      // Skip showing toast for 403 errors (already shown by interceptor)
+      const is403Error =
+        (axios.isAxiosError(error) && error.response?.status === 403) ||
+        errorMessage.includes("403") ||
+        errorMessage.toLowerCase().includes("permission") ||
+        errorMessage.toLowerCase().includes("access denied");
+
+      if (is403Error) {
+        return;
       }
+
+      toast.error("Failed to create activity", {
+        description: errorMessage,
+        duration: 5000,
+      });
     },
   });
 };

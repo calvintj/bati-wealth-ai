@@ -27,7 +27,7 @@ export const checkPermissionBeforeAction = (
         view: "view",
       }[actionName.toLowerCase()] || actionName;
 
-    // Match the exact error message format from API interceptor
+    // Use the standard error message format (matches API interceptor)
     toast.error("Error", {
       description: `Access denied. You do not have permission to ${actionText} on this page. Please contact your administrator if you need access.`,
       duration: 5000,

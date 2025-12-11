@@ -9,30 +9,29 @@ import { CertainCustomerList } from "@/types/page/overview";
 import { useBulkUpdateCustomers } from "@/hooks/dashboard-overview/use-bulk-update";
 import { useToast } from "@/hooks/use-toast";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
-import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 // Helper function to format risk profile
 const formatRiskProfile = (riskProfile: string | undefined): string => {
   if (!riskProfile) return "";
-  
+
   const riskMap: Record<string, string> = {
     "1": "1 - Conservative",
-    "Conservative": "1 - Conservative",
+    Conservative: "1 - Conservative",
     "2": "2 - Balanced",
-    "Balanced": "2 - Balanced",
+    Balanced: "2 - Balanced",
     "3": "3 - Moderate",
-    "Moderate": "3 - Moderate",
+    Moderate: "3 - Moderate",
     "4": "4 - Growth",
-    "Growth": "4 - Growth",
+    Growth: "4 - Growth",
     "5": "5 - Aggressive",
-    "Aggressive": "5 - Aggressive",
+    Aggressive: "5 - Aggressive",
   };
-  
+
   // Check if it's already formatted
   if (riskProfile.includes(" - ")) {
     return riskProfile;
   }
-  
+
   // Try to match by number or name
   const normalized = riskProfile.trim();
   return riskMap[normalized] || riskProfile;
@@ -46,7 +45,7 @@ const CustomerListTable = ({ customerRisk }: { customerRisk: string }) => {
     new Set()
   );
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
-  
+
   // Get permissions for dashboard-overview page
   const { canUpdate } = usePagePermissions();
 
@@ -82,10 +81,6 @@ const CustomerListTable = ({ customerRisk }: { customerRisk: string }) => {
   }
 
   const handleEdit = (customer: CertainCustomerList) => {
-    // Check permission before allowing edit
-    if (!checkPermissionBeforeAction(canUpdate, "update", "customer information")) {
-      return;
-    }
     setEditingCustomer(customer);
     setIsEditModalOpen(true);
   };

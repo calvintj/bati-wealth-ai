@@ -9,7 +9,6 @@ import ExportButton from "@/components/dashboard-overview/export-button";
 import { useBulkUpdateCustomers } from "@/hooks/dashboard-overview/use-bulk-update";
 import { useToast } from "@/hooks/use-toast";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
-import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 interface CustomerListTableProps {
   propensity: string;
@@ -19,34 +18,37 @@ interface CustomerListTableProps {
 // Helper function to format risk profile
 const formatRiskProfile = (riskProfile: string | undefined): string => {
   if (!riskProfile) return "";
-  
+
   const riskMap: Record<string, string> = {
     "1": "1 - Conservative",
-    "Conservative": "1 - Conservative",
+    Conservative: "1 - Conservative",
     "2": "2 - Balanced",
-    "Balanced": "2 - Balanced",
+    Balanced: "2 - Balanced",
     "3": "3 - Moderate",
-    "Moderate": "3 - Moderate",
+    Moderate: "3 - Moderate",
     "4": "4 - Growth",
-    "Growth": "4 - Growth",
+    Growth: "4 - Growth",
     "5": "5 - Aggressive",
-    "Aggressive": "5 - Aggressive",
+    Aggressive: "5 - Aggressive",
   };
-  
+
   // Check if it's already formatted
   if (riskProfile.includes(" - ")) {
     return riskProfile;
   }
-  
+
   // Try to match by number or name
   const normalized = riskProfile.trim();
   return riskMap[normalized] || riskProfile;
 };
 
 const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
-  const [editingCustomer, setEditingCustomer] = useState<CertainCustomerList | null>(null);
+  const [editingCustomer, setEditingCustomer] =
+    useState<CertainCustomerList | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedCustomers, setSelectedCustomers] = useState<Set<string>>(new Set());
+  const [selectedCustomers, setSelectedCustomers] = useState<Set<string>>(
+    new Set()
+  );
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
 
   // Hooks
@@ -55,7 +57,7 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
     propensity,
     aum
   ) as CertainCustomerList[];
-  
+
   // Get permissions for customer-mapping page
   const { canUpdate } = usePagePermissions();
 
@@ -73,12 +75,12 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
       "Customer ID": customer["Customer ID"],
       "Risk Profile": customer["Risk Profile"],
       "AUM Label": customer["AUM Label"],
-      "Propensity": customer["Propensity"],
+      Propensity: customer["Propensity"],
       "Priority / Private": customer["Priority / Private"],
       "Customer Type": customer["Customer Type"],
-      "Pekerjaan": customer["Pekerjaan"],
+      Pekerjaan: customer["Pekerjaan"],
       "Status Nikah": customer["Status Nikah"],
-      "Usia": customer["Usia"],
+      Usia: customer["Usia"],
       "Annual Income": customer["Annual Income"],
       "Total FUM": customer["Total FUM"] || 0,
       "Total AUM": customer["Total AUM"] || 0,
@@ -87,10 +89,6 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
   });
 
   const handleEdit = (customer: CertainCustomerList) => {
-    // Check permission before allowing edit
-    if (!checkPermissionBeforeAction(canUpdate, "update", "customer information")) {
-      return;
-    }
     setEditingCustomer(customer);
     setIsEditModalOpen(true);
   };
@@ -111,7 +109,9 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
     if (selectedCustomers.size === customersForEdit.length) {
       setSelectedCustomers(new Set());
     } else {
-      setSelectedCustomers(new Set(customersForEdit.map((c) => c["Customer ID"])));
+      setSelectedCustomers(
+        new Set(customersForEdit.map((c) => c["Customer ID"]))
+      );
     }
   };
 

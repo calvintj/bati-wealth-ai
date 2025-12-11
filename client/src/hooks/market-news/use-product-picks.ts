@@ -6,6 +6,19 @@ import {
   deleteProductPick,
 } from "@/services/market-news/product-picks-api";
 import { ProductPickResponse, ProductPick } from "@/types/page/market-news";
+import { toast } from "sonner";
+import axios from "axios";
+
+// Helper to extract error message
+const getErrorMessage = (error: unknown): string => {
+  if (axios.isAxiosError(error)) {
+    return error.response?.data?.error || error.message || "An error occurred";
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "An unexpected error occurred";
+};
 
 export const useGetProductPicks = (pick_date?: string) => {
   return useQuery<ProductPickResponse>({
@@ -31,6 +44,19 @@ export const useCreateProductPick = () => {
     }) => createProductPick(ticker, pick_date, reason, priority),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["productPicks"] });
+    },
+    onError: (error) => {
+      const errorMessage = getErrorMessage(error);
+      // Only show toast if it's not a permission error (already shown by interceptor)
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
+        toast.error("Failed to create product pick", {
+          description: errorMessage,
+          duration: 5000,
+        });
+      }
     },
   });
 };
@@ -70,4 +96,3 @@ export const useDeleteProductPick = () => {
     },
   });
 };
-

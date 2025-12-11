@@ -60,15 +60,15 @@ export default function CustomerEditModal({
     // Map to formatted version
     const riskMap: Record<string, string> = {
       "1": "1 - Conservative",
-      "Conservative": "1 - Conservative",
+      Conservative: "1 - Conservative",
       "2": "2 - Balanced",
-      "Balanced": "2 - Balanced",
+      Balanced: "2 - Balanced",
       "3": "3 - Moderate",
-      "Moderate": "3 - Moderate",
+      Moderate: "3 - Moderate",
       "4": "4 - Growth",
-      "Growth": "4 - Growth",
+      Growth: "4 - Growth",
       "5": "5 - Aggressive",
-      "Aggressive": "5 - Aggressive",
+      Aggressive: "5 - Aggressive",
     };
     return riskMap[value.trim()] || value;
   };
@@ -109,7 +109,7 @@ export default function CustomerEditModal({
       if (riskProfileValue && riskProfileValue.includes(" - ")) {
         riskProfileValue = riskProfileValue.split(" - ")[0].trim();
       }
-      
+
       await updateCustomer({
         customerID: customer["Customer ID"],
         risk_profile: riskProfileValue || undefined,
@@ -133,11 +133,21 @@ export default function CustomerEditModal({
       });
       onClose();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update customer information",
-        variant: "destructive",
-      });
+      // Check if it's a permission error - if so, the interceptor already showed the error
+      const errorMessage = error?.response?.data?.error || error?.message || "";
+      const isPermissionError =
+        errorMessage.toLowerCase().includes("permission") ||
+        errorMessage.toLowerCase().includes("access denied");
+
+      if (!isPermissionError) {
+        // Only show custom error if it's not a permission error
+        toast({
+          title: "Error",
+          description: errorMessage || "Failed to update customer information",
+          variant: "destructive",
+        });
+      }
+      // If it's a permission error, the interceptor already showed the error message
     }
   };
 

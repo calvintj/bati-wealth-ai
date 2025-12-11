@@ -7,7 +7,6 @@ import { Pencil } from "lucide-react";
 import { useCustomerDetails } from "@/hooks/customer-details/use-customer-details";
 import { useCustomerList } from "@/hooks/customer-mapping/use-customer-list";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
-import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 // Components
 import Sidebar from "@/components/shared/sidebar";
@@ -42,13 +41,7 @@ const formatCurrency = (value: string | undefined): string => {
 
 // Memoized DetailRow component
 const DetailRow = memo(
-  ({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | number | undefined;
-  }) => (
+  ({ label, value }: { label: string; value: string | number | undefined }) => (
     <div className="bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-between p-3 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600">
       <h2 className="pl-2 font-semibold text-sm text-gray-700 dark:text-gray-300">
         {label}
@@ -67,8 +60,12 @@ export default function CustomerDetailsPage() {
   const [customerID, setCustomerID] = useState("1");
   const [customerRisk, setCustomerRisk] = useState<string>("All");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  
-  const { canView, canUpdate, loading: permissionsLoading } = usePagePermissions();
+
+  const {
+    canView,
+    canUpdate,
+    loading: permissionsLoading,
+  } = usePagePermissions();
   const customerList = useCustomerList();
 
   // Update customerID based on URL search parameter
@@ -87,12 +84,8 @@ export default function CustomerDetailsPage() {
 
   // Memoized event handlers
   const handleEditClick = useCallback(() => {
-    // Check permission before allowing to edit
-    if (!checkPermissionBeforeAction(canUpdate, "update", "customer information")) {
-      return;
-    }
     setIsEditModalOpen(true);
-  }, [canUpdate]);
+  }, []);
 
   const handleModalClose = useCallback(() => {
     setIsEditModalOpen(false);
@@ -120,23 +113,23 @@ export default function CustomerDetailsPage() {
   // Find customer data for editing
   const customerForEdit = useMemo(() => {
     if (!customerID || !Array.isArray(customerList)) return null;
-    
+
     const customer = customerList.find(
       (c: any) => String(c["Customer ID"]) === String(customerID)
     );
-    
+
     if (!customer) return null;
-    
+
     return {
       "Customer ID": customer["Customer ID"],
       "Risk Profile": customer["Risk Profile"] || "",
       "AUM Label": customer["AUM Label"] || "",
-      "Propensity": customer["Propensity"] || "",
+      Propensity: customer["Propensity"] || "",
       "Priority / Private": customer["Priority / Private"] || "",
       "Customer Type": customer["Customer Type"] || "",
-      "Pekerjaan": customer["Pekerjaan"] || "",
+      Pekerjaan: customer["Pekerjaan"] || "",
       "Status Nikah": customer["Status Nikah"] || "",
-      "Usia": customer["Usia"] || 0,
+      Usia: customer["Usia"] || 0,
       "Annual Income": customer["Annual Income"] || 0,
       "Total FUM": customer["Total FUM"] || 0,
       "Total AUM": customer["Total AUM"] || 0,
@@ -156,7 +149,9 @@ export default function CustomerDetailsPage() {
             showRiskDropdown={false}
           />
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-            <p className="text-gray-600 dark:text-gray-400">Loading permissions...</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Loading permissions...
+            </p>
           </main>
         </div>
       </div>
@@ -179,7 +174,8 @@ export default function CustomerDetailsPage() {
                 Access Denied
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                You do not have permission to view this page. Please contact your administrator if you need access.
+                You do not have permission to view this page. Please contact
+                your administrator if you need access.
               </p>
             </div>
           </main>
@@ -241,7 +237,9 @@ export default function CustomerDetailsPage() {
                     {loading ? (
                       <div className="animate-pulse h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
                     ) : (
-                      <span className="truncate block w-full">{item.value}</span>
+                      <span className="truncate block w-full">
+                        {item.value}
+                      </span>
                     )}
                   </h2>
                 </div>

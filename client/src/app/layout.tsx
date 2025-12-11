@@ -4,6 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import AppProvider from "@/providers/app-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "sonner";
 import { cookies } from "next/headers";
 
 const geistSans = Geist({
@@ -40,6 +41,7 @@ export default async function RootLayout({
             {children}
           </AppProvider>
           <Toaster />
+          <SonnerToaster position="bottom-right" />
         </ReactQueryProvider>
       </body>
     </html>

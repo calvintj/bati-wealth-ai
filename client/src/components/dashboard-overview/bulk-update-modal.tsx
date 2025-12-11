@@ -117,11 +117,21 @@ export default function BulkUpdateModal({
       onSuccess();
       handleClose();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update customers",
-        variant: "destructive",
-      });
+      // Check if it's a permission error - if so, the interceptor already showed the error
+      const errorMessage = error?.response?.data?.error || error?.message || "";
+      const isPermissionError =
+        errorMessage.toLowerCase().includes("permission") ||
+        errorMessage.toLowerCase().includes("access denied");
+
+      if (!isPermissionError) {
+        // Only show custom error if it's not a permission error
+        toast({
+          title: "Error",
+          description: errorMessage || "Failed to update customers",
+          variant: "destructive",
+        });
+      }
+      // If it's a permission error, the interceptor already showed the error message
     }
   };
 

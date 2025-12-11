@@ -6,6 +6,19 @@ import {
   deleteNewsNote,
 } from "@/services/market-news/news-notes-api";
 import { NewsNoteResponse, NewsNote } from "@/types/page/market-news";
+import { toast } from "sonner";
+import axios from "axios";
+
+// Helper to extract error message
+const getErrorMessage = (error: unknown): string => {
+  if (axios.isAxiosError(error)) {
+    return error.response?.data?.error || error.message || "An error occurred";
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "An unexpected error occurred";
+};
 
 export const useGetNewsNotes = (news_id?: number) => {
   return useQuery<NewsNoteResponse>({
@@ -31,6 +44,19 @@ export const useCreateNewsNote = () => {
     }) => createNewsNote(note_title, note_content, news_id, relevance_tags),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["newsNotes"] });
+    },
+    onError: (error) => {
+      const errorMessage = getErrorMessage(error);
+      // Only show toast if it's not a permission error (already shown by interceptor)
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
+        toast.error("Failed to create news note", {
+          description: errorMessage,
+          duration: 5000,
+        });
+      }
     },
   });
 };
@@ -68,4 +94,3 @@ export const useDeleteNewsNote = () => {
     },
   });
 };
-

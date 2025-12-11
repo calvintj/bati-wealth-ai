@@ -91,16 +91,18 @@ api.interceptors.response.use(
 
     // Handle 403 Forbidden (Permission Denied)
     if (error.response?.status === 403) {
-      const errorMessage = error.response?.data?.error || "Access denied. You do not have permission to perform this action.";
-      
-      // Show user-friendly error message
+      const errorMessage =
+        error.response?.data?.error ||
+        "Access denied. You do not have permission to perform this action. Please contact your administrator if you need access.";
+
+      // Show user-friendly error message - match the format from permission-checker.ts
       if (typeof window !== "undefined") {
-        toast.error("Permission Denied", {
+        toast.error("Error", {
           description: errorMessage,
           duration: 5000,
         });
       }
-      
+
       logger.warn("Permission denied", {
         url: originalRequest.url,
         method: originalRequest.method,
@@ -124,38 +126,39 @@ api.interceptors.response.use(
     try {
       const errorData: Record<string, any> = {};
       let hasData = false;
-      
+
       if (error.response) {
         errorData.status = error.response.status;
         errorData.statusText = error.response.statusText;
         hasData = true;
-        
+
         if (error.response.data) {
           try {
-            errorData.data = typeof error.response.data === 'string' 
-              ? error.response.data 
-              : JSON.stringify(error.response.data);
+            errorData.data =
+              typeof error.response.data === "string"
+                ? error.response.data
+                : JSON.stringify(error.response.data);
           } catch (e) {
             errorData.data = String(error.response.data);
           }
         }
       }
-      
+
       if (originalRequest?.url) {
         errorData.url = originalRequest.url;
         hasData = true;
       }
-      
+
       if (originalRequest?.method) {
         errorData.method = originalRequest.method;
         hasData = true;
       }
-      
+
       if (error.message) {
         errorData.error = error.message;
         hasData = true;
       }
-      
+
       // Only log if we have meaningful data
       if (hasData && Object.keys(errorData).length > 0) {
         logger.error("API response error", errorData);
@@ -164,8 +167,8 @@ api.interceptors.response.use(
     } catch (logError) {
       // Only log fallback if we have at least an error message
       if (error.message) {
-        logger.error("API response error", { 
-          message: error.message
+        logger.error("API response error", {
+          message: error.message,
         });
       }
     }

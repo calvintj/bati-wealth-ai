@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
-import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 export default function ProductPicks() {
   const today = new Date().toISOString().split("T")[0];
@@ -23,7 +22,7 @@ export default function ProductPicks() {
   const { mutateAsync: createPick } = useCreateProductPick();
   const { mutateAsync: updatePick } = useUpdateProductPick();
   const { mutateAsync: deletePick } = useDeleteProductPick();
-  
+
   // Get permissions for market-news page
   const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
@@ -38,10 +37,6 @@ export default function ProductPicks() {
   const picks = data?.picks || [];
 
   const handleOpenCreate = () => {
-    // Check permission before allowing to create
-    if (!checkPermissionBeforeAction(canAdd, "create", "product pick")) {
-      return;
-    }
     setIsEditing(false);
     setEditingPick(null);
     setTicker("");
@@ -52,10 +47,6 @@ export default function ProductPicks() {
   };
 
   const handleOpenEdit = (pick: ProductPick) => {
-    // Check permission before allowing to edit
-    if (!checkPermissionBeforeAction(canUpdate, "update", "product pick")) {
-      return;
-    }
     setIsEditing(true);
     setEditingPick(pick);
     setTicker(pick.ticker);
@@ -79,17 +70,6 @@ export default function ProductPicks() {
     if (!ticker.trim()) {
       alert("Please enter a ticker symbol");
       return;
-    }
-
-    // Check permission before submitting
-    if (isEditing) {
-      if (!checkPermissionBeforeAction(canUpdate, "update", "product pick")) {
-        return;
-      }
-    } else {
-      if (!checkPermissionBeforeAction(canAdd, "create", "product pick")) {
-        return;
-      }
     }
 
     try {
@@ -117,11 +97,6 @@ export default function ProductPicks() {
   };
 
   const handleDelete = async (id: number) => {
-    // Check permission before allowing to delete
-    if (!checkPermissionBeforeAction(canDelete, "delete", "product pick")) {
-      return;
-    }
-
     if (!confirm("Are you sure you want to delete this product pick?")) return;
 
     try {
@@ -267,7 +242,9 @@ export default function ProductPicks() {
                       id="priority"
                       type="number"
                       value={priority}
-                      onChange={(e) => setPriority(parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        setPriority(parseInt(e.target.value) || 0)
+                      }
                       className="mt-1"
                       min={0}
                     />
@@ -298,4 +275,3 @@ export default function ProductPicks() {
     </>
   );
 }
-
