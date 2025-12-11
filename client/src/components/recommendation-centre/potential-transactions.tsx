@@ -12,6 +12,8 @@ import { usePostTask } from "@/hooks/recommendation-centre/use-task-manager";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 export default function OwnedProductTable() {
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
@@ -26,6 +28,9 @@ export default function OwnedProductTable() {
   const { mutateAsync: createTask } = usePostTask();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  
+  // Get permissions for recommendation-centre page
+  const { canUpdate, canAdd } = usePagePermissions();
 
   // Find customer data for editing
   const editingCustomer = editingCustomerId
@@ -45,6 +50,12 @@ export default function OwnedProductTable() {
   };
 
   const handleEditCustomer = (customerId: string) => {
+    // Check permission before allowing to edit
+    // Note: This uses dashboard-overview permissions since it opens the customer edit modal
+    // We need to check the current page permissions (recommendation-centre) for update
+    if (!checkPermissionBeforeAction(canUpdate, "update", "customer information")) {
+      return;
+    }
     setEditingCustomerId(customerId);
     setIsEditModalOpen(true);
   };
@@ -61,6 +72,11 @@ export default function OwnedProductTable() {
 
   // Handle "Janji Temu" click - Create task
   const handleJanjiTemu = async (customerId: string, productName: string) => {
+    // Check permission before allowing to create task
+    if (!checkPermissionBeforeAction(canAdd, "create", "task")) {
+      return;
+    }
+
     try {
       const today = format(new Date(), "yyyy-MM-dd");
       const taskDescription = `Janji Temu - ${productName}`;

@@ -64,30 +64,66 @@ class Logger {
       this.logs = this.logs.slice(-this.MAX_LOGS);
     }
 
+    // Helper to check if data has meaningful content
+    const hasMeaningfulData = (data: any): boolean => {
+      if (!data) return false;
+      if (typeof data !== 'object') return true;
+      if (Array.isArray(data)) return data.length > 0;
+      return Object.keys(data).length > 0;
+    };
+
     // Console logging behavior based on environment
     if (this.isDevelopment) {
-      const consoleMethod =
-        level === "error"
-          ? "error"
-          : level === "warn"
-          ? "warn"
-          : level === "debug"
-          ? "debug"
-          : "log";
-      
-      // Ensure consoleMethod is valid
-      if (typeof console[consoleMethod as keyof Console] === "function") {
-        console[consoleMethod as keyof Console](
-          `[${level.toUpperCase()}] ${message}`,
-          sanitizedData || ""
-        );
-      } else {
-        // Fallback to console.log if method doesn't exist
-        console.log(`[${level.toUpperCase()}] ${message}`, sanitizedData || "");
+      try {
+        const logMessage = `[${level.toUpperCase()}] ${message}`;
+        
+        // Only include data if it has meaningful content
+        const shouldIncludeData = hasMeaningfulData(sanitizedData);
+        
+        // Direct console method calls based on level
+        if (level === "error") {
+          if (shouldIncludeData) {
+            console.error(logMessage, sanitizedData);
+          } else {
+            console.error(logMessage);
+          }
+        } else if (level === "warn") {
+          if (shouldIncludeData) {
+            console.warn(logMessage, sanitizedData);
+          } else {
+            console.warn(logMessage);
+          }
+        } else if (level === "debug") {
+          if (shouldIncludeData) {
+            console.debug(logMessage, sanitizedData);
+          } else {
+            console.debug(logMessage);
+          }
+        } else {
+          // Default to console.log for info level
+          if (shouldIncludeData) {
+            console.log(logMessage, sanitizedData);
+          } else {
+            console.log(logMessage);
+          }
+        }
+      } catch (err) {
+        // Fallback if console method call fails - just log the message
+        console.log(`[${level.toUpperCase()}] ${message}`);
       }
     } else if (this.isProduction && level === "error") {
       // In production, only log errors to console
-      console.error(`[${level.toUpperCase()}] ${message}`, sanitizedData || "");
+      try {
+        const logMessage = `[${level.toUpperCase()}] ${message}`;
+        const shouldIncludeData = hasMeaningfulData(sanitizedData);
+        if (shouldIncludeData) {
+          console.error(logMessage, sanitizedData);
+        } else {
+          console.error(logMessage);
+        }
+      } catch (err) {
+        console.error(`[${level.toUpperCase()}] ${message}`);
+      }
     }
   }
 

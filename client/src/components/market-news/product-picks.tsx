@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 export default function ProductPicks() {
   const today = new Date().toISOString().split("T")[0];
@@ -21,6 +23,9 @@ export default function ProductPicks() {
   const { mutateAsync: createPick } = useCreateProductPick();
   const { mutateAsync: updatePick } = useUpdateProductPick();
   const { mutateAsync: deletePick } = useDeleteProductPick();
+  
+  // Get permissions for market-news page
+  const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -33,6 +38,10 @@ export default function ProductPicks() {
   const picks = data?.picks || [];
 
   const handleOpenCreate = () => {
+    // Check permission before allowing to create
+    if (!checkPermissionBeforeAction(canAdd, "create", "product pick")) {
+      return;
+    }
     setIsEditing(false);
     setEditingPick(null);
     setTicker("");
@@ -43,6 +52,10 @@ export default function ProductPicks() {
   };
 
   const handleOpenEdit = (pick: ProductPick) => {
+    // Check permission before allowing to edit
+    if (!checkPermissionBeforeAction(canUpdate, "update", "product pick")) {
+      return;
+    }
     setIsEditing(true);
     setEditingPick(pick);
     setTicker(pick.ticker);
@@ -68,6 +81,17 @@ export default function ProductPicks() {
       return;
     }
 
+    // Check permission before submitting
+    if (isEditing) {
+      if (!checkPermissionBeforeAction(canUpdate, "update", "product pick")) {
+        return;
+      }
+    } else {
+      if (!checkPermissionBeforeAction(canAdd, "create", "product pick")) {
+        return;
+      }
+    }
+
     try {
       if (isEditing && editingPick) {
         await updatePick({
@@ -88,18 +112,23 @@ export default function ProductPicks() {
       handleCloseModal();
     } catch (err: any) {
       console.error("Failed to save product pick:", err);
-      alert(err.message || "Failed to save product pick");
+      // Error will be handled by API interceptor and React Query onError
     }
   };
 
   const handleDelete = async (id: number) => {
+    // Check permission before allowing to delete
+    if (!checkPermissionBeforeAction(canDelete, "delete", "product pick")) {
+      return;
+    }
+
     if (!confirm("Are you sure you want to delete this product pick?")) return;
 
     try {
       await deletePick(id);
     } catch (err) {
       console.error("Failed to delete product pick:", err);
-      alert("Failed to delete product pick");
+      // Error will be handled by API interceptor and React Query onError
     }
   };
 

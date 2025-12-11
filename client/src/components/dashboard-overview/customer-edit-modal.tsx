@@ -14,11 +14,11 @@ interface CustomerEditModalProps {
 }
 
 const RISK_PROFILES = [
-  "Conservative",
-  "Balanced",
-  "Moderate",
-  "Growth",
-  "Aggressive",
+  "1 - Conservative",
+  "2 - Balanced",
+  "3 - Moderate",
+  "4 - Growth",
+  "5 - Aggressive",
 ];
 
 const PROPENSITY_OPTIONS = ["low", "medium", "high", "qualified"];
@@ -50,8 +50,31 @@ export default function CustomerEditModal({
     return AUM_LABEL_OPTIONS.includes(lower) ? lower : value.toLowerCase();
   };
 
+  // Helper to normalize risk profile for form
+  const normalizeRiskProfile = (value: string): string => {
+    if (!value) return "";
+    // If already formatted, return as is
+    if (value.includes(" - ")) {
+      return value;
+    }
+    // Map to formatted version
+    const riskMap: Record<string, string> = {
+      "1": "1 - Conservative",
+      "Conservative": "1 - Conservative",
+      "2": "2 - Balanced",
+      "Balanced": "2 - Balanced",
+      "3": "3 - Moderate",
+      "Moderate": "3 - Moderate",
+      "4": "4 - Growth",
+      "Growth": "4 - Growth",
+      "5": "5 - Aggressive",
+      "Aggressive": "5 - Aggressive",
+    };
+    return riskMap[value.trim()] || value;
+  };
+
   const [formData, setFormData] = useState({
-    risk_profile: customer["Risk Profile"] || "",
+    risk_profile: normalizeRiskProfile(customer["Risk Profile"] || ""),
     aum_label: normalizeAumLabel(customer["AUM Label"] || ""),
     propensity: normalizePropensity(customer["Propensity"] || ""),
     priority_private: customer["Priority / Private"] || "",
@@ -65,7 +88,7 @@ export default function CustomerEditModal({
   useEffect(() => {
     if (isOpen && customer) {
       setFormData({
-        risk_profile: customer["Risk Profile"] || "",
+        risk_profile: normalizeRiskProfile(customer["Risk Profile"] || ""),
         aum_label: normalizeAumLabel(customer["AUM Label"] || ""),
         propensity: normalizePropensity(customer["Propensity"] || ""),
         priority_private: customer["Priority / Private"] || "",
@@ -81,9 +104,15 @@ export default function CustomerEditModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Extract risk profile number from formatted string (e.g., "1 - Conservative" -> "1")
+      let riskProfileValue = formData.risk_profile;
+      if (riskProfileValue && riskProfileValue.includes(" - ")) {
+        riskProfileValue = riskProfileValue.split(" - ")[0].trim();
+      }
+      
       await updateCustomer({
         customerID: customer["Customer ID"],
-        risk_profile: formData.risk_profile || undefined,
+        risk_profile: riskProfileValue || undefined,
         aum_label: formData.aum_label || undefined,
         propensity: formData.propensity || undefined,
         priority_private: formData.priority_private || undefined,

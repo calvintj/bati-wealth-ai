@@ -14,7 +14,13 @@ export interface CustomerData {
   "Total FBI": number;
 }
 
-export const exportToCSV = (data: CustomerData[], filename: string = "customers") => {
+// Generic type for any CSV export data
+export type CSVData = Record<string, string | number | null | undefined>;
+
+export const exportToCSV = (
+  data: CSVData[], 
+  filename: string = "customers"
+) => {
   if (data.length === 0) {
     alert("No data to export");
     return;
@@ -31,7 +37,7 @@ export const exportToCSV = (data: CustomerData[], filename: string = "customers"
     ...data.map((row) =>
       headers
         .map((header) => {
-          const value = row[header as keyof CustomerData];
+          const value = row[header];
           // Handle values that might contain commas or quotes
           if (value === null || value === undefined) return "";
           const stringValue = String(value);

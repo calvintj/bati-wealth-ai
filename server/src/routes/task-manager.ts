@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth";
+import { canView, canAdd, canUpdate, canDelete } from "../middleware/permissions";
 import {
   getManagedNumbersController,
   getIncreasedNumbersController,
@@ -16,18 +17,17 @@ import {
 
 const router = Router();
 
-// Example of unprotected routes
-router.get("/managed-number", getManagedNumbersController);
-router.get("/increased-number", getIncreasedNumbersController);
-router.get("/portfolio", getPortfolioController);
-router.get("/last-transaction", getLastTransactionController);
-router.get("/potential-transaction", getPotentialTransactionController);
-router.get("/get-task", getTaskController);
-router.get("/offer-product-risk", getOfferProductRiskController);
-router.get("/re-profile-risk-target", getReProfileRiskTargetController);
-// Protect the POST route with authMiddleware
-router.post("/post-task", authMiddleware, postTaskController);
-router.delete("/delete-task", deleteTaskController);
-router.put("/update-task", updateTaskController);
+// All routes require authentication and view permission
+router.get("/managed-number", authMiddleware, canView("/recommendation-centre"), getManagedNumbersController);
+router.get("/increased-number", authMiddleware, canView("/recommendation-centre"), getIncreasedNumbersController);
+router.get("/portfolio", authMiddleware, canView("/recommendation-centre"), getPortfolioController);
+router.get("/last-transaction", authMiddleware, canView("/recommendation-centre"), getLastTransactionController);
+router.get("/potential-transaction", authMiddleware, canView("/recommendation-centre"), getPotentialTransactionController);
+router.get("/get-task", authMiddleware, canView("/recommendation-centre"), getTaskController);
+router.get("/offer-product-risk", authMiddleware, canView("/recommendation-centre"), getOfferProductRiskController);
+router.get("/re-profile-risk-target", authMiddleware, canView("/recommendation-centre"), getReProfileRiskTargetController);
+router.post("/post-task", authMiddleware, canAdd("/recommendation-centre"), postTaskController);
+router.delete("/delete-task", authMiddleware, canDelete("/recommendation-centre"), deleteTaskController);
+router.put("/update-task", authMiddleware, canUpdate("/recommendation-centre"), updateTaskController);
 
 export default router;

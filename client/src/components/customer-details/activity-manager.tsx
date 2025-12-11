@@ -9,6 +9,8 @@ import {
 } from "@/hooks/customer-details/use-activity-manager";
 import { Activity } from "@/types/page/customer-details";
 import { exportToCSV } from "@/utils/csv-export";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 const ActivityManager = ({ customerID }: { customerID: string }) => {
   const {
@@ -20,6 +22,9 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   const { mutate: postData } = usePostActivity();
   const { mutate: deleteData } = useDeleteActivity();
   const { mutate: updateData } = useUpdateActivity();
+  
+  // Get permissions for customer-details page
+  const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
   // Initialize with empty array
   const [localActivity, setLocalActivity] = useState<Activity[]>([]);
@@ -58,6 +63,10 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
 
   // Toggle the popup position at the bottom left of the button.
   const togglePopup = () => {
+    // Check permission before allowing to add
+    if (!showPopup && !checkPermissionBeforeAction(canAdd, "add", "activity")) {
+      return;
+    }
     if (!showPopup) {
       updatePopupPosition();
     }
@@ -68,6 +77,17 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   const handleActivitySubmit = async () => {
     if (!newActivity.trim() || !newDescription.trim() || !newDate.trim())
       return;
+
+    // Check permission before submitting
+    if (isEditing) {
+      if (!checkPermissionBeforeAction(canUpdate, "update", "activity")) {
+        return;
+      }
+    } else {
+      if (!checkPermissionBeforeAction(canAdd, "create", "activity")) {
+        return;
+      }
+    }
 
     const activityObj = {
       id: isEditing ? editingActivityId : "",
@@ -84,12 +104,20 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
             refetch();
             resetForm();
           },
+          onError: (error: any) => {
+            // Error will be handled by API interceptor
+            console.error("Failed to update activity:", error);
+          },
         });
       } else {
         postData(activityObj, {
           onSuccess: () => {
             refetch();
             resetForm();
+          },
+          onError: (error: any) => {
+            // Error will be handled by API interceptor
+            console.error("Failed to create activity:", error);
           },
         });
       }
@@ -109,6 +137,10 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
 
   // Update handleEdit to use the button's position
   const handleEdit = (activity: Activity) => {
+    // Check permission before allowing to edit
+    if (!checkPermissionBeforeAction(canUpdate, "update", "activity")) {
+      return;
+    }
     setIsEditing(true);
     setEditingActivityId(activity.id);
     setNewActivity(activity.title);
@@ -119,9 +151,17 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   };
 
   const deleteActivity = async (id: string) => {
+    // Check permission before allowing to delete
+    if (!checkPermissionBeforeAction(canDelete, "delete", "activity")) {
+      return;
+    }
     deleteData(id, {
       onSuccess: () => {
         refetch();
+      },
+      onError: (error: any) => {
+        // Error will be handled by API interceptor, but we can add additional handling here if needed
+        console.error("Failed to delete activity:", error);
       },
     });
   };
@@ -153,15 +193,17 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
               <span>Export</span>
             </button>
           )}
-          <button
-            ref={buttonRef}
-            onClick={togglePopup}
-            className="text-2xl text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300 cursor-pointer transition-colors"
-            title={isEditing ? "Edit Activity" : "Add Activity"}
-            aria-label={isEditing ? "Edit Activity" : "Add Activity"}
-          >
-            <CirclePlus />
-          </button>
+          {canAdd && (
+            <button
+              ref={buttonRef}
+              onClick={togglePopup}
+              className="text-2xl text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300 cursor-pointer transition-colors"
+              title={isEditing ? "Edit Activity" : "Add Activity"}
+              aria-label={isEditing ? "Edit Activity" : "Add Activity"}
+            >
+              <CirclePlus />
+            </button>
+          )}
         </div>
       </div>
 
@@ -196,22 +238,26 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
                   <p className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     {activity.date.split("T")[0]}
                   </p>
-                  <button
-                    className="text-gray-600 dark:text-gray-100 hover:text-gray-800 dark:hover:text-gray-300 cursor-pointer transition-colors"
-                    onClick={() => handleEdit(activity)}
-                    title="Edit activity"
-                    aria-label="Edit activity"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    className="text-gray-600 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400 cursor-pointer transition-colors"
-                    onClick={() => deleteActivity(activity.id)}
-                    title="Delete activity"
-                    aria-label="Delete activity"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {canUpdate && (
+                    <button
+                      className="text-gray-600 dark:text-gray-100 hover:text-gray-800 dark:hover:text-gray-300 cursor-pointer transition-colors"
+                      onClick={() => handleEdit(activity)}
+                      title="Edit activity"
+                      aria-label="Edit activity"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
+                  {canDelete && (
+                    <button
+                      className="text-gray-600 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400 cursor-pointer transition-colors"
+                      onClick={() => deleteActivity(activity.id)}
+                      title="Delete activity"
+                      aria-label="Delete activity"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
               </li>
             ))}

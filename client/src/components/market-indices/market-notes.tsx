@@ -10,6 +10,8 @@ import {
   useDeleteNote,
 } from "@/hooks/market-indices/use-market-notes";
 import { MarketNote, INDEX_OPTIONS } from "@/types/page/market-indices";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 const MarketNotes = () => {
   const [selectedIndex, setSelectedIndex] = useState<string>("");
@@ -24,10 +26,17 @@ const MarketNotes = () => {
   const { mutateAsync: createNote } = useCreateNote();
   const { mutateAsync: updateNote } = useUpdateNote();
   const { mutateAsync: deleteNote } = useDeleteNote();
+  
+  // Get permissions for market-indices page
+  const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
   const notes = data?.notes || [];
 
   const handleOpenCreate = () => {
+    // Check permission before allowing to create
+    if (!checkPermissionBeforeAction(canAdd, "create", "note")) {
+      return;
+    }
     setIsEditing(false);
     setEditingNote(null);
     setNoteTitle("");
@@ -37,6 +46,10 @@ const MarketNotes = () => {
   };
 
   const handleOpenEdit = (note: MarketNote) => {
+    // Check permission before allowing to edit
+    if (!checkPermissionBeforeAction(canUpdate, "update", "note")) {
+      return;
+    }
     setIsEditing(true);
     setEditingNote(note);
     setNoteTitle(note.note_title);
@@ -60,6 +73,17 @@ const MarketNotes = () => {
       return;
     }
 
+    // Check permission before submitting
+    if (isEditing) {
+      if (!checkPermissionBeforeAction(canUpdate, "update", "note")) {
+        return;
+      }
+    } else {
+      if (!checkPermissionBeforeAction(canAdd, "create", "note")) {
+        return;
+      }
+    }
+
     try {
       if (isEditing && editingNote) {
         await updateNote({
@@ -76,19 +100,24 @@ const MarketNotes = () => {
       }
       handleCloseModal();
     } catch (err) {
+      // Error will be handled by API interceptor and React Query onError
       console.error("Failed to save note:", err);
-      alert("Failed to save note");
     }
   };
 
   const handleDelete = async (id: number) => {
+    // Check permission before allowing to delete
+    if (!checkPermissionBeforeAction(canDelete, "delete", "note")) {
+      return;
+    }
+
     if (!confirm("Are you sure you want to delete this note?")) return;
 
     try {
       await deleteNote(id);
     } catch (err) {
+      // Error will be handled by API interceptor and React Query onError
       console.error("Failed to delete note:", err);
-      alert("Failed to delete note");
     }
   };
 
@@ -115,12 +144,14 @@ const MarketNotes = () => {
           <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
             Market Notes
           </h2>
-          <button
-            onClick={handleOpenCreate}
-            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
-          >
-            <CirclePlus size={20} />
-          </button>
+          {canAdd && (
+            <button
+              onClick={handleOpenCreate}
+              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+            >
+              <CirclePlus size={20} />
+            </button>
+          )}
         </div>
 
         <div className="mb-4">
@@ -168,18 +199,22 @@ const MarketNotes = () => {
                     </p>
                   </div>
                   <div className="flex gap-2 ml-2">
-                    <button
-                      onClick={() => handleOpenEdit(note)}
-                      className="p-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(note.id)}
-                      className="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    {canUpdate && (
+                      <button
+                        onClick={() => handleOpenEdit(note)}
+                        className="p-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        <Pencil size={16} />
+                      </button>
+                    )}
+                    {canDelete && (
+                      <button
+                        onClick={() => handleDelete(note.id)}
+                        className="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

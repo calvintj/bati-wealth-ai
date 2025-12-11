@@ -18,6 +18,7 @@ import marketIndicesRoutes from "./routes/market-indices";
 import dashboardTargetsRoutes from "./routes/dashboard-targets";
 import economicIndicatorsRoutes from "./routes/economic-indicators";
 import marketNewsRoutes from "./routes/market-news";
+import permissionsRoutes from "./routes/permissions";
 
 dotenv.config();
 
@@ -137,6 +138,7 @@ app.use("/api/market-indices", marketIndicesRoutes);
 app.use("/api/dashboard-targets", dashboardTargetsRoutes);
 app.use("/api/economic-indicators", economicIndicatorsRoutes);
 app.use("/api/market-news", marketNewsRoutes);
+app.use("/api/permissions", permissionsRoutes);
 
 // Health check endpoint
 app.get("/health", (req: Request, res: Response) => {

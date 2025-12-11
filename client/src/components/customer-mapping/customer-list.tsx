@@ -8,11 +8,40 @@ import BulkUpdateModal from "@/components/dashboard-overview/bulk-update-modal";
 import ExportButton from "@/components/dashboard-overview/export-button";
 import { useBulkUpdateCustomers } from "@/hooks/dashboard-overview/use-bulk-update";
 import { useToast } from "@/hooks/use-toast";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 interface CustomerListTableProps {
   propensity: string;
   aum: string;
 }
+
+// Helper function to format risk profile
+const formatRiskProfile = (riskProfile: string | undefined): string => {
+  if (!riskProfile) return "";
+  
+  const riskMap: Record<string, string> = {
+    "1": "1 - Conservative",
+    "Conservative": "1 - Conservative",
+    "2": "2 - Balanced",
+    "Balanced": "2 - Balanced",
+    "3": "3 - Moderate",
+    "Moderate": "3 - Moderate",
+    "4": "4 - Growth",
+    "Growth": "4 - Growth",
+    "5": "5 - Aggressive",
+    "Aggressive": "5 - Aggressive",
+  };
+  
+  // Check if it's already formatted
+  if (riskProfile.includes(" - ")) {
+    return riskProfile;
+  }
+  
+  // Try to match by number or name
+  const normalized = riskProfile.trim();
+  return riskMap[normalized] || riskProfile;
+};
 
 const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
   const [editingCustomer, setEditingCustomer] = useState<CertainCustomerList | null>(null);
@@ -26,6 +55,9 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
     propensity,
     aum
   ) as CertainCustomerList[];
+  
+  // Get permissions for customer-mapping page
+  const { canUpdate } = usePagePermissions();
 
   // Determine which list to use based on propensity and aum
   const displayList =
@@ -55,6 +87,10 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
   });
 
   const handleEdit = (customer: CertainCustomerList) => {
+    // Check permission before allowing edit
+    if (!checkPermissionBeforeAction(canUpdate, "update", "customer information")) {
+      return;
+    }
     setEditingCustomer(customer);
     setIsEditModalOpen(true);
   };
@@ -186,12 +222,7 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
                   <td className="sticky left-0 z-10 px-4 py-2 bg-white dark:bg-[#1D283A]">
                     {customerID}
                   </td>
-                  <td>
-                    {row["Risk Profile"]
-                      ? row["Risk Profile"].charAt(0).toUpperCase() +
-                        row["Risk Profile"].slice(1).toLowerCase()
-                      : row["Risk Profile"]}
-                  </td>
+                  <td>{formatRiskProfile(row["Risk Profile"])}</td>
                   <td>
                     {row["AUM Label"]
                       ? row["AUM Label"].charAt(0).toUpperCase() +

@@ -10,6 +10,8 @@ import {
   useDeleteWatchlist,
 } from "@/hooks/market-indices/use-market-watchlists";
 import { MarketWatchlist, INDEX_OPTIONS } from "@/types/page/market-indices";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 interface MarketWatchlistsProps {
   onWatchlistSelect?: (indices: string[] | null, watchlistId: number | null) => void;
@@ -21,6 +23,9 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
   const { mutateAsync: createWatchlist } = useCreateWatchlist();
   const { mutateAsync: updateWatchlist } = useUpdateWatchlist();
   const { mutateAsync: deleteWatchlist } = useDeleteWatchlist();
+  
+  // Get permissions for market-indices page
+  const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -31,6 +36,10 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
   const watchlists = data?.watchlists || [];
 
   const handleOpenCreate = () => {
+    // Check permission before allowing to create
+    if (!checkPermissionBeforeAction(canAdd, "create", "watchlist")) {
+      return;
+    }
     setIsEditing(false);
     setEditingWatchlist(null);
     setWatchlistName("");
@@ -39,6 +48,10 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
   };
 
   const handleOpenEdit = (watchlist: MarketWatchlist) => {
+    // Check permission before allowing to edit
+    if (!checkPermissionBeforeAction(canUpdate, "update", "watchlist")) {
+      return;
+    }
     setIsEditing(true);
     setEditingWatchlist(watchlist);
     setWatchlistName(watchlist.watchlist_name);
@@ -68,6 +81,17 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
       return;
     }
 
+    // Check permission before submitting
+    if (isEditing) {
+      if (!checkPermissionBeforeAction(canUpdate, "update", "watchlist")) {
+        return;
+      }
+    } else {
+      if (!checkPermissionBeforeAction(canAdd, "create", "watchlist")) {
+        return;
+      }
+    }
+
     try {
       if (isEditing && editingWatchlist) {
         await updateWatchlist({
@@ -87,12 +111,17 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
         onWatchlistSelect(null, null);
       }
     } catch (err) {
+      // Error will be handled by API interceptor and React Query onError
       console.error("Failed to save watchlist:", err);
-      alert("Failed to save watchlist");
     }
   };
 
   const handleDelete = async (id: number) => {
+    // Check permission before allowing to delete
+    if (!checkPermissionBeforeAction(canDelete, "delete", "watchlist")) {
+      return;
+    }
+
     if (!confirm("Are you sure you want to delete this watchlist?")) return;
 
     try {
@@ -102,8 +131,8 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
         onWatchlistSelect(null, null);
       }
     } catch (err) {
+      // Error will be handled by API interceptor and React Query onError
       console.error("Failed to delete watchlist:", err);
-      alert("Failed to delete watchlist");
     }
   };
 
@@ -141,12 +170,14 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
           <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
             Market Watchlists
           </h2>
-          <button
-            onClick={handleOpenCreate}
-            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
-          >
-            <CirclePlus size={20} />
-          </button>
+          {canAdd && (
+            <button
+              onClick={handleOpenCreate}
+              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+            >
+              <CirclePlus size={20} />
+            </button>
+          )}
         </div>
 
         {/* Watchlist Selector */}
@@ -217,18 +248,22 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
                   </div>
                 </div>
                 <div className="flex gap-2 ml-2">
-                  <button
-                    onClick={() => handleOpenEdit(watchlist)}
-                    className="p-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(watchlist.id)}
-                    className="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {canUpdate && (
+                    <button
+                      onClick={() => handleOpenEdit(watchlist)}
+                      className="p-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
+                  {canDelete && (
+                    <button
+                      onClick={() => handleDelete(watchlist.id)}
+                      className="p-1 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

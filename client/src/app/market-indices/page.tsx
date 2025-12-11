@@ -10,11 +10,13 @@ import { NDXChart } from "@/components/market-indices/ndx";
 import { DJIChart } from "@/components/market-indices/dji";
 import MarketWatchlists from "@/components/market-indices/market-watchlists";
 import MarketNotes from "@/components/market-indices/market-notes";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 
 export default function MarketIndicesPage() {
   const [customerRisk, setCustomerRisk] = useState<string>("All");
   const [selectedWatchlistIndices, setSelectedWatchlistIndices] = useState<string[] | null>(null);
   const [selectedWatchlistId, setSelectedWatchlistId] = useState<number | null>(null);
+  const { canView, loading: permissionsLoading } = usePagePermissions();
 
   // Map index codes to chart components
   const shouldShowChart = (indexCode: string): boolean => {
@@ -44,6 +46,50 @@ export default function MarketIndicesPage() {
   }, [selectedWatchlistIndices]);
 
   const hasVisibleCharts = visibleCharts.indonesian.length > 0 || visibleCharts.us.length > 0;
+
+  // Check view permission
+  if (permissionsLoading) {
+    return (
+      <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={false}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <p className="text-gray-600 dark:text-gray-400">Loading permissions...</p>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (!canView) {
+    return (
+      <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={false}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Access Denied
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                You do not have permission to view this page. Please contact your administrator if you need access.
+              </p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-200">

@@ -6,6 +6,8 @@ import { Pencil } from "lucide-react";
 // Hooks
 import { useCustomerDetails } from "@/hooks/customer-details/use-customer-details";
 import { useCustomerList } from "@/hooks/customer-mapping/use-customer-list";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 // Components
 import Sidebar from "@/components/shared/sidebar";
@@ -66,6 +68,7 @@ export default function CustomerDetailsPage() {
   const [customerRisk, setCustomerRisk] = useState<string>("All");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
+  const { canView, canUpdate, loading: permissionsLoading } = usePagePermissions();
   const customerList = useCustomerList();
 
   // Update customerID based on URL search parameter
@@ -84,8 +87,12 @@ export default function CustomerDetailsPage() {
 
   // Memoized event handlers
   const handleEditClick = useCallback(() => {
+    // Check permission before allowing to edit
+    if (!checkPermissionBeforeAction(canUpdate, "update", "customer information")) {
+      return;
+    }
     setIsEditModalOpen(true);
-  }, []);
+  }, [canUpdate]);
 
   const handleModalClose = useCallback(() => {
     setIsEditModalOpen(false);
@@ -136,6 +143,50 @@ export default function CustomerDetailsPage() {
       "Total FBI": customer["Total FBI"] || 0,
     } as CertainCustomerList;
   }, [customerID, customerList]);
+
+  // Check view permission
+  if (permissionsLoading) {
+    return (
+      <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={false}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <p className="text-gray-600 dark:text-gray-400">Loading permissions...</p>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (!canView) {
+    return (
+      <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={false}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Access Denied
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                You do not have permission to view this page. Please contact your administrator if you need access.
+              </p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-200">

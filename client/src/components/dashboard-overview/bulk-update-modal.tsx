@@ -15,11 +15,11 @@ interface BulkUpdateModalProps {
 }
 
 const RISK_PROFILES = [
-  "Conservative",
-  "Balanced",
-  "Moderate",
-  "Growth",
-  "Aggressive",
+  "1 - Conservative",
+  "2 - Balanced",
+  "3 - Moderate",
+  "4 - Growth",
+  "5 - Aggressive",
 ];
 
 const PROPENSITY_OPTIONS = ["low", "medium", "high", "qualified"];
@@ -65,8 +65,14 @@ export default function BulkUpdateModal({
 
     // Build update data object with only filled fields
     const updateData: any = {};
-    if (formData.risk_profile && formData.risk_profile.trim())
-      updateData.risk_profile = formData.risk_profile;
+    if (formData.risk_profile && formData.risk_profile.trim()) {
+      // Extract risk profile number from formatted string (e.g., "1 - Conservative" -> "1")
+      let riskProfileValue = formData.risk_profile;
+      if (riskProfileValue.includes(" - ")) {
+        riskProfileValue = riskProfileValue.split(" - ")[0].trim();
+      }
+      updateData.risk_profile = riskProfileValue;
+    }
     if (formData.aum_label && formData.aum_label.trim())
       updateData.aum_label = formData.aum_label;
     if (formData.propensity && formData.propensity.trim())

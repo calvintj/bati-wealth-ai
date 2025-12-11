@@ -14,12 +14,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 export default function NewsNotes() {
   const { data, isLoading, error } = useGetNewsNotes();
   const { mutateAsync: createNote } = useCreateNewsNote();
   const { mutateAsync: updateNote } = useUpdateNewsNote();
   const { mutateAsync: deleteNote } = useDeleteNewsNote();
+  
+  // Get permissions for market-news page
+  const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -31,6 +36,10 @@ export default function NewsNotes() {
   const notes = data?.notes || [];
 
   const handleOpenCreate = () => {
+    // Check permission before allowing to create
+    if (!checkPermissionBeforeAction(canAdd, "create", "note")) {
+      return;
+    }
     setIsEditing(false);
     setEditingNote(null);
     setNoteTitle("");
@@ -40,6 +49,10 @@ export default function NewsNotes() {
   };
 
   const handleOpenEdit = (note: NewsNote) => {
+    // Check permission before allowing to edit
+    if (!checkPermissionBeforeAction(canUpdate, "update", "note")) {
+      return;
+    }
     setIsEditing(true);
     setEditingNote(note);
     setNoteTitle(note.note_title);
@@ -61,6 +74,17 @@ export default function NewsNotes() {
     if (!noteTitle.trim() || !noteContent.trim()) {
       alert("Please enter both title and content");
       return;
+    }
+
+    // Check permission before submitting
+    if (isEditing) {
+      if (!checkPermissionBeforeAction(canUpdate, "update", "note")) {
+        return;
+      }
+    } else {
+      if (!checkPermissionBeforeAction(canAdd, "create", "note")) {
+        return;
+      }
     }
 
     try {
@@ -86,18 +110,23 @@ export default function NewsNotes() {
       handleCloseModal();
     } catch (err: any) {
       console.error("Failed to save news note:", err);
-      alert(err.message || "Failed to save news note");
+      // Error will be handled by API interceptor and React Query onError
     }
   };
 
   const handleDelete = async (id: number) => {
+    // Check permission before allowing to delete
+    if (!checkPermissionBeforeAction(canDelete, "delete", "note")) {
+      return;
+    }
+
     if (!confirm("Are you sure you want to delete this note?")) return;
 
     try {
       await deleteNote(id);
     } catch (err) {
       console.error("Failed to delete news note:", err);
-      alert("Failed to delete news note");
+      // Error will be handled by API interceptor and React Query onError
     }
   };
 

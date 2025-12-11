@@ -13,6 +13,8 @@ import {
   useUpdateTask,
 } from "@/hooks/recommendation-centre/use-task-manager";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   // React Query hook for tasks
@@ -21,6 +23,9 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   const { mutateAsync: deleteData } = useDeleteTask();
   const { mutateAsync: updateData } = useUpdateTask();
   const queryClient = useQueryClient();
+  
+  // Get permissions for recommendation-centre page
+  const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
   // Popup state and positioning
   const [showPopup, setShowPopup] = useState(false);
@@ -54,6 +59,10 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
 
   // Toggle popup position based on the add button's location.
   const togglePopup = () => {
+    // Check permission before allowing to add
+    if (!showPopup && !checkPermissionBeforeAction(canAdd, "create", "task")) {
+      return;
+    }
     if (!showPopup && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const windowWidth = window.innerWidth;
@@ -101,6 +110,10 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
 
   // Handle edit click with the same positioning logic
   const handleEdit = (task: TaskRow) => {
+    // Check permission before allowing to edit
+    if (!checkPermissionBeforeAction(canUpdate, "update", "task")) {
+      return;
+    }
     setIsEditing(true);
     setEditingTask(task);
     setNewTask(task.description);
@@ -134,6 +147,11 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
 
   // Handle delete
   const handleDelete = async (taskId: string) => {
+    // Check permission before allowing to delete
+    if (!checkPermissionBeforeAction(canDelete, "delete", "task")) {
+      return;
+    }
+
     try {
       await deleteData(taskId);
       // Update local cache immediately for better UX
@@ -155,6 +173,17 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   // Modify addTask to handle both add and edit
   const handleSubmit = async () => {
     if (!newTask.trim() || !newInvitee.trim() || !newDueDate.trim()) return;
+
+    // Check permission before submitting
+    if (isEditing) {
+      if (!checkPermissionBeforeAction(canUpdate, "update", "task")) {
+        return;
+      }
+    } else {
+      if (!checkPermissionBeforeAction(canAdd, "create", "task")) {
+        return;
+      }
+    }
 
     try {
       if (isEditing && editingTask) {

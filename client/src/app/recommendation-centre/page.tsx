@@ -22,6 +22,7 @@ import LastTransactions from "@/components/recommendation-centre/last-transactio
 import PotentialTransactions from "@/components/recommendation-centre/potential-transactions";
 import OfferProductsRisk from "@/components/recommendation-centre/offer-products-risk";
 import ReprofileRiskTarget from "@/components/recommendation-centre/reprofile-risk-target";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 
 // ASSETS
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
@@ -113,6 +114,7 @@ ReprofileRiskTargetWrapper.displayName = "ReprofileRiskTargetWrapper";
 export default function RecommendationCentrePage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [customerRisk, setCustomerRisk] = useState<string>("All");
+  const { canView, loading: permissionsLoading } = usePagePermissions();
   const { data: managedNumbers, isLoading: isLoadingNumbers } =
     useManagedNumbers();
   const { data: increasedNumbers, isLoading: isLoadingIncreased } =
@@ -183,6 +185,53 @@ export default function RecommendationCentrePage() {
     () => components[activeComponentIndex],
     [components, activeComponentIndex]
   );
+
+  // Check view permission
+  if (permissionsLoading) {
+    return (
+      <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={false}
+          />
+          <main className="flex flex-col md:flex-row gap-4 flex-1 p-4 md:p-6 overflow-y-auto bg-gray-50 dark:bg-gray-900 items-center justify-center">
+            <p className="text-gray-600 dark:text-gray-400">
+              Loading permissions...
+            </p>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (!canView) {
+    return (
+      <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={false}
+          />
+          <main className="flex flex-col md:flex-row gap-4 flex-1 p-4 md:p-6 overflow-y-auto bg-gray-50 dark:bg-gray-900 items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Access Denied
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                You do not have permission to view this page. Please contact
+                your administrator if you need access.
+              </p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">

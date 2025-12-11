@@ -4,6 +4,7 @@ import { useState } from "react";
 // Shared Components
 import Sidebar from "@/components/shared/sidebar";
 import Navbar from "@/components/shared/navbar";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 
 // Overview Components
 import TotalCustomer from "@/components/dashboard-overview/total-customers";
@@ -28,12 +29,57 @@ const OverviewPage = () => {
   const [customerRisk, setCustomerRisk] = useState<string>("All");
 
   // HOOKS
+  const { canView, loading: permissionsLoading } = usePagePermissions();
   const customerData = useTotalCustomer(customerRisk);
   const aumData = useTotalAUM(customerRisk);
   const fbiData = useTotalFBI(customerRisk);
   const quarterlyFUM = useQuarterlyFUM(customerRisk);
   const quarterlyFBI = useQuarterlyFBI(customerRisk);
   const topProducts = useTopProducts(customerRisk);
+
+  // Check view permission
+  if (permissionsLoading) {
+    return (
+      <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={true}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <p className="text-gray-600 dark:text-gray-400">Loading permissions...</p>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (!canView) {
+    return (
+      <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={true}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Access Denied
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                You do not have permission to view this page. Please contact your administrator if you need access.
+              </p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen dark:bg-gray-900 text-gray-200">

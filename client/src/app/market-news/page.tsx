@@ -11,10 +11,56 @@ import NewsNotes from "@/components/market-news/news-notes";
 
 // Hooks
 import { useEconomicIndicators } from "@/hooks/market-news/use-economic-indicators";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 
 export default function MarketNewsPage() {
   const [customerRisk, setCustomerRisk] = useState<string>("All");
   const { data: indicators, isLoading, error } = useEconomicIndicators();
+  const { canView, loading: permissionsLoading } = usePagePermissions();
+
+  // Check view permission
+  if (permissionsLoading) {
+    return (
+      <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={false}
+          />
+          <main className="flex flex-1 flex-col lg:flex-row p-4 md:p-6 gap-4 overflow-y-auto bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <p className="text-gray-600 dark:text-gray-400">Loading permissions...</p>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (!canView) {
+    return (
+      <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Navbar
+            setCustomerRisk={setCustomerRisk}
+            customerRisk={customerRisk}
+            showRiskDropdown={false}
+          />
+          <main className="flex flex-1 flex-col lg:flex-row p-4 md:p-6 gap-4 overflow-y-auto bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Access Denied
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                You do not have permission to view this page. Please contact your administrator if you need access.
+              </p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
