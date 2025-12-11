@@ -65,11 +65,10 @@ export const usePermissions = () => {
     try {
       setLoading(true);
       setError(null);
-      await permissionsService.updateUserPermission(
-        rm_account_id,
-        page_id,
-        permissions
-      );
+      await permissionsService.updateUserPermission(rm_account_id, page_id, {
+        ...permissions,
+        can_download: true, // Always true for backward compatibility
+      });
       toast.success("Permission updated successfully");
       // Refresh users with permissions
       await fetchUsersWithPermissions();
@@ -99,7 +98,10 @@ export const usePermissions = () => {
       setError(null);
       await permissionsService.bulkUpdateUserPermissions(
         rm_account_id,
-        permissions
+        permissions.map((perm) => ({
+          ...perm,
+          can_download: true, // Always true for backward compatibility
+        }))
       );
       toast.success("Permissions updated successfully");
       // Refresh users with permissions
@@ -150,4 +152,3 @@ export const usePermissions = () => {
     deleteUserPermission,
   };
 };
-

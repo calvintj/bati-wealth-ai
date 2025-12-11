@@ -9,31 +9,43 @@ import {
   useUpdateWatchlist,
   useDeleteWatchlist,
 } from "@/hooks/market-indices/use-market-watchlists";
-import { MarketWatchlist, INDEX_OPTIONS } from "@/types/page/market-indices";
+import {
+  MarketWatchlist,
+  MarketWatchlistResponse,
+  INDEX_OPTIONS,
+} from "@/types/page/market-indices";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
 interface MarketWatchlistsProps {
-  onWatchlistSelect?: (indices: string[] | null, watchlistId: number | null) => void;
+  onWatchlistSelect?: (
+    indices: string[] | null,
+    watchlistId: number | null
+  ) => void;
   selectedWatchlistId?: number | null;
 }
 
-const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatchlistsProps) => {
+const MarketWatchlists = ({
+  onWatchlistSelect,
+  selectedWatchlistId,
+}: MarketWatchlistsProps) => {
   const { data, isLoading, error } = useGetWatchlists();
   const { mutateAsync: createWatchlist } = useCreateWatchlist();
   const { mutateAsync: updateWatchlist } = useUpdateWatchlist();
   const { mutateAsync: deleteWatchlist } = useDeleteWatchlist();
-  
+
   // Get permissions for market-indices page
   const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingWatchlist, setEditingWatchlist] = useState<MarketWatchlist | null>(null);
+  const [editingWatchlist, setEditingWatchlist] =
+    useState<MarketWatchlist | null>(null);
   const [watchlistName, setWatchlistName] = useState("");
   const [selectedIndices, setSelectedIndices] = useState<string[]>([]);
 
-  const watchlists = data?.watchlists || [];
+  const watchlistsData = data as MarketWatchlistResponse | undefined;
+  const watchlists = watchlistsData?.watchlists || [];
 
   const handleOpenCreate = () => {
     // Check permission before allowing to create
@@ -139,7 +151,9 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
   if (isLoading) {
     return (
       <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-        <p className="text-gray-600 dark:text-gray-400">Loading watchlists...</p>
+        <p className="text-gray-600 dark:text-gray-400">
+          Loading watchlists...
+        </p>
       </div>
     );
   }
@@ -207,7 +221,8 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
               <option value="">Show All Indices</option>
               {watchlists.map((watchlist) => (
                 <option key={watchlist.id} value={watchlist.id}>
-                  {watchlist.watchlist_name} ({watchlist.indices.length} indices)
+                  {watchlist.watchlist_name} ({watchlist.indices.length}{" "}
+                  indices)
                 </option>
               ))}
             </select>
@@ -223,9 +238,11 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
             {watchlists.map((watchlist) => (
               <div
                 key={watchlist.id}
-                onClick={() => handleWatchlistSelectChange(
-                  selectedWatchlistId === watchlist.id ? null : watchlist.id
-                )}
+                onClick={() =>
+                  handleWatchlistSelectChange(
+                    selectedWatchlistId === watchlist.id ? null : watchlist.id
+                  )
+                }
                 className={`p-3 rounded-lg flex justify-between items-start cursor-pointer transition-colors ${
                   selectedWatchlistId === watchlist.id
                     ? "bg-blue-100 dark:bg-blue-900 border-2 border-blue-500 dark:border-blue-400"
@@ -242,7 +259,8 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
                         key={index}
                         className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded"
                       >
-                        {INDEX_OPTIONS.find((opt) => opt.value === index)?.label || index}
+                        {INDEX_OPTIONS.find((opt) => opt.value === index)
+                          ?.label || index}
                       </span>
                     ))}
                   </div>
@@ -349,4 +367,3 @@ const MarketWatchlists = ({ onWatchlistSelect, selectedWatchlistId }: MarketWatc
 };
 
 export default MarketWatchlists;
-

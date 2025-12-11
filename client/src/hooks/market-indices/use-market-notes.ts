@@ -25,13 +25,6 @@ export const useGetNotes = (index_name?: string) => {
     queryKey: ["market-notes", index_name],
     queryFn: () => getNotes(index_name),
     staleTime: 5 * 60 * 1000,
-    onError: (error) => {
-      const errorMessage = getErrorMessage(error);
-      toast.error("Failed to load notes", {
-        description: errorMessage,
-        duration: 5000,
-      });
-    },
   });
 };
 
@@ -50,7 +43,10 @@ export const useCreateNote = () => {
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to create note", {
           description: errorMessage,
           duration: 5000,
@@ -67,14 +63,18 @@ export const useUpdateNote = () => {
     Error,
     { id: number; note_title: string; note_content: string }
   >({
-    mutationFn: ({ id, note_title, note_content }) => updateNote(id, note_title, note_content),
+    mutationFn: ({ id, note_title, note_content }) =>
+      updateNote(id, note_title, note_content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["market-notes"] });
     },
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to update note", {
           description: errorMessage,
           duration: 5000,
@@ -94,7 +94,10 @@ export const useDeleteNote = () => {
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to delete note", {
           description: errorMessage,
           duration: 5000,
@@ -103,5 +106,3 @@ export const useDeleteNote = () => {
     },
   });
 };
-
-

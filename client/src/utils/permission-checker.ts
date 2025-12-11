@@ -14,17 +14,18 @@ export const checkPermissionBeforeAction = (
   resourceName: string = "item"
 ): boolean => {
   if (!hasPermission) {
-    const actionText = {
-      create: "create",
-      add: "create",
-      update: "update",
-      edit: "update",
-      delete: "delete",
-      remove: "delete",
-      download: "download",
-      export: "download",
-      view: "view",
-    }[actionName.toLowerCase()] || actionName;
+    const actionText =
+      {
+        create: "create",
+        add: "create",
+        update: "update",
+        edit: "update",
+        delete: "delete",
+        remove: "delete",
+        download: "download",
+        export: "download",
+        view: "view",
+      }[actionName.toLowerCase()] || actionName;
 
     // Match the exact error message format from API interceptor
     toast.error("Error", {
@@ -64,4 +65,3 @@ export const checkMultiplePermissions = (
   const hasPermission = permissionMap[actionName] ?? false;
   return checkPermissionBeforeAction(hasPermission, actionName, resourceName);
 };
-

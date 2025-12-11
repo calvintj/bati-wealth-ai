@@ -7,7 +7,7 @@ import {
   useDeleteActivity,
   useUpdateActivity,
 } from "@/hooks/customer-details/use-activity-manager";
-import { Activity } from "@/types/page/customer-details";
+import { Activity, ActivityResponse } from "@/types/page/customer-details";
 import { exportToCSV } from "@/utils/csv-export";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 import { checkPermissionBeforeAction } from "@/utils/permission-checker";
@@ -22,7 +22,7 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   const { mutate: postData } = usePostActivity();
   const { mutate: deleteData } = useDeleteActivity();
   const { mutate: updateData } = useUpdateActivity();
-  
+
   // Get permissions for customer-details page
   const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
@@ -30,8 +30,9 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   const [localActivity, setLocalActivity] = useState<Activity[]>([]);
 
   useEffect(() => {
-    if (activityFromHook?.data) {
-      setLocalActivity(activityFromHook.data);
+    const activityData = activityFromHook as ActivityResponse | undefined;
+    if (activityData?.data) {
+      setLocalActivity(activityData.data);
     }
   }, [activityFromHook]);
 
@@ -168,11 +169,11 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
 
   const handleExport = () => {
     if (localActivity.length === 0) return;
-    
+
     const exportData = localActivity.map((activity) => ({
-      "Title": activity.title,
-      "Description": activity.description,
-      "Date": activity.date.split("T")[0],
+      Title: activity.title,
+      Description: activity.description,
+      Date: activity.date.split("T")[0],
     }));
     exportToCSV(exportData, `activities_${customerID}`);
   };
@@ -231,8 +232,12 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
                 className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex justify-between items-center"
               >
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold truncate text-gray-900 dark:text-white">{activity.title}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{activity.description}</p>
+                  <h3 className="font-semibold truncate text-gray-900 dark:text-white">
+                    {activity.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                    {activity.description}
+                  </p>
                 </div>
                 <div className="flex flex-row gap-2 items-center flex-shrink-0 ml-2">
                   <p className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">

@@ -5,7 +5,10 @@ import {
   updateWatchlist,
   deleteWatchlist,
 } from "@/services/market-indices/market-watchlists-api";
-import { MarketWatchlistResponse, MarketWatchlist } from "@/types/page/market-indices";
+import {
+  MarketWatchlistResponse,
+  MarketWatchlist,
+} from "@/types/page/market-indices";
 import { toast } from "sonner";
 import axios from "axios";
 
@@ -25,27 +28,28 @@ export const useGetWatchlists = () => {
     queryKey: ["market-watchlists"],
     queryFn: getWatchlists,
     staleTime: 5 * 60 * 1000,
-    onError: (error) => {
-      const errorMessage = getErrorMessage(error);
-      toast.error("Failed to load watchlists", {
-        description: errorMessage,
-        duration: 5000,
-      });
-    },
   });
 };
 
 export const useCreateWatchlist = () => {
   const queryClient = useQueryClient();
-  return useMutation<MarketWatchlistResponse, Error, { watchlist_name: string; indices: string[] }>({
-    mutationFn: ({ watchlist_name, indices }) => createWatchlist(watchlist_name, indices),
+  return useMutation<
+    MarketWatchlistResponse,
+    Error,
+    { watchlist_name: string; indices: string[] }
+  >({
+    mutationFn: ({ watchlist_name, indices }) =>
+      createWatchlist(watchlist_name, indices),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["market-watchlists"] });
     },
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to create watchlist", {
           description: errorMessage,
           duration: 5000,
@@ -62,14 +66,18 @@ export const useUpdateWatchlist = () => {
     Error,
     { id: number; watchlist_name: string; indices: string[] }
   >({
-    mutationFn: ({ id, watchlist_name, indices }) => updateWatchlist(id, watchlist_name, indices),
+    mutationFn: ({ id, watchlist_name, indices }) =>
+      updateWatchlist(id, watchlist_name, indices),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["market-watchlists"] });
     },
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to update watchlist", {
           description: errorMessage,
           duration: 5000,
@@ -89,7 +97,10 @@ export const useDeleteWatchlist = () => {
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to delete watchlist", {
           description: errorMessage,
           duration: 5000,
@@ -98,5 +109,3 @@ export const useDeleteWatchlist = () => {
     },
   });
 };
-
-

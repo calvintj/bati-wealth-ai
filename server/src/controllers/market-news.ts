@@ -14,11 +14,12 @@ import {
 export const getProductPicksController = async (
   req: Request,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const rm_number = (req as any).user?.rm_number;
     if (!rm_number) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const { pick_date } = req.query;
@@ -36,17 +37,19 @@ export const getProductPicksController = async (
 export const createProductPickController = async (
   req: Request,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const rm_number = (req as any).user?.rm_number;
     if (!rm_number) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const { ticker, pick_date, reason, priority } = req.body;
 
     if (!ticker || !pick_date) {
-      return res.status(400).json({ error: "Ticker and pick_date are required" });
+      res.status(400).json({ error: "Ticker and pick_date are required" });
+      return;
     }
 
     const result = await createProductPick(
@@ -59,8 +62,14 @@ export const createProductPickController = async (
     res.status(201).json(result);
   } catch (error: any) {
     console.error("Error creating product pick:", error);
-    if (error.message?.includes("unique") || error.message?.includes("duplicate")) {
-      return res.status(409).json({ error: "Product pick already exists for this date" });
+    if (
+      error.message?.includes("unique") ||
+      error.message?.includes("duplicate")
+    ) {
+      res
+        .status(409)
+        .json({ error: "Product pick already exists for this date" });
+      return;
     }
     res.status(500).json({ error: error.message || "Internal server error" });
   }
@@ -69,11 +78,12 @@ export const createProductPickController = async (
 export const updateProductPickController = async (
   req: Request,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const rm_number = (req as any).user?.rm_number;
     if (!rm_number) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const { id } = req.params;
@@ -92,7 +102,8 @@ export const updateProductPickController = async (
   } catch (error: any) {
     console.error("Error updating product pick:", error);
     if (error.message?.includes("not found")) {
-      return res.status(404).json({ error: error.message });
+      res.status(404).json({ error: error.message });
+      return;
     }
     res.status(500).json({ error: error.message || "Internal server error" });
   }
@@ -101,11 +112,12 @@ export const updateProductPickController = async (
 export const deleteProductPickController = async (
   req: Request,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const rm_number = (req as any).user?.rm_number;
     if (!rm_number) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const { id } = req.params;
@@ -114,18 +126,23 @@ export const deleteProductPickController = async (
   } catch (error: any) {
     console.error("Error deleting product pick:", error);
     if (error.message?.includes("not found")) {
-      return res.status(404).json({ error: error.message });
+      res.status(404).json({ error: error.message });
+      return;
     }
     res.status(500).json({ error: error.message || "Internal server error" });
   }
 };
 
 // News Notes Controllers
-export const getNewsNotesController = async (req: Request, res: Response) => {
+export const getNewsNotesController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const rm_number = (req as any).user?.rm_number;
     if (!rm_number) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const { news_id } = req.query;
@@ -140,17 +157,22 @@ export const getNewsNotesController = async (req: Request, res: Response) => {
   }
 };
 
-export const createNewsNoteController = async (req: Request, res: Response) => {
+export const createNewsNoteController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const rm_number = (req as any).user?.rm_number;
     if (!rm_number) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const { note_title, note_content, news_id, relevance_tags } = req.body;
 
     if (!note_title || !note_content) {
-      return res.status(400).json({ error: "Note title and content are required" });
+      res.status(400).json({ error: "Note title and content are required" });
+      return;
     }
 
     const result = await createNewsNote(
@@ -167,11 +189,15 @@ export const createNewsNoteController = async (req: Request, res: Response) => {
   }
 };
 
-export const updateNewsNoteController = async (req: Request, res: Response) => {
+export const updateNewsNoteController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const rm_number = (req as any).user?.rm_number;
     if (!rm_number) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const { id } = req.params;
@@ -189,17 +215,22 @@ export const updateNewsNoteController = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("Error updating news note:", error);
     if (error.message?.includes("not found")) {
-      return res.status(404).json({ error: error.message });
+      res.status(404).json({ error: error.message });
+      return;
     }
     res.status(500).json({ error: error.message || "Internal server error" });
   }
 };
 
-export const deleteNewsNoteController = async (req: Request, res: Response) => {
+export const deleteNewsNoteController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const rm_number = (req as any).user?.rm_number;
     if (!rm_number) {
-      return res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     const { id } = req.params;
@@ -208,9 +239,9 @@ export const deleteNewsNoteController = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("Error deleting news note:", error);
     if (error.message?.includes("not found")) {
-      return res.status(404).json({ error: error.message });
+      res.status(404).json({ error: error.message });
+      return;
     }
     res.status(500).json({ error: error.message || "Internal server error" });
   }
 };
-

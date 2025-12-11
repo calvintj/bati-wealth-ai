@@ -9,7 +9,11 @@ import {
   useUpdateNote,
   useDeleteNote,
 } from "@/hooks/market-indices/use-market-notes";
-import { MarketNote, INDEX_OPTIONS } from "@/types/page/market-indices";
+import {
+  MarketNote,
+  MarketNoteResponse,
+  INDEX_OPTIONS,
+} from "@/types/page/market-indices";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 import { checkPermissionBeforeAction } from "@/utils/permission-checker";
 
@@ -26,11 +30,12 @@ const MarketNotes = () => {
   const { mutateAsync: createNote } = useCreateNote();
   const { mutateAsync: updateNote } = useUpdateNote();
   const { mutateAsync: deleteNote } = useDeleteNote();
-  
+
   // Get permissions for market-indices page
   const { canAdd, canUpdate, canDelete } = usePagePermissions();
 
-  const notes = data?.notes || [];
+  const notesData = data as MarketNoteResponse | undefined;
+  const notes = notesData?.notes || [];
 
   const handleOpenCreate = () => {
     // Check permission before allowing to create
@@ -184,8 +189,9 @@ const MarketNotes = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded">
-                        {INDEX_OPTIONS.find((opt) => opt.value === note.index_name)?.label ||
-                          note.index_name}
+                        {INDEX_OPTIONS.find(
+                          (opt) => opt.value === note.index_name
+                        )?.label || note.index_name}
                       </span>
                       <h3 className="font-medium text-gray-800 dark:text-white">
                         {note.note_title}
@@ -307,5 +313,3 @@ const MarketNotes = () => {
 };
 
 export default MarketNotes;
-
-

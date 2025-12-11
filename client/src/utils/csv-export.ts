@@ -12,13 +12,14 @@ export interface CustomerData {
   "Total FUM": number;
   "Total AUM": number;
   "Total FBI": number;
+  [key: string]: string | number | null | undefined;
 }
 
 // Generic type for any CSV export data
 export type CSVData = Record<string, string | number | null | undefined>;
 
 export const exportToCSV = (
-  data: CSVData[], 
+  data: CSVData[],
   filename: string = "customers"
 ) => {
   if (data.length === 0) {
@@ -42,7 +43,11 @@ export const exportToCSV = (
           if (value === null || value === undefined) return "";
           const stringValue = String(value);
           // Escape quotes and wrap in quotes if contains comma, quote, or newline
-          if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
+          if (
+            stringValue.includes(",") ||
+            stringValue.includes('"') ||
+            stringValue.includes("\n")
+          ) {
             return `"${stringValue.replace(/"/g, '""')}"`;
           }
           return stringValue;
@@ -57,12 +62,13 @@ export const exportToCSV = (
   const url = URL.createObjectURL(blob);
 
   link.setAttribute("href", url);
-  link.setAttribute("download", `${filename}_${new Date().toISOString().split("T")[0]}.csv`);
+  link.setAttribute(
+    "download",
+    `${filename}_${new Date().toISOString().split("T")[0]}.csv`
+  );
   link.style.visibility = "hidden";
 
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 };
-
-

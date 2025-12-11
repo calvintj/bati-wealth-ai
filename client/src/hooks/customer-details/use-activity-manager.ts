@@ -1,4 +1,9 @@
-import { deleteActivity, getActivity, postActivity, updateActivity } from "@/services/customer-details/activity-manager-api";
+import {
+  deleteActivity,
+  getActivity,
+  postActivity,
+  updateActivity,
+} from "@/services/customer-details/activity-manager-api";
 import { Activity, ActivityResponse } from "@/types/page/customer-details";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -21,7 +26,10 @@ export const usePostActivity = () => {
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to create activity", {
           description: errorMessage,
           duration: 5000,
@@ -36,13 +44,6 @@ export const useGetActivity = (customerID: string) => {
     queryKey: ["activity", customerID],
     queryFn: () => getActivity(customerID),
     staleTime: 5 * 60 * 1000,
-    onError: (error) => {
-      const errorMessage = getErrorMessage(error);
-      toast.error("Failed to load activities", {
-        description: errorMessage,
-        duration: 5000,
-      });
-    },
   });
 };
 
@@ -52,7 +53,10 @@ export const useDeleteActivity = () => {
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to delete activity", {
           description: errorMessage,
           duration: 5000,
@@ -68,7 +72,10 @@ export const useUpdateActivity = () => {
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
+      if (
+        !errorMessage.toLowerCase().includes("permission") &&
+        !errorMessage.toLowerCase().includes("access denied")
+      ) {
         toast.error("Failed to update activity", {
           description: errorMessage,
           duration: 5000,
