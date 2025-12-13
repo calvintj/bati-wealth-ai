@@ -12,12 +12,12 @@ import axios from "axios";
 // Helper to extract error message
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.message || "An error occurred";
+    return error.response?.data?.error || error.message || "Terjadi kesalahan";
   }
   if (error instanceof Error) {
     return error.message;
   }
-  return "An unexpected error occurred";
+  return "Terjadi kesalahan yang tidak diketahui";
 };
 
 export const usePostActivity = () => {
@@ -36,7 +36,7 @@ export const usePostActivity = () => {
         return;
       }
 
-      toast.error("Failed to create activity", {
+      toast.error("Gagal membuat aktivitas", {
         description: errorMessage,
         duration: 5000,
       });
@@ -62,7 +62,7 @@ export const useDeleteActivity = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to delete activity", {
+        toast.error("Gagal menghapus aktivitas", {
           description: errorMessage,
           duration: 5000,
         });
@@ -81,7 +81,7 @@ export const useUpdateActivity = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to update activity", {
+        toast.error("Gagal memperbarui aktivitas", {
           description: errorMessage,
           duration: 5000,
         });

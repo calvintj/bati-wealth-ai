@@ -38,7 +38,7 @@ export const useLogin = () => {
 
       if (!data.token) {
         logger.error("No token received in login response");
-        throw new Error("No token received in login response");
+        throw new Error("Token tidak diterima dari server. Silakan coba lagi.");
       }
 
       // Store token in localStorage and cookies
@@ -75,14 +75,50 @@ export const useLogin = () => {
       return true;
     } catch (error) {
       setLoading(false);
+      let errorMessage = "Login gagal. Silakan coba lagi.";
+
       if (error instanceof AxiosError) {
-        setError(
-          error.response?.data?.error || "An error occurred during login"
-        );
-      } else {
-        setError("An unexpected error occurred");
+        // Extract error message from response
+        const responseError = error.response?.data?.error;
+        const responseMessage = error.response?.data?.message;
+
+        if (responseError) {
+          errorMessage = responseError;
+        } else if (responseMessage) {
+          errorMessage = responseMessage;
+        } else if (error.response?.status === 400) {
+          errorMessage =
+            "Email atau password tidak valid. Silakan periksa kredensial Anda.";
+        } else if (error.response?.status === 401) {
+          errorMessage = "Tidak diizinkan. Silakan periksa kredensial Anda.";
+        } else if (error.response?.status === 403) {
+          errorMessage = "Akses ditolak. Silakan hubungi administrator Anda.";
+        } else if (error.response?.status === 404) {
+          errorMessage =
+            "Layanan login tidak ditemukan. Silakan coba lagi nanti.";
+        } else if (error.response?.status === 500) {
+          errorMessage = "Kesalahan server. Silakan coba lagi nanti.";
+        } else if (error.response?.status) {
+          errorMessage = `Login gagal dengan status ${error.response.status}. Silakan coba lagi.`;
+        } else if (error.message) {
+          errorMessage = error.message;
+        } else if (
+          error.code === "ECONNABORTED" ||
+          error.code === "ETIMEDOUT"
+        ) {
+          errorMessage =
+            "Koneksi timeout. Silakan periksa koneksi internet Anda dan coba lagi.";
+        } else if (error.code === "ERR_NETWORK") {
+          errorMessage =
+            "Kesalahan jaringan. Silakan periksa koneksi internet Anda.";
+        }
+      } else if (error instanceof Error) {
+        // For non-Axios errors, use the error message
+        errorMessage = error.message;
       }
-      logger.error("Login failed", { error });
+
+      setError(errorMessage);
+      logger.error("Login failed", { error, errorMessage });
       return false;
     }
   };

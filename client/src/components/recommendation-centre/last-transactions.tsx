@@ -102,7 +102,7 @@ export default function LastTransactionComponent() {
                       href={`/customer-details?customerID=${transaction.bp_number_wm_core}`}
                       className="inline-flex items-center gap-1 px-2 py-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors text-xs"
                     >
-                      View
+                      Lihat
                       <ExternalLink size={12} />
                     </Link>
                   </td>

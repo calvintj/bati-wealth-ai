@@ -14,8 +14,12 @@ import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 
 export default function MarketIndicesPage() {
   const [customerRisk, setCustomerRisk] = useState<string>("All");
-  const [selectedWatchlistIndices, setSelectedWatchlistIndices] = useState<string[] | null>(null);
-  const [selectedWatchlistId, setSelectedWatchlistId] = useState<number | null>(null);
+  const [selectedWatchlistIndices, setSelectedWatchlistIndices] = useState<
+    string[] | null
+  >(null);
+  const [selectedWatchlistId, setSelectedWatchlistId] = useState<number | null>(
+    null
+  );
   const { canView, loading: permissionsLoading } = usePagePermissions();
 
   // Map index codes to chart components
@@ -24,7 +28,10 @@ export default function MarketIndicesPage() {
     return selectedWatchlistIndices.includes(indexCode);
   };
 
-  const handleWatchlistSelect = (indices: string[] | null, watchlistId: number | null) => {
+  const handleWatchlistSelect = (
+    indices: string[] | null,
+    watchlistId: number | null
+  ) => {
     setSelectedWatchlistIndices(indices);
     setSelectedWatchlistId(watchlistId);
   };
@@ -45,7 +52,8 @@ export default function MarketIndicesPage() {
     return charts;
   }, [selectedWatchlistIndices]);
 
-  const hasVisibleCharts = visibleCharts.indonesian.length > 0 || visibleCharts.us.length > 0;
+  const hasVisibleCharts =
+    visibleCharts.indonesian.length > 0 || visibleCharts.us.length > 0;
 
   // Check view permission
   if (permissionsLoading) {
@@ -59,7 +67,7 @@ export default function MarketIndicesPage() {
             showRiskDropdown={false}
           />
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-            <p className="text-gray-600 dark:text-gray-400">Loading permissions...</p>
+            <p className="text-gray-600 dark:text-gray-400">Memuat izin...</p>
           </main>
         </div>
       </div>
@@ -79,10 +87,11 @@ export default function MarketIndicesPage() {
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                Access Denied
+                Akses Ditolak
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                You do not have permission to view this page. Please contact your administrator if you need access.
+                Anda tidak memiliki izin untuk melihat halaman ini. Silakan
+                hubungi administrator Anda jika Anda memerlukan akses.
               </p>
             </div>
           </main>
@@ -110,10 +119,10 @@ export default function MarketIndicesPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
-                Major Market Indices
+                Indeks Pasar Utama
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Real-time tracking of major market indices from around the world
+                Pelacakan real-time indeks pasar utama dari seluruh dunia
               </p>
             </div>
 
@@ -121,14 +130,17 @@ export default function MarketIndicesPage() {
             {selectedWatchlistIndices && (
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
-                  <Filter size={16} className="text-blue-600 dark:text-blue-400" />
+                  <Filter
+                    size={16}
+                    className="text-blue-600 dark:text-blue-400"
+                  />
                   <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                    {selectedWatchlistIndices.length} {selectedWatchlistIndices.length === 1 ? 'index' : 'indices'} selected
+                    {selectedWatchlistIndices.length} indeks dipilih
                   </span>
                   <button
                     onClick={() => handleWatchlistSelect(null, null)}
                     className="ml-1 p-0.5 hover:bg-blue-100 dark:hover:bg-blue-800 rounded transition-colors"
-                    title="Clear filter"
+                    title="Hapus filter"
                   >
                     <X size={14} className="text-blue-600 dark:text-blue-400" />
                   </button>
@@ -141,7 +153,7 @@ export default function MarketIndicesPage() {
         {/* Watchlist and Notes Section */}
         <div className="px-4 md:px-6 py-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <MarketWatchlists 
+            <MarketWatchlists
               onWatchlistSelect={handleWatchlistSelect}
               selectedWatchlistId={selectedWatchlistId}
             />
@@ -158,7 +170,7 @@ export default function MarketIndicesPage() {
                 <div className="flex items-center gap-3">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
                   <h2 className="text-xl font-bold text-gray-800 dark:text-white px-4">
-                    Indonesian Market
+                    Pasar Indonesia
                   </h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
                 </div>
@@ -185,7 +197,7 @@ export default function MarketIndicesPage() {
                 <div className="flex items-center gap-3">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
                   <h2 className="text-xl font-bold text-gray-800 dark:text-white px-4">
-                    US Market
+                    Pasar Amerika Serikat
                   </h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
                 </div>
@@ -217,13 +229,17 @@ export default function MarketIndicesPage() {
               <div className="flex flex-col items-center justify-center py-16 px-4 bg-white dark:bg-[#1D283A] rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg">
                 <div className="text-center max-w-md">
                   <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800">
-                    <Filter size={24} className="text-gray-400 dark:text-gray-500" />
+                    <Filter
+                      size={24}
+                      className="text-gray-400 dark:text-gray-500"
+                    />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                    No charts match the selected watchlist
+                    Tidak ada grafik yang cocok dengan watchlist yang dipilih
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                    The selected watchlist contains indices that don't match any available charts.
+                    Watchlist yang dipilih berisi indeks yang tidak cocok dengan
+                    grafik yang tersedia.
                   </p>
                   <div className="inline-flex flex-wrap gap-2 justify-center mb-4">
                     {selectedWatchlistIndices.map((index) => (
@@ -239,7 +255,7 @@ export default function MarketIndicesPage() {
                     onClick={() => handleWatchlistSelect(null, null)}
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg transition-colors"
                   >
-                    Clear Filter
+                    Hapus Filter
                   </button>
                 </div>
               </div>
@@ -249,7 +265,8 @@ export default function MarketIndicesPage() {
             {!selectedWatchlistIndices && (
               <div className="text-center py-4">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Showing all available market indices. Select a watchlist to filter.
+                  Menampilkan semua indeks pasar yang tersedia. Pilih watchlist
+                  untuk memfilter.
                 </p>
               </div>
             )}

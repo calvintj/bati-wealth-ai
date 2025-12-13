@@ -15,12 +15,12 @@ import axios from "axios";
 // Helper to extract error message
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.message || "An error occurred";
+    return error.response?.data?.error || error.message || "Terjadi kesalahan";
   }
   if (error instanceof Error) {
     return error.message;
   }
-  return "An unexpected error occurred";
+  return "Terjadi kesalahan yang tidak diketahui";
 };
 
 export const useGetWatchlists = () => {
@@ -50,7 +50,7 @@ export const useCreateWatchlist = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to create watchlist", {
+        toast.error("Gagal membuat watchlist", {
           description: errorMessage,
           duration: 5000,
         });
@@ -78,7 +78,7 @@ export const useUpdateWatchlist = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to update watchlist", {
+        toast.error("Gagal memperbarui watchlist", {
           description: errorMessage,
           duration: 5000,
         });
@@ -101,7 +101,7 @@ export const useDeleteWatchlist = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to delete watchlist", {
+        toast.error("Gagal menghapus watchlist", {
           description: errorMessage,
           duration: 5000,
         });

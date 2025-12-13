@@ -46,7 +46,7 @@ export const LQ45Chart: React.FC = () => {
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
           </svg>
-          <p>Error loading LQ45 data.</p>
+          <p>Error memuat data LQ45.</p>
         </div>
       </div>
     );
@@ -56,7 +56,7 @@ export const LQ45Chart: React.FC = () => {
       <div className="flex items-center justify-center h-64 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-md m-4">
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-8 w-8 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin mb-2"></div>
-          <p>Loading chart data...</p>
+          <p>Memuat data grafik...</p>
         </div>
       </div>
     );
@@ -65,7 +65,7 @@ export const LQ45Chart: React.FC = () => {
   if (!latestDataPoint || latestDataPoint.change_percent === undefined) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-md m-4">
-        <p>No data available</p>
+        <p>Tidak ada data tersedia</p>
       </div>
     );
   }
@@ -169,7 +169,7 @@ export const LQ45Chart: React.FC = () => {
                       <div className="flex flex-col gap-1">
                         <div className="flex justify-between gap-4">
                           <span className="text-gray-500 dark:text-gray-400">
-                            Close:
+                            Tutup:
                           </span>
                           <span className="font-semibold">
                             {value.toLocaleString("id-ID", {
@@ -180,7 +180,7 @@ export const LQ45Chart: React.FC = () => {
                         {dataPoint && dataPoint.change_percent !== undefined && (
                           <div className="flex justify-between gap-4">
                             <span className="text-gray-500 dark:text-gray-400">
-                              Change:
+                              Perubahan:
                             </span>
                             <span
                               className={`font-semibold ${

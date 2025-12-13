@@ -48,7 +48,7 @@ export function checkPermission(
         }[permissionType] || permissionType;
 
         res.status(403).json({
-          error: `Access denied. You do not have permission to ${actionText} on this page. Please contact your administrator if you need access.`,
+          error: `Akses ditolak. Anda tidak memiliki izin untuk ${actionText} di halaman ini. Silakan hubungi administrator Anda jika Anda memerlukan akses.`,
         });
         return;
       }
@@ -72,7 +72,7 @@ export function checkPermission(
         }[permissionType] || permissionType;
 
         res.status(403).json({
-          error: `Access denied. You do not have permission to ${actionText} on this page. Please contact your administrator if you need access.`,
+          error: `Akses ditolak. Anda tidak memiliki izin untuk ${actionText} di halaman ini. Silakan hubungi administrator Anda jika Anda memerlukan akses.`,
         });
         return;
       }
@@ -150,7 +150,7 @@ export function canUpdateCustomerInfo() {
 
       if (!hasCustomerDetailsUpdate && !hasDashboardUpdate) {
         res.status(403).json({
-          error: "Access denied. You do not have permission to update on this page. Please contact your administrator if you need access.",
+          error: "Akses ditolak. Anda tidak memiliki izin untuk memperbarui di halaman ini. Silakan hubungi administrator Anda jika Anda memerlukan akses.",
         });
         return;
       }

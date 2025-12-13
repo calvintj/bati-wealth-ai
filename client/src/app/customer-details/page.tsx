@@ -39,6 +39,28 @@ const formatCurrency = (value: string | undefined): string => {
   return `$ ${Number(value).toLocaleString("id-ID")}`;
 };
 
+// Helper function to format risk profile
+const formatRiskProfile = (value: string | undefined): string => {
+  if (!value) return "N/A";
+
+  // If it's already in the format "1 - Conservative", extract the text part
+  if (value.includes(" - ")) {
+    return value.split(" - ")[1];
+  }
+
+  // If it's just a number, map it to the full text
+  const riskProfileMap: { [key: string]: string } = {
+    "1": "Conservative",
+    "2": "Balanced",
+    "3": "Moderate",
+    "4": "Growth",
+    "5": "Aggressive",
+    "0": "Tidak Ada",
+  };
+
+  return riskProfileMap[value] || value;
+};
+
 // Memoized DetailRow component
 const DetailRow = memo(
   ({ label, value }: { label: string; value: string | number | undefined }) => (
@@ -171,11 +193,11 @@ export default function CustomerDetailsPage() {
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                Access Denied
+                Akses Ditolak
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                You do not have permission to view this page. Please contact
-                your administrator if you need access.
+                Anda tidak memiliki izin untuk melihat halaman ini. Silakan
+                hubungi administrator Anda jika Anda memerlukan akses.
               </p>
             </div>
           </main>
@@ -261,13 +283,22 @@ export default function CustomerDetailsPage() {
               ) : data ? (
                 <div className="space-y-2">
                   <DetailRow label="Status" value={data.Priority_Private} />
-                  <DetailRow label="Usia" value={data.Usia} />
+                  <DetailRow
+                    label="Usia"
+                    value={data.Usia ? `${data.Usia} tahun` : undefined}
+                  />
                   <DetailRow
                     label="Status Pernikahan"
                     value={data.Status_Nikah}
                   />
-                  <DetailRow label="Profil Resiko" value={data.Risk_Profile} />
-                  <DetailRow label="Vintage" value={data.Vintage} />
+                  <DetailRow
+                    label="Profil Resiko"
+                    value={formatRiskProfile(data.Risk_Profile)}
+                  />
+                  <DetailRow
+                    label="Gabung Sejak"
+                    value={data.Vintage ? `${data.Vintage} tahun` : undefined}
+                  />
                 </div>
               ) : (
                 <div className="text-center py-4 text-gray-600 dark:text-gray-300 text-xs">

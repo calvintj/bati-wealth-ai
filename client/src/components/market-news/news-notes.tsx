@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { CirclePlus, Trash2, Pencil, X, FileText } from "lucide-react";
+import { CirclePlus, Trash2, Pencil, X, FileText, AlertTriangle } from "lucide-react";
 import {
   useGetNewsNotes,
   useCreateNewsNote,
@@ -15,6 +15,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function NewsNotes() {
   const { data, isLoading, error } = useGetNewsNotes();
@@ -31,6 +40,8 @@ export default function NewsNotes() {
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [relevanceTags, setRelevanceTags] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<number | null>(null);
 
   const notes = data?.notes || [];
 
@@ -63,7 +74,7 @@ export default function NewsNotes() {
 
   const handleSubmit = async () => {
     if (!noteTitle.trim() || !noteContent.trim()) {
-      alert("Please enter both title and content");
+      alert("Masukkan judul dan konten");
       return;
     }
 
@@ -94,21 +105,39 @@ export default function NewsNotes() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
+  const handleDelete = (id: number) => {
+    setNoteToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!noteToDelete) return;
 
     try {
-      await deleteNote(id);
+      await deleteNote(noteToDelete);
+      toast.success("Catatan berita berhasil dihapus", {
+        description: "Catatan berita telah dihapus dari sistem",
+        duration: 3000,
+      });
+      setShowDeleteDialog(false);
+      setNoteToDelete(null);
     } catch (err) {
-      console.error("Failed to delete news note:", err);
       // Error will be handled by API interceptor and React Query onError
+      console.error("Failed to delete news note:", err);
+      setShowDeleteDialog(false);
+      setNoteToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setNoteToDelete(null);
   };
 
   if (isLoading) {
     return (
       <div className="p-4 text-sm text-gray-600 dark:text-gray-400">
-        Loading news notes...
+        Memuat catatan berita...
       </div>
     );
   }
@@ -116,7 +145,7 @@ export default function NewsNotes() {
   if (error) {
     return (
       <div className="p-4 text-sm text-red-600 dark:text-red-400">
-        Error loading news notes
+        Error memuat catatan berita
       </div>
     );
   }
@@ -126,7 +155,7 @@ export default function NewsNotes() {
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-gray-800 dark:text-white">
-            News Notes
+            Catatan Berita
           </h3>
           <Button
             onClick={handleOpenCreate}
@@ -135,13 +164,13 @@ export default function NewsNotes() {
             variant="outline"
           >
             <CirclePlus className="w-3 h-3 mr-1" />
-            Add
+            Tambah
           </Button>
         </div>
 
         {notes.length === 0 ? (
           <div className="flex-1 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
-            No notes yet. Click "Add" to create one.
+            Belum ada catatan. Klik "Tambah" untuk membuat satu.
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto space-y-3">
@@ -165,7 +194,7 @@ export default function NewsNotes() {
                     <button
                       onClick={() => handleDelete(note.id)}
                       className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900"
-                      title="Delete"
+                      title="Hapus"
                     >
                       <Trash2 className="w-3 h-3 text-red-600 dark:text-red-400" />
                     </button>
@@ -202,7 +231,7 @@ export default function NewsNotes() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                    {isEditing ? "Edit News Note" : "Add News Note"}
+                    {isEditing ? "Edit Catatan Berita" : "Tambah Catatan Berita"}
                   </h2>
                   <button
                     onClick={handleCloseModal}
@@ -214,23 +243,23 @@ export default function NewsNotes() {
 
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="noteTitle">Note Title *</Label>
+                    <Label htmlFor="noteTitle">Judul Catatan *</Label>
                     <Input
                       id="noteTitle"
                       value={noteTitle}
                       onChange={(e) => setNoteTitle(e.target.value)}
-                      placeholder="e.g., Market Impact Analysis"
+                      placeholder="contoh: Analisis Dampak Pasar"
                       className="mt-1"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="noteContent">Note Content *</Label>
+                    <Label htmlFor="noteContent">Isi Catatan *</Label>
                     <Textarea
                       id="noteContent"
                       value={noteContent}
                       onChange={(e) => setNoteContent(e.target.value)}
-                      placeholder="Your analysis, observations, or insights..."
+                      placeholder="Analisis, observasi, atau wawasan Anda..."
                       className="mt-1"
                       rows={6}
                     />
@@ -238,13 +267,13 @@ export default function NewsNotes() {
 
                   <div>
                     <Label htmlFor="relevanceTags">
-                      Relevance Tags (comma-separated)
+                      Tag Relevansi (dipisahkan koma)
                     </Label>
                     <Input
                       id="relevanceTags"
                       value={relevanceTags}
                       onChange={(e) => setRelevanceTags(e.target.value)}
-                      placeholder="e.g., customer_impact, market_trend, risk"
+                      placeholder="contoh: dampak_nasabah, tren_pasar, risiko"
                       className="mt-1"
                     />
                   </div>
@@ -256,14 +285,14 @@ export default function NewsNotes() {
                     className="flex-1"
                     variant="default"
                   >
-                    {isEditing ? "Update" : "Create"}
+                    {isEditing ? "Perbarui" : "Buat"}
                   </Button>
                   <Button
                     onClick={handleCloseModal}
                     className="flex-1"
                     variant="outline"
                   >
-                    Cancel
+                    Batal
                   </Button>
                 </div>
               </div>
@@ -271,6 +300,39 @@ export default function NewsNotes() {
           </div>,
           document.body
         )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                Hapus Catatan Berita
+              </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2 text-sm text-gray-600 dark:text-gray-400">
+              Apakah Anda yakin ingin menghapus catatan berita ini? Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <button
+              onClick={handleCancelDelete}
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
+            >
+              Hapus
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

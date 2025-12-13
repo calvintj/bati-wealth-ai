@@ -25,7 +25,7 @@ interface QuarterlyAUMProps {
 }
 
 const assetType = [
-  { label: "Asset", value: "Overall" },
+  { label: "Aset", value: "Overall" },
   { label: "SB", value: "SB" },
   { label: "RD", value: "RD" },
   { label: "BAC", value: "BAC" },

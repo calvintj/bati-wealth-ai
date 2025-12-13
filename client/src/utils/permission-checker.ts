@@ -16,20 +16,20 @@ export const checkPermissionBeforeAction = (
   if (!hasPermission) {
     const actionText =
       {
-        create: "create",
-        add: "create",
-        update: "update",
-        edit: "update",
-        delete: "delete",
-        remove: "delete",
-        download: "download",
-        export: "download",
-        view: "view",
+        create: "membuat",
+        add: "menambahkan",
+        update: "memperbarui",
+        edit: "mengedit",
+        delete: "menghapus",
+        remove: "menghapus",
+        download: "mengunduh",
+        export: "mengekspor",
+        view: "melihat",
       }[actionName.toLowerCase()] || actionName;
 
     // Use the standard error message format (matches API interceptor)
-    toast.error("Error", {
-      description: `Access denied. You do not have permission to ${actionText} on this page. Please contact your administrator if you need access.`,
+    toast.error("Kesalahan", {
+      description: `Akses ditolak. Anda tidak memiliki izin untuk ${actionText} di halaman ini. Silakan hubungi administrator Anda jika Anda memerlukan akses.`,
       duration: 5000,
     });
     return false;

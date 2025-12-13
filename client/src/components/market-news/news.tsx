@@ -98,7 +98,7 @@ export default function News() {
           <div className="animate-pulse flex flex-col items-center">
             <div className="h-12 w-12 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin mb-4"></div>
             <p className="text-gray-600 dark:text-gray-300">
-              Loading market news...
+              Memuat berita pasar...
             </p>
           </div>
         </div>
@@ -114,12 +114,12 @@ export default function News() {
             <FileText className="w-8 h-8 text-red-600 dark:text-red-400" />
           </div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-            Error Loading News
+            Error Memuat Berita
           </h3>
           <p className="text-sm text-red-600 dark:text-red-400">
             {error instanceof Error
               ? error.message
-              : "Failed to load market news"}
+              : "Gagal memuat berita pasar"}
           </p>
         </div>
       </div>
@@ -134,10 +134,10 @@ export default function News() {
             <FileText className="w-8 h-8 text-gray-400 dark:text-gray-500" />
           </div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-            No News Available
+            Tidak Ada Berita
           </h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            There are no market news articles available at this time.
+            Tidak ada artikel berita pasar yang tersedia saat ini.
           </p>
         </div>
       </div>
@@ -149,7 +149,7 @@ export default function News() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("id-ID", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -201,14 +201,14 @@ export default function News() {
           {/* Page Info */}
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <span className="font-medium">
-              Section {page + 1} of {sections.length}
+              Bagian {page + 1} dari {sections.length}
             </span>
             {sections.length > 1 && (
               <span className="text-gray-400 dark:text-gray-500">•</span>
             )}
             {sections.length > 1 && (
               <span className="text-xs">
-                {Math.round(((page + 1) / sections.length) * 100)}% complete
+                {Math.round(((page + 1) / sections.length) * 100)}% selesai
               </span>
             )}
           </div>
@@ -229,10 +229,10 @@ export default function News() {
                   disabled:hover:bg-white dark:disabled:hover:bg-gray-700"
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={page === 0}
-                title="Previous section"
+                title="Bagian sebelumnya"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Previous</span>
+                <span>Sebelumnya</span>
               </button>
 
               {/* Page Dots */}
@@ -246,8 +246,8 @@ export default function News() {
                         ? "bg-blue-600 dark:bg-blue-400 w-6"
                         : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
                     }`}
-                    title={`Go to section ${index + 1}`}
-                    aria-label={`Section ${index + 1}`}
+                    title={`Buka bagian ${index + 1}`}
+                    aria-label={`Bagian ${index + 1}`}
                   />
                 ))}
               </div>
@@ -267,9 +267,9 @@ export default function News() {
                   setPage((p) => Math.min(sections.length - 1, p + 1))
                 }
                 disabled={page === sections.length - 1}
-                title="Next section"
+                title="Bagian selanjutnya"
               >
-                <span>Next</span>
+                <span>Selanjutnya</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>

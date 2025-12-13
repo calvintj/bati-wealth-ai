@@ -69,10 +69,10 @@ const OverviewPage = () => {
           <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                Access Denied
+                Akses Ditolak
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                You do not have permission to view this page. Please contact your administrator if you need access.
+                Anda tidak memiliki izin untuk melihat halaman ini. Silakan hubungi administrator Anda jika Anda memerlukan akses.
               </p>
             </div>
           </main>

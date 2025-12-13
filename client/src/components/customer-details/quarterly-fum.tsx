@@ -25,7 +25,7 @@ interface QuarterlyFUMProps {
 }
 
 const assetType = [
-  { label: "Asset", value: "Overall" },
+  { label: "Aset", value: "Overall" },
   { label: "CASA", value: "casa" },
   { label: "Deposito", value: "deposito" },
 ];

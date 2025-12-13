@@ -98,8 +98,8 @@ export default function BulkUpdateModal({
 
     if (Object.keys(updateData).length === 0) {
       toast({
-        title: "Error",
-        description: "Please fill at least one field to update",
+        title: "Kesalahan",
+        description: "Silakan isi minimal satu field untuk diperbarui",
         variant: "destructive",
       });
       return;
@@ -111,23 +111,28 @@ export default function BulkUpdateModal({
         ...updateData,
       });
       toast({
-        title: "Success",
-        description: `Successfully updated ${result.updated} customer(s)`,
+        title: "Berhasil",
+        description: `Berhasil memperbarui ${result.updated} pelanggan`,
       });
       onSuccess();
       handleClose();
     } catch (error: any) {
       // Check if it's a permission error - if so, the interceptor already showed the error
       const errorMessage = error?.response?.data?.error || error?.message || "";
+      const errorLower = errorMessage.toLowerCase();
       const isPermissionError =
-        errorMessage.toLowerCase().includes("permission") ||
-        errorMessage.toLowerCase().includes("access denied");
+        errorLower.includes("permission") ||
+        errorLower.includes("access denied") ||
+        errorLower.includes("akses ditolak") ||
+        errorLower.includes("tidak memiliki izin") ||
+        error?.response?.status === 403;
 
+      // Don't show error if it's a permission error (API interceptor already handles it)
       if (!isPermissionError) {
         // Only show custom error if it's not a permission error
         toast({
-          title: "Error",
-          description: errorMessage || "Failed to update customers",
+          title: "Kesalahan",
+          description: errorMessage || "Gagal memperbarui pelanggan",
           variant: "destructive",
         });
       }

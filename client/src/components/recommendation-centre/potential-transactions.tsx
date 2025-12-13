@@ -112,7 +112,7 @@ export default function OwnedProductTable() {
         // Only show custom error if it's not a permission error
         console.error("Failed to create task:", error);
         toast({
-          title: "Error",
+          title: "Kesalahan",
           description: errorMessage || "Gagal membuat task. Silakan coba lagi.",
           variant: "destructive",
         });

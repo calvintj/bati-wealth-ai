@@ -12,12 +12,12 @@ import axios from "axios";
 // Helper to extract error message
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.message || "An error occurred";
+    return error.response?.data?.error || error.message || "Terjadi kesalahan";
   }
   if (error instanceof Error) {
     return error.message;
   }
-  return "An unexpected error occurred";
+  return "Terjadi kesalahan yang tidak diketahui";
 };
 
 export const useGetNotes = (index_name?: string) => {
@@ -47,7 +47,7 @@ export const useCreateNote = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to create note", {
+        toast.error("Gagal membuat catatan", {
           description: errorMessage,
           duration: 5000,
         });
@@ -75,7 +75,7 @@ export const useUpdateNote = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to update note", {
+        toast.error("Gagal memperbarui catatan", {
           description: errorMessage,
           duration: 5000,
         });
@@ -98,7 +98,7 @@ export const useDeleteNote = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to delete note", {
+        toast.error("Gagal menghapus catatan", {
           description: errorMessage,
           duration: 5000,
         });

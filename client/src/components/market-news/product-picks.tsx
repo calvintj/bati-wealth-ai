@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { CirclePlus, Trash2, Pencil, X, Calendar } from "lucide-react";
+import { CirclePlus, Trash2, Pencil, X, Calendar, AlertTriangle } from "lucide-react";
 import {
   useGetProductPicks,
   useCreateProductPick,
@@ -15,6 +15,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function ProductPicks() {
   const today = new Date().toISOString().split("T")[0];
@@ -33,6 +42,8 @@ export default function ProductPicks() {
   const [pickDate, setPickDate] = useState(today);
   const [reason, setReason] = useState("");
   const [priority, setPriority] = useState(0);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [pickToDelete, setPickToDelete] = useState<number | null>(null);
 
   const picks = data?.picks || [];
 
@@ -68,7 +79,7 @@ export default function ProductPicks() {
 
   const handleSubmit = async () => {
     if (!ticker.trim()) {
-      alert("Please enter a ticker symbol");
+      alert("Masukkan simbol ticker");
       return;
     }
 
@@ -96,21 +107,39 @@ export default function ProductPicks() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this product pick?")) return;
+  const handleDelete = (id: number) => {
+    setPickToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pickToDelete) return;
 
     try {
-      await deletePick(id);
+      await deletePick(pickToDelete);
+      toast.success("Product pick berhasil dihapus", {
+        description: "Product pick telah dihapus dari sistem",
+        duration: 3000,
+      });
+      setShowDeleteDialog(false);
+      setPickToDelete(null);
     } catch (err) {
-      console.error("Failed to delete product pick:", err);
       // Error will be handled by API interceptor and React Query onError
+      console.error("Failed to delete product pick:", err);
+      setShowDeleteDialog(false);
+      setPickToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setPickToDelete(null);
   };
 
   if (isLoading) {
     return (
       <div className="p-4 text-sm text-gray-600 dark:text-gray-400">
-        Loading product picks...
+        Memuat product pick...
       </div>
     );
   }
@@ -118,7 +147,7 @@ export default function ProductPicks() {
   if (error) {
     return (
       <div className="p-4 text-sm text-red-600 dark:text-red-400">
-        Error loading product picks
+        Error memuat product pick
       </div>
     );
   }
@@ -128,7 +157,7 @@ export default function ProductPicks() {
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-gray-800 dark:text-white">
-            Today's Product Pick
+            Product Pick Hari Ini
           </h3>
           <Button
             onClick={handleOpenCreate}
@@ -137,13 +166,13 @@ export default function ProductPicks() {
             variant="outline"
           >
             <CirclePlus className="w-3 h-3 mr-1" />
-            Add
+            Tambah
           </Button>
         </div>
 
         {picks.length === 0 ? (
           <div className="flex-1 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
-            No product picks for today. Click "Add" to create one.
+            Tidak ada product pick untuk hari ini. Klik "Tambah" untuk membuat satu.
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3 flex-1">
@@ -169,7 +198,7 @@ export default function ProductPicks() {
                   <button
                     onClick={() => handleDelete(pick.id)}
                     className="p-1 rounded bg-red-600 hover:bg-red-500"
-                    title="Delete"
+                    title="Hapus"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -187,7 +216,7 @@ export default function ProductPicks() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                    {isEditing ? "Edit Product Pick" : "Add Product Pick"}
+                    {isEditing ? "Edit Product Pick" : "Tambah Product Pick"}
                   </h2>
                   <button
                     onClick={handleCloseModal}
@@ -199,19 +228,19 @@ export default function ProductPicks() {
 
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="ticker">Ticker Symbol *</Label>
+                    <Label htmlFor="ticker">Simbol Ticker *</Label>
                     <Input
                       id="ticker"
                       value={ticker}
                       onChange={(e) => setTicker(e.target.value)}
-                      placeholder="e.g., BBCA"
+                      placeholder="contoh: BBCA"
                       className="mt-1"
                       maxLength={20}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="pickDate">Pick Date *</Label>
+                    <Label htmlFor="pickDate">Tanggal Pick *</Label>
                     <div className="relative mt-1">
                       <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <Input
@@ -225,19 +254,19 @@ export default function ProductPicks() {
                   </div>
 
                   <div>
-                    <Label htmlFor="reason">Reason (Optional)</Label>
+                    <Label htmlFor="reason">Alasan (Opsional)</Label>
                     <Textarea
                       id="reason"
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
-                      placeholder="Why is this a good pick?"
+                      placeholder="Mengapa ini pilihan yang baik?"
                       className="mt-1"
                       rows={3}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="priority">Priority (0 = highest)</Label>
+                    <Label htmlFor="priority">Prioritas (0 = tertinggi)</Label>
                     <Input
                       id="priority"
                       type="number"
@@ -257,14 +286,14 @@ export default function ProductPicks() {
                     className="flex-1"
                     variant="default"
                   >
-                    {isEditing ? "Update" : "Create"}
+                    {isEditing ? "Perbarui" : "Buat"}
                   </Button>
                   <Button
                     onClick={handleCloseModal}
                     className="flex-1"
                     variant="outline"
                   >
-                    Cancel
+                    Batal
                   </Button>
                 </div>
               </div>
@@ -272,6 +301,39 @@ export default function ProductPicks() {
           </div>,
           document.body
         )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                Hapus Product Pick
+              </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2 text-sm text-gray-600 dark:text-gray-400">
+              Apakah Anda yakin ingin menghapus product pick ini? Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <button
+              onClick={handleCancelDelete}
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
+            >
+              Hapus
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

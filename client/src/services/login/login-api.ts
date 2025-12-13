@@ -38,7 +38,7 @@ export const loginService = {
       console.log("Server response:", response.data);
 
       if (!response.data.success || !response.data.token) {
-        throw new Error("Invalid server response format");
+        throw new Error("Format respons server tidak valid");
       }
 
       return response.data as LoginResponse;
@@ -49,10 +49,43 @@ export const loginService = {
           data: error.response?.data,
           message: error.message,
         });
-        const errorMessage = error.response?.data?.error || "Login failed";
-        throw new Error(errorMessage);
+        
+        // Extract detailed error message
+        const responseError = error.response?.data?.error;
+        const responseMessage = error.response?.data?.message;
+        
+        if (responseError) {
+          throw new Error(responseError);
+        } else if (responseMessage) {
+          throw new Error(responseMessage);
+        } else if (error.response?.status === 400) {
+          throw new Error("Email atau password tidak valid. Silakan periksa kredensial Anda.");
+        } else if (error.response?.status === 401) {
+          throw new Error("Tidak diizinkan. Silakan periksa kredensial Anda.");
+        } else if (error.response?.status === 403) {
+          throw new Error("Akses ditolak. Silakan hubungi administrator Anda.");
+        } else if (error.response?.status === 404) {
+          throw new Error("Layanan login tidak ditemukan. Silakan coba lagi nanti.");
+        } else if (error.response?.status === 500) {
+          throw new Error("Kesalahan server. Silakan coba lagi nanti.");
+        } else if (error.response?.status) {
+          throw new Error(`Login gagal dengan status ${error.response.status}. Silakan coba lagi.`);
+        } else if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
+          throw new Error("Koneksi timeout. Silakan periksa koneksi internet Anda dan coba lagi.");
+        } else if (error.code === "ERR_NETWORK") {
+          throw new Error("Kesalahan jaringan. Silakan periksa koneksi internet Anda.");
+        } else if (error.message) {
+          throw new Error(error.message);
+        } else {
+          throw new Error("Login gagal. Silakan coba lagi.");
+        }
       }
-      throw new Error("An unexpected error occurred");
+      
+      // For non-Axios errors, preserve the original error message
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("Login gagal. Silakan coba lagi.");
     }
   },
 };

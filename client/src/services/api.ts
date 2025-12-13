@@ -8,6 +8,54 @@ const api = axios.create({
   timeout: 30000, // 30 seconds
 });
 
+// Track recent error messages to prevent duplicates
+const recentErrors = new Map<string, number>();
+const ERROR_DEDUP_WINDOW = 5000; // 5 seconds - increased to prevent duplicates
+
+// Expose recentErrors to window for ProtectedRoute to use
+if (typeof window !== "undefined") {
+  (window as any).__recentErrorsMap = recentErrors;
+}
+
+// Track if admin access error was shown (to prevent duplicates from ProtectedRoute)
+const getAdminErrorShown = (): boolean => {
+  if (typeof window === "undefined") return false;
+  const shown = (window as any).__adminErrorShown;
+  const timestamp = (window as any).__adminErrorTimestamp;
+  if (!shown || !timestamp) return false;
+  // Check if it was shown within last 10 seconds
+  return (Date.now() - timestamp) < 10000;
+};
+
+// Helper to check if error message was recently shown
+const shouldShowError = (errorMessage: string): boolean => {
+  const now = Date.now();
+  const lastShown = recentErrors.get(errorMessage);
+  
+  // Check if this is an admin access error
+  const isAdminAccessError = errorMessage.includes("Role admin diperlukan") || 
+                             errorMessage.includes("admin role required") ||
+                             errorMessage.includes("Akses ditolak. Role admin");
+  
+  if (isAdminAccessError) {
+    // NEVER show admin access errors - ProtectedRoute ALWAYS handles them
+    // Return false immediately, regardless of route or flag
+    return false;
+  }
+  
+  if (!lastShown || now - lastShown > ERROR_DEDUP_WINDOW) {
+    recentErrors.set(errorMessage, now);
+    // Clean up old entries (older than 10 seconds)
+    for (const [msg, timestamp] of recentErrors.entries()) {
+      if (now - timestamp > 10000) {
+        recentErrors.delete(msg);
+      }
+    }
+    return true;
+  }
+  return false;
+};
+
 // Function to check token expiration and show warning
 const checkTokenExpiration = () => {
   // Only run on client side
@@ -91,13 +139,48 @@ api.interceptors.response.use(
 
     // Handle 403 Forbidden (Permission Denied)
     if (error.response?.status === 403) {
+      // Get error message FIRST to check its content
       const errorMessage =
         error.response?.data?.error ||
-        "Access denied. You do not have permission to perform this action. Please contact your administrator if you need access.";
+        "Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini. Silakan hubungi administrator Anda jika Anda memerlukan akses.";
 
-      // Show user-friendly error message - match the format from permission-checker.ts
+      // ABSOLUTE PRIORITY: Check for admin access error - ALWAYS skip, NO EXCEPTIONS
+      // ProtectedRoute is the ONLY source that should show "Akses ditolak. Role admin diperlukan."
+      // Check for exact match first, then partial matches - this must be FIRST and UNCONDITIONAL
+      const exactMatch = errorMessage === "Akses ditolak. Role admin diperlukan." ||
+                        errorMessage.trim() === "Akses ditolak. Role admin diperlukan.";
+      const partialMatch = errorMessage.includes("Role admin diperlukan") || 
+                           errorMessage.includes("admin role required") ||
+                           errorMessage.includes("Akses ditolak. Role admin");
+      
+      if (exactMatch || partialMatch) {
+        // NEVER show admin access errors - ProtectedRoute ALWAYS handles them
+        // Return immediately without showing toast, logging, or any processing
+        // This is the ONLY place that should handle admin access errors
+        return Promise.reject(error);
+      }
+
+      // CRITICAL: Check if we're on admin route - ALWAYS skip ALL 403 errors on admin route
+      // ProtectedRoute handles all errors for admin route access
       if (typeof window !== "undefined") {
-        toast.error("Error", {
+        const currentPath = window.location.pathname;
+        const isAdminRoute = currentPath === "/admin" || currentPath.startsWith("/admin");
+        
+        if (isAdminRoute) {
+          // NEVER show ANY 403 errors on admin route - ProtectedRoute handles it
+          return Promise.reject(error);
+        }
+      }
+
+      // CRITICAL: Check flag - if ProtectedRoute already showed admin error, skip immediately
+      if (typeof window !== "undefined" && getAdminErrorShown()) {
+        // ProtectedRoute already handled it - don't show duplicate
+        return Promise.reject(error);
+      }
+
+      // Show user-friendly error message only if not recently shown (prevent duplicates)
+      if (typeof window !== "undefined" && shouldShowError(errorMessage)) {
+        toast.error("Kesalahan", {
           description: errorMessage,
           duration: 5000,
         });

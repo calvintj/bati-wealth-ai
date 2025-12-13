@@ -1,10 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { toast } from "sonner";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
 }
+
+// Global flag to prevent duplicate admin errors (persists across component lifecycles)
+let adminErrorShownGlobal = false;
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
@@ -12,8 +16,15 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const errorShownRef = useRef(false); // Prevent duplicate errors in React Strict Mode
 
   useEffect(() => {
+    // Prevent duplicate error messages (React Strict Mode runs effects twice)
+    // Check both ref and global flag
+    if (errorShownRef.current || adminErrorShownGlobal) {
+      return;
+    }
+
     const token = localStorage.getItem("token");
     const userStr = localStorage.getItem("user");
 
@@ -29,7 +40,37 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       if (requireAdmin) {
         // If admin access is required but user is not admin
         if (user.role !== "admin") {
-          router.push("/dashboard-overview");
+          const errorMessage = "Akses ditolak. Role admin diperlukan.";
+          
+          // Mark that we've shown admin error FIRST (synchronously, before any API calls)
+          // This prevents API interceptor from showing duplicate errors
+          // Set global flag immediately to prevent any race conditions
+          adminErrorShownGlobal = true;
+          
+          if (typeof window !== "undefined") {
+            (window as any).__adminErrorShown = true;
+            (window as any).__adminErrorTimestamp = Date.now();
+            // Also set a flag to prevent any API calls on admin route
+            (window as any).__adminRouteBlocked = true;
+            // Also track in recentErrors map (used by API interceptor)
+            if ((window as any).__recentErrorsMap) {
+              (window as any).__recentErrorsMap.set(errorMessage, Date.now());
+            }
+          }
+          
+          // Mark that we've shown the error to prevent duplicates (React Strict Mode)
+          errorShownRef.current = true;
+          
+          // Show error message
+          toast.error("Kesalahan", {
+            description: errorMessage,
+            duration: 5000,
+          });
+          
+          // Small delay before redirect to ensure toast is visible
+          setTimeout(() => {
+            router.push("/dashboard-overview");
+          }, 100);
           return;
         }
       } else {

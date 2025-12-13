@@ -12,12 +12,12 @@ import axios from "axios";
 // Helper to extract error message
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.message || "An error occurred";
+    return error.response?.data?.error || error.message || "Terjadi kesalahan";
   }
   if (error instanceof Error) {
     return error.message;
   }
-  return "An unexpected error occurred";
+  return "Terjadi kesalahan yang tidak diketahui";
 };
 
 export const useGetNewsNotes = (news_id?: number) => {
@@ -52,7 +52,7 @@ export const useCreateNewsNote = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to create news note", {
+        toast.error("Gagal membuat catatan berita", {
           description: errorMessage,
           duration: 5000,
         });

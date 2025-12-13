@@ -108,9 +108,25 @@ const AdminPage = () => {
   const currentUsers = users.slice(startIndex, endIndex);
 
   useEffect(() => {
-    fetchUsers();
-    fetchPages();
-    fetchUsersWithPermissions();
+    // Check if user is admin before making API calls
+    // Also check if admin route is blocked (set by ProtectedRoute)
+    if (typeof window !== "undefined" && (window as any).__adminRouteBlocked) {
+      return; // Don't make API calls if route is blocked
+    }
+    
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.role === "admin") {
+          fetchUsers();
+          fetchPages();
+          fetchUsersWithPermissions();
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -376,12 +392,12 @@ const AdminPage = () => {
           <div className="flex items-center space-x-4 pb-2">
             <ColorModeToggle />
             <div className="flex items-center space-x-4">
-              <a
+              {/* <a
                 href="/logs"
                 className="flex items-center px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 cursor-pointer text-sm sm:text-base"
               >
                 <ScrollText className="h-4 w-4 mr-1" /> View Logs
-              </a>
+              </a> */}
               <UserNav />
             </div>
           </div>
@@ -1090,7 +1106,7 @@ const AdminPage = () => {
             )}
 
             {/* System Settings and Analytics Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="p-4 sm:p-6 bg-white dark:bg-[#1D283A] rounded-lg shadow hover:shadow-lg transition-shadow">
                 <div className="flex items-center space-x-4 mb-4">
                   <Settings className="h-8 w-8 text-purple-600" />
@@ -1135,10 +1151,10 @@ const AdminPage = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Additional Admin Features */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="p-4 sm:p-6 bg-white dark:bg-[#1D283A] rounded-lg shadow">
                 <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
                   Recent Activity
@@ -1195,7 +1211,7 @@ const AdminPage = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </main>
       </div>

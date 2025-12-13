@@ -24,27 +24,27 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     if (!email || !password) {
       console.log("Missing credentials");
-      res.status(400).json({ error: "Email and password are required." });
+      res.status(400).json({ error: "Email dan password wajib diisi." });
       return;
     }
 
     const account = await findAccountByEmail(email);
     if (!account) {
       console.log("Account not found for email:", email);
-      res.status(400).json({ error: "Invalid email." });
+      res.status(400).json({ error: "Email tidak valid." });
       return;
     }
 
     const isMatch = await bcrypt.compare(password, account.password_hash);
     if (!isMatch) {
       console.log("Password mismatch for email:", email);
-      res.status(400).json({ error: "Invalid password." });
+      res.status(400).json({ error: "Password tidak valid." });
       return;
     }
 
     if (!JWT_SECRET) {
       console.error("JWT_SECRET not configured");
-      res.status(500).json({ error: "Server configuration error" });
+      res.status(500).json({ error: "Kesalahan konfigurasi server" });
       return;
     }
 
@@ -73,8 +73,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({
-      error: "Internal server error",
-      details: err instanceof Error ? err.message : "Unknown error",
+      error: "Kesalahan server internal",
+      details: err instanceof Error ? err.message : "Kesalahan tidak diketahui",
     });
   }
 };

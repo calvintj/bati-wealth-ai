@@ -10,12 +10,12 @@ import axios from "axios";
 // Helper to extract error message
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.message || "An error occurred";
+    return error.response?.data?.error || error.message || "Terjadi kesalahan";
   }
   if (error instanceof Error) {
     return error.message;
   }
-  return "An unexpected error occurred";
+  return "Terjadi kesalahan yang tidak diketahui";
 };
 
 export const useBulkUpdateCustomers = () => {
@@ -39,9 +39,18 @@ export const useBulkUpdateCustomers = () => {
     },
     onError: (error) => {
       const errorMessage = getErrorMessage(error);
+      const errorLower = errorMessage.toLowerCase();
+      // Check if it's a permission error (already shown by interceptor)
+      const isPermissionError =
+        errorLower.includes("permission") ||
+        errorLower.includes("access denied") ||
+        errorLower.includes("akses ditolak") ||
+        errorLower.includes("tidak memiliki izin") ||
+        (axios.isAxiosError(error) && error.response?.status === 403);
+      
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
-        toast.error("Failed to bulk update customers", {
+      if (!isPermissionError) {
+        toast.error("Gagal memperbarui pelanggan secara massal", {
           description: errorMessage,
           duration: 5000,
         });

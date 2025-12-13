@@ -41,7 +41,7 @@ export function adminMiddleware(
   next: NextFunction
 ): void {
   if (!req.user || req.user.role !== "admin") {
-    res.status(403).json({ error: "Access denied. Admin role required." });
+    res.status(403).json({ error: "Akses ditolak. Role admin diperlukan." });
     return;
   }
   next();

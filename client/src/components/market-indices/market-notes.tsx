@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { CirclePlus, Trash2, Pencil, X } from "lucide-react";
+import { CirclePlus, Trash2, Pencil, X, AlertTriangle } from "lucide-react";
 import {
   useGetNotes,
   useCreateNote,
@@ -15,6 +15,15 @@ import {
   INDEX_OPTIONS,
 } from "@/types/page/market-indices";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const MarketNotes = () => {
   const [selectedIndex, setSelectedIndex] = useState<string>("");
@@ -24,6 +33,8 @@ const MarketNotes = () => {
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [noteIndex, setNoteIndex] = useState<string>("general");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<number | null>(null);
 
   const { data, isLoading, error } = useGetNotes(selectedIndex || undefined);
   const { mutateAsync: createNote } = useCreateNote();
@@ -65,7 +76,7 @@ const MarketNotes = () => {
 
   const handleSubmit = async () => {
     if (!noteTitle.trim() || !noteContent.trim()) {
-      alert("Please enter both title and content");
+      alert("Masukkan judul dan konten");
       return;
     }
 
@@ -90,21 +101,39 @@ const MarketNotes = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
+  const handleDelete = (id: number) => {
+    setNoteToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!noteToDelete) return;
 
     try {
-      await deleteNote(id);
+      await deleteNote(noteToDelete);
+      toast.success("Catatan berhasil dihapus", {
+        description: "Catatan telah dihapus dari sistem",
+        duration: 3000,
+      });
+      setShowDeleteDialog(false);
+      setNoteToDelete(null);
     } catch (err) {
       // Error will be handled by API interceptor and React Query onError
       console.error("Failed to delete note:", err);
+      setShowDeleteDialog(false);
+      setNoteToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setNoteToDelete(null);
   };
 
   if (isLoading) {
     return (
       <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-        <p className="text-gray-600 dark:text-gray-400">Loading notes...</p>
+        <p className="text-gray-600 dark:text-gray-400">Memuat catatan...</p>
       </div>
     );
   }
@@ -122,7 +151,7 @@ const MarketNotes = () => {
       <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-            Market Notes
+            Catatan Pasar
           </h2>
           <button
             onClick={handleOpenCreate}
@@ -138,7 +167,7 @@ const MarketNotes = () => {
             onChange={(e) => setSelectedIndex(e.target.value)}
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
           >
-            <option value="">All Indices</option>
+            <option value="">Semua Indeks</option>
             {INDEX_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -149,7 +178,7 @@ const MarketNotes = () => {
 
         {notes.length === 0 ? (
           <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-            No notes yet. Create one to get started!
+            Belum ada catatan. Buat satu untuk memulai!
           </p>
         ) : (
           <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -204,7 +233,7 @@ const MarketNotes = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 m-4 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-                  {isEditing ? "Edit Note" : "Create Note"}
+                  {isEditing ? "Edit Catatan" : "Buat Catatan"}
                 </h3>
                 <button
                   onClick={handleCloseModal}
@@ -217,7 +246,7 @@ const MarketNotes = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Index
+                    Indeks
                   </label>
                   <select
                     value={noteIndex}
@@ -234,27 +263,27 @@ const MarketNotes = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Note Title
+                    Judul Catatan
                   </label>
                   <input
                     type="text"
                     value={noteTitle}
                     onChange={(e) => setNoteTitle(e.target.value)}
                     className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                    placeholder="e.g., Market Analysis Q1 2024"
+                    placeholder="contoh: Analisis Pasar Q1 2024"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Note Content
+                    Isi Catatan
                   </label>
                   <textarea
                     value={noteContent}
                     onChange={(e) => setNoteContent(e.target.value)}
                     rows={6}
                     className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                    placeholder="Enter your notes here..."
+                    placeholder="Masukkan catatan Anda di sini..."
                   />
                 </div>
 
@@ -263,13 +292,13 @@ const MarketNotes = () => {
                     onClick={handleCloseModal}
                     className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600"
                   >
-                    Cancel
+                    Batal
                   </button>
                   <button
                     onClick={handleSubmit}
                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                   >
-                    {isEditing ? "Update" : "Create"}
+                    {isEditing ? "Perbarui" : "Buat"}
                   </button>
                 </div>
               </div>
@@ -277,6 +306,40 @@ const MarketNotes = () => {
           </div>,
           document.body
         )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                Hapus Catatan
+              </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2 text-sm text-gray-600 dark:text-gray-400">
+              Apakah Anda yakin ingin menghapus catatan ini? Tindakan ini tidak
+              dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <button
+              onClick={handleCancelDelete}
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
+            >
+              Hapus
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

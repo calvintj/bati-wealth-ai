@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { CirclePlus, Trash2, Pencil, X } from "lucide-react";
+import { CirclePlus, Trash2, Pencil, X, AlertTriangle } from "lucide-react";
 import {
   useGetWatchlists,
   useCreateWatchlist,
@@ -15,6 +15,15 @@ import {
   INDEX_OPTIONS,
 } from "@/types/page/market-indices";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface MarketWatchlistsProps {
   onWatchlistSelect?: (
@@ -42,6 +51,8 @@ const MarketWatchlists = ({
     useState<MarketWatchlist | null>(null);
   const [watchlistName, setWatchlistName] = useState("");
   const [selectedIndices, setSelectedIndices] = useState<string[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [watchlistToDelete, setWatchlistToDelete] = useState<number | null>(null);
 
   const watchlistsData = data as MarketWatchlistResponse | undefined;
   const watchlists = watchlistsData?.watchlists || [];
@@ -80,7 +91,7 @@ const MarketWatchlists = ({
 
   const handleSubmit = async () => {
     if (!watchlistName.trim() || selectedIndices.length === 0) {
-      alert("Please enter a watchlist name and select at least one index");
+      alert("Masukkan nama watchlist dan pilih setidaknya satu indeks");
       return;
     }
 
@@ -108,26 +119,44 @@ const MarketWatchlists = ({
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this watchlist?")) return;
+  const handleDelete = (id: number) => {
+    setWatchlistToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!watchlistToDelete) return;
 
     try {
-      await deleteWatchlist(id);
+      await deleteWatchlist(watchlistToDelete);
+      toast.success("Watchlist berhasil dihapus", {
+        description: "Watchlist telah dihapus dari sistem",
+        duration: 3000,
+      });
       // Reset selection if deleted watchlist was selected
-      if (selectedWatchlistId === id && onWatchlistSelect) {
+      if (selectedWatchlistId === watchlistToDelete && onWatchlistSelect) {
         onWatchlistSelect(null, null);
       }
+      setShowDeleteDialog(false);
+      setWatchlistToDelete(null);
     } catch (err) {
       // Error will be handled by API interceptor and React Query onError
       console.error("Failed to delete watchlist:", err);
+      setShowDeleteDialog(false);
+      setWatchlistToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setWatchlistToDelete(null);
   };
 
   if (isLoading) {
     return (
       <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
         <p className="text-gray-600 dark:text-gray-400">
-          Loading watchlists...
+          Memuat watchlist...
         </p>
       </div>
     );
@@ -157,7 +186,7 @@ const MarketWatchlists = ({
       <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-            Market Watchlists
+            Watchlist Pasar
           </h2>
           <button
             onClick={handleOpenCreate}
@@ -172,14 +201,14 @@ const MarketWatchlists = ({
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Filter by Watchlist
+                Filter berdasarkan Watchlist
               </label>
               {selectedWatchlistId && (
                 <button
                   onClick={() => handleWatchlistSelectChange(null)}
                   className="px-3 py-1 text-xs bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
                 >
-                  Clear Filter
+                  Hapus Filter
                 </button>
               )}
             </div>
@@ -191,11 +220,11 @@ const MarketWatchlists = ({
               }}
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm"
             >
-              <option value="">Show All Indices</option>
+              <option value="">Tampilkan Semua Indeks</option>
               {watchlists.map((watchlist) => (
                 <option key={watchlist.id} value={watchlist.id}>
                   {watchlist.watchlist_name} ({watchlist.indices.length}{" "}
-                  indices)
+                  indeks)
                 </option>
               ))}
             </select>
@@ -204,7 +233,7 @@ const MarketWatchlists = ({
 
         {watchlists.length === 0 ? (
           <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-            No watchlists yet. Create one to get started!
+            Belum ada watchlist. Buat satu untuk memulai!
           </p>
         ) : (
           <div className="space-y-2">
@@ -264,7 +293,7 @@ const MarketWatchlists = ({
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 m-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-                  {isEditing ? "Edit Watchlist" : "Create Watchlist"}
+                  {isEditing ? "Edit Watchlist" : "Buat Watchlist"}
                 </h3>
                 <button
                   onClick={handleCloseModal}
@@ -277,20 +306,20 @@ const MarketWatchlists = ({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Watchlist Name
+                    Nama Watchlist
                   </label>
                   <input
                     type="text"
                     value={watchlistName}
                     onChange={(e) => setWatchlistName(e.target.value)}
                     className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                    placeholder="e.g., My US Indices"
+                    placeholder="contoh: Indeks AS Saya"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Select Indices
+                    Pilih Indeks
                   </label>
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {INDEX_OPTIONS.map((option) => (
@@ -317,13 +346,13 @@ const MarketWatchlists = ({
                     onClick={handleCloseModal}
                     className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600"
                   >
-                    Cancel
+                    Batal
                   </button>
                   <button
                     onClick={handleSubmit}
                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                   >
-                    {isEditing ? "Update" : "Create"}
+                    {isEditing ? "Perbarui" : "Buat"}
                   </button>
                 </div>
               </div>
@@ -331,6 +360,39 @@ const MarketWatchlists = ({
           </div>,
           document.body
         )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                Hapus Watchlist
+              </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2 text-sm text-gray-600 dark:text-gray-400">
+              Apakah Anda yakin ingin menghapus watchlist ini? Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <button
+              onClick={handleCancelDelete}
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
+            >
+              Hapus
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

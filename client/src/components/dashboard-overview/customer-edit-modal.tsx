@@ -128,22 +128,33 @@ export default function CustomerEditModal({
       });
 
       toast({
-        title: "Success",
-        description: "Customer information updated successfully",
+        title: "Berhasil",
+        description: "Informasi pelanggan berhasil diperbarui",
       });
       onClose();
     } catch (error: any) {
+      // Always skip showing error for 403 status (permission denied)
+      // API interceptor already handles 403 errors
+      if (error?.response?.status === 403) {
+        return; // API interceptor already showed the error
+      }
+      
       // Check if it's a permission error - if so, the interceptor already showed the error
       const errorMessage = error?.response?.data?.error || error?.message || "";
+      const errorLower = errorMessage.toLowerCase();
       const isPermissionError =
-        errorMessage.toLowerCase().includes("permission") ||
-        errorMessage.toLowerCase().includes("access denied");
+        errorLower.includes("permission") ||
+        errorLower.includes("access denied") ||
+        errorLower.includes("akses ditolak") ||
+        errorLower.includes("tidak memiliki izin") ||
+        errorLower.includes("memperbarui di halaman ini");
 
+      // Don't show error if it's a permission error (API interceptor already handles it)
       if (!isPermissionError) {
         // Only show custom error if it's not a permission error
         toast({
-          title: "Error",
-          description: errorMessage || "Failed to update customer information",
+          title: "Kesalahan",
+          description: errorMessage || "Gagal memperbarui informasi pelanggan",
           variant: "destructive",
         });
       }

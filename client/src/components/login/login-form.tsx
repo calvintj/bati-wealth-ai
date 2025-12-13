@@ -1,6 +1,7 @@
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 import { useLogin } from "@/hooks/login/use-login";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks/use-toast";
 
 type LoginFormData = {
   email: string;
@@ -10,6 +11,18 @@ type LoginFormData = {
 const LoginForm: React.FC = () => {
   // Custom hook for login functionality
   const { handleLogin, error, loading } = useLogin();
+  const { toast } = useToast();
+
+  // Show error toast when error state changes
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Kesalahan",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
 
   // React Hook Form setup
   const {
@@ -26,9 +39,17 @@ const LoginForm: React.FC = () => {
   // Handle form submission
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await handleLogin(data.email, data.password);
+      const success = await handleLogin(data.email, data.password);
+      if (success) {
+        toast({
+          title: "Berhasil",
+          description: "Login berhasil! Mengalihkan...",
+        });
+      }
+      // Error toast will be shown via useEffect when error state changes
     } catch (err) {
       console.error("Login failed:", err);
+      // Error toast will be shown via useEffect when error state changes
     }
   };
 
@@ -40,17 +61,17 @@ const LoginForm: React.FC = () => {
           htmlFor="email"
           className="text-sm font-medium text-black block mb-1"
         >
-          Email address
+          Alamat Email
         </label>
         <input
           id="email"
           type="email"
           placeholder="RM001@batiinvestasi.ai"
           {...register("email", {
-            required: "Email is required",
+            required: "Email wajib diisi",
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid email address",
+              message: "Format email tidak valid",
             },
           })}
           className="w-full p-3 bg-gray-100 focus:ring-blue-500 focus:border-blue-500 rounded-md outline-none"
@@ -66,17 +87,17 @@ const LoginForm: React.FC = () => {
           htmlFor="password"
           className="text-sm font-medium text-black block mb-1"
         >
-          Password
+          Kata Sandi
         </label>
         <input
           id="password"
           type="password"
           placeholder="Rm12345!"
           {...register("password", {
-            required: "Password is required",
+            required: "Password wajib diisi",
             minLength: {
               value: 6,
-              message: "Password must be at least 6 characters",
+              message: "Password minimal 6 karakter",
             },
           })}
           className="w-full p-3 bg-gray-100 focus:ring-blue-500 focus:border-blue-500 rounded-md outline-none"
@@ -100,7 +121,7 @@ const LoginForm: React.FC = () => {
           className="w-full cursor-pointer py-2 px-4 text-white font-bold rounded-md bg-blue-600 hover:bg-blue-500 transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
           disabled={loading}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Masuk..." : "Masuk"}
         </button>
       </div>
     </form>

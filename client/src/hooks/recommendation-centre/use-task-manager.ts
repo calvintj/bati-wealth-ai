@@ -12,12 +12,12 @@ import axios from "axios";
 // Helper to extract error message
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.message || "An error occurred";
+    return error.response?.data?.error || error.message || "Terjadi kesalahan";
   }
   if (error instanceof Error) {
     return error.message;
   }
-  return "An unexpected error occurred";
+  return "Terjadi kesalahan yang tidak diketahui";
 };
 
 export const useGetTask = () => {
@@ -44,7 +44,7 @@ export const usePostTask = () => {
         return;
       }
 
-      toast.error("Failed to create task", {
+      toast.error("Gagal membuat task", {
         description: errorMessage,
         duration: 5000,
       });
@@ -62,7 +62,7 @@ export const useDeleteTask = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to delete task", {
+        toast.error("Gagal menghapus task", {
           description: errorMessage,
           duration: 5000,
         });
@@ -81,7 +81,7 @@ export const useUpdateTask = () => {
         !errorMessage.toLowerCase().includes("permission") &&
         !errorMessage.toLowerCase().includes("access denied")
       ) {
-        toast.error("Failed to update task", {
+        toast.error("Gagal memperbarui task", {
           description: errorMessage,
           duration: 5000,
         });

@@ -30,7 +30,7 @@ export default function MarketNewsPage() {
             showRiskDropdown={false}
           />
           <main className="flex flex-1 flex-col lg:flex-row p-4 md:p-6 gap-4 overflow-y-auto bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-            <p className="text-gray-600 dark:text-gray-400">Loading permissions...</p>
+            <p className="text-gray-600 dark:text-gray-400">Memuat izin...</p>
           </main>
         </div>
       </div>
@@ -50,10 +50,10 @@ export default function MarketNewsPage() {
           <main className="flex flex-1 flex-col lg:flex-row p-4 md:p-6 gap-4 overflow-y-auto bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                Access Denied
+                Akses Ditolak
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                You do not have permission to view this page. Please contact your administrator if you need access.
+                Anda tidak memiliki izin untuk melihat halaman ini. Silakan hubungi administrator Anda jika Anda memerlukan akses.
               </p>
             </div>
           </main>
@@ -79,20 +79,20 @@ export default function MarketNewsPage() {
             {/* Macroeconomic Indicators Section */}
             <section className="space-y-4">
               <div className="text-center rounded-xl p-3 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg font-semibold text-gray-800 dark:text-white">
-                Macroeconomic Indicators
+                Indikator Makroekonomi
               </div>
               <div className="flex flex-col gap-3">
                 {/* GDP Growth Card */}
                 <div className="rounded-xl flex flex-col gap-2 p-4 bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 text-white shadow-lg transition-shadow hover:shadow-xl">
                   <div className="text-sm font-medium opacity-90">
-                    GDP Growth
+                    Pertumbuhan GDP
                   </div>
                   <div className="flex items-end gap-2">
                     {isLoading ? (
                       <div className="animate-pulse h-8 w-24 bg-blue-400/50 dark:bg-blue-500/50 rounded"></div>
                     ) : error || !indicators?.gdpGrowth ? (
                       <span className="text-red-100 dark:text-red-200 text-sm font-medium">
-                        {error?.message || "Data unavailable"}
+                        {error?.message || "Data tidak tersedia"}
                       </span>
                     ) : (
                       <>
@@ -133,7 +133,7 @@ export default function MarketNewsPage() {
                       <div className="animate-pulse h-8 w-24 bg-purple-400/50 dark:bg-purple-500/50 rounded"></div>
                     ) : error || !indicators?.biRate ? (
                       <span className="text-red-100 dark:text-red-200 text-sm font-medium">
-                        {error?.message || "Data unavailable"}
+                        {error?.message || "Data tidak tersedia"}
                       </span>
                     ) : (
                       <>
@@ -176,7 +176,7 @@ export default function MarketNewsPage() {
                       <div className="animate-pulse h-8 w-24 bg-green-400/50 dark:bg-green-500/50 rounded"></div>
                     ) : error || !indicators?.inflationRate ? (
                       <span className="text-red-100 dark:text-red-200 text-sm font-medium">
-                        {error?.message || "Data unavailable"}
+                        {error?.message || "Data tidak tersedia"}
                       </span>
                     ) : (
                       <>
@@ -211,7 +211,7 @@ export default function MarketNewsPage() {
               </div>
             </section>
 
-            {/* Today's Product Pick Section */}
+            {/* Bagian Product Pick Hari Ini */}
             <section className="space-y-4 flex-1 flex flex-col min-h-0">
               <div className="flex-1 rounded-xl p-4 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl min-h-0">
                 <ProductPicks />
@@ -225,7 +225,7 @@ export default function MarketNewsPage() {
             <div className="flex flex-col gap-4 flex-1 min-w-0">
               <div className="rounded-xl flex items-center justify-between p-4 bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg">
                 <h2 className="text-lg font-bold text-gray-800 dark:text-white">
-                  News Summary
+                  Ringkasan Berita
                 </h2>
               </div>
               <div className="flex-1 rounded-xl overflow-hidden bg-white dark:bg-[#1D283A] border border-gray-200 dark:border-gray-700 shadow-lg transition-shadow hover:shadow-xl min-h-0">

@@ -9,12 +9,12 @@ import axios from "axios";
 // Helper to extract error message
 const getErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.message || "An error occurred";
+    return error.response?.data?.error || error.message || "Terjadi kesalahan";
   }
   if (error instanceof Error) {
     return error.message;
   }
-  return "An unexpected error occurred";
+  return "Terjadi kesalahan yang tidak diketahui";
 };
 
 export const useUpdateCustomer = () => {
@@ -23,23 +23,37 @@ export const useUpdateCustomer = () => {
     mutationFn: updateCustomerInfo,
     onSuccess: async () => {
       // Invalidate and refetch customer list queries to refresh data
-      await queryClient.invalidateQueries({ 
+      await queryClient.invalidateQueries({
         queryKey: ["customerList"],
-        exact: false 
+        exact: false,
       });
-      await queryClient.refetchQueries({ 
+      await queryClient.refetchQueries({
         queryKey: ["customerList"],
-        exact: false 
+        exact: false,
       });
       queryClient.invalidateQueries({ queryKey: ["total-customer"] });
       queryClient.invalidateQueries({ queryKey: ["total-aum"] });
       queryClient.invalidateQueries({ queryKey: ["total-fbi"] });
     },
     onError: (error) => {
+      // Check if it's a permission error (already shown by interceptor)
+      // Always skip showing error for 403 status (permission denied)
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        return; // API interceptor already handles 403 errors
+      }
+
       const errorMessage = getErrorMessage(error);
+      const errorLower = errorMessage.toLowerCase();
+      const isPermissionError =
+        errorLower.includes("permission") ||
+        errorLower.includes("access denied") ||
+        errorLower.includes("akses ditolak") ||
+        errorLower.includes("tidak memiliki izin") ||
+        errorLower.includes("memperbarui di halaman ini");
+
       // Only show toast if it's not a permission error (already shown by interceptor)
-      if (!errorMessage.toLowerCase().includes("permission") && !errorMessage.toLowerCase().includes("access denied")) {
-        toast.error("Failed to update customer", {
+      if (!isPermissionError) {
+        toast.error("Gagal memperbarui pelanggan", {
           description: errorMessage,
           duration: 5000,
         });
@@ -47,5 +61,3 @@ export const useUpdateCustomer = () => {
     },
   });
 };
-
-
