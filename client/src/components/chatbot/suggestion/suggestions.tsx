@@ -4,24 +4,24 @@ import { SuggestionOptions } from "@/components/chatbot/suggestion/suggestion-li
 
 export const suggestions: SuggestionOptions[] = [
   {
-    value: "Customer Description",
+    value: "Deskripsi Nasabah",
     icon: (
       <Image src="/profile-user.svg" alt="profile" width={16} height={16} />
     ),
     topicId: "e7990fe4-9530-4c82-bcc7-8700ec14dc6d",
   },
   {
-    value: "Customer Recommendations",
+    value: "Rekomendasi Nasabah",
     icon: <Image src="/thumb-up.svg" alt="profile" width={16} height={16} />,
     topicId: "2226c352-c5ef-428a-b911-253cd1203614",
   },
   {
-    value: "Product Analysis",
+    value: "Analisis Produk",
     icon: <Image src="/graph.svg" alt="profile" width={16} height={16} />,
     topicId: "5a6cf722-655d-4594-b58e-3b66932c7a91",
   },
   {
-    value: "Top Customer",
+    value: "Nasabah Teratas",
     icon: (
       <Image src="/profile-user.svg" alt="profile" width={16} height={16} />
     ),

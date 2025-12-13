@@ -24,7 +24,7 @@ export default function ChatbotPage() {
             />
           </div>
           <div className="flex-1 overflow-y-auto flex items-center justify-center">
-            <p className="text-gray-600 dark:text-gray-400">Loading permissions...</p>
+            <p className="text-gray-600 dark:text-gray-400">Memuat izin...</p>
           </div>
         </div>
       </div>

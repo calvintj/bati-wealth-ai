@@ -21,11 +21,11 @@ export function ModelSelector({ className, ...props }: ModelSelectorProps) {
   return (
     <Select defaultValue="gpt-4o" {...props}>
       <SelectTrigger className={cn(className, "capitalize max-w-[170px]")}>
-        <SelectValue placeholder="Select model" />
+        <SelectValue placeholder="Pilih model" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Select Model</SelectLabel>
+          <SelectLabel>Pilih Model</SelectLabel>
           {chatBotModels.map((model) => (
             <SelectItem value={model} key={model}>
               {model}

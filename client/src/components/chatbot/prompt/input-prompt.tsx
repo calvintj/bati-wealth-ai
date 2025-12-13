@@ -166,7 +166,7 @@ export default function InputPrompt() {
                     }
                   >
                     <SelectTrigger className="bg-white dark:bg-[#161B21] rounded-xl w-full md:w-[160px] text-black dark:text-white">
-                      <SelectValue placeholder="Select Language" />
+                      <SelectValue placeholder="Pilih Bahasa" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
@@ -210,7 +210,7 @@ export default function InputPrompt() {
                   onChange={(e) => field.handleChange(e.target.value)}
                   onKeyDown={handleKeyDown}
                   maxRows={4}
-                  placeholder="What can I help with? Message Wealth Advisor"
+                  placeholder="Apa yang bisa saya bantu? Kirim pesan ke Wealth Advisor"
                   className="rounded-xl resize-none min-h-9 bg-white dark:bg-[#161B21] w-full text-black dark:text-white"
                   endAdornment={
                     <button
@@ -226,7 +226,7 @@ export default function InputPrompt() {
                           className="text-black dark:text-accent2"
                         />
                       ) : (
-                        <Icon alt="Send Message" src="/send.svg" />
+                        <Icon alt="Kirim Pesan" src="/send.svg" />
                       )}
                     </button>
                   }

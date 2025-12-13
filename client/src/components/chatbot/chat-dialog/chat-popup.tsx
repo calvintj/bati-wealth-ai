@@ -153,7 +153,7 @@ export default function ChatPopup({
                       <Button size="icon" variant="ghost" onClick={onNewChat}>
                         <Icon
                           src="/write.svg"
-                          alt="Write new message"
+                          alt="Tulis pesan baru"
                           size={18}
                           className="md:w-5 md:h-5"
                         />

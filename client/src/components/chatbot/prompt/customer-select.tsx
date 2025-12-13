@@ -97,13 +97,13 @@ export default function CustomerSelect({
         {...props}
         className={cn("rounded-xl", className)}
       >
-        <SelectValue placeholder="Customer ID">
+        <SelectValue placeholder="ID Nasabah">
           {value && JSON.parse(value)?.customerId}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Customer ID</SelectLabel>
+          <SelectLabel>ID Nasabah</SelectLabel>
           {isFetchingPreviousPage && <Spinner />}
           <div
             ref={parentRef}
