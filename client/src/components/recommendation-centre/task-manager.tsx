@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { format } from "date-fns";
 import { id } from "date-fns/locale/id";
-import { CirclePlus, Trash, Pencil } from "lucide-react";
+import { CirclePlus, Trash, Pencil, AlertTriangle } from "lucide-react";
 import { TaskResponse, TaskRow } from "@/types/page/task-manager";
 import {
   usePostTask,
@@ -14,6 +14,15 @@ import {
 } from "@/hooks/recommendation-centre/use-task-manager";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   // React Query hook for tasks
@@ -41,6 +50,8 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   // Add state for editing
   const [isEditing, setIsEditing] = useState(false);
   const [editingTask, setEditingTask] = useState<TaskRow | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   // Update due date when selectedDate changes.
   useEffect(() => {
@@ -137,23 +148,42 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
   };
 
   // Handle delete
-  const handleDelete = async (taskId: string) => {
+  const handleDelete = (taskId: string) => {
+    setTaskToDelete(taskId);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!taskToDelete) return;
+
     try {
-      await deleteData(taskId);
+      await deleteData(taskToDelete);
       // Update local cache immediately for better UX
       queryClient.setQueryData<TaskResponse>(["task"], (oldData) => {
         if (!oldData) return oldData;
         return {
-          task: oldData.task.filter((t) => t.id !== taskId),
+          task: oldData.task.filter((t) => t.id !== taskToDelete),
         };
       });
       // Invalidate query to ensure fresh data on next fetch
       queryClient.invalidateQueries({ queryKey: ["task"] });
+      toast.success("Tugas berhasil dihapus", {
+        description: "Tugas telah dihapus dari sistem",
+        duration: 3000,
+      });
+      setShowDeleteDialog(false);
+      setTaskToDelete(null);
     } catch (err) {
       console.error("Failed to delete task:", err);
-      // Show error to user
-      alert("Failed to delete task. Please try again.");
+      setShowDeleteDialog(false);
+      setTaskToDelete(null);
+      // Error will be handled by API interceptor and React Query onError
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setTaskToDelete(null);
   };
 
   // Modify addTask to handle both add and edit
@@ -204,7 +234,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
       <div className="flex justify-center items-center h-full text-gray-600 dark:text-gray-300">
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-8 w-8 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin mb-2"></div>
-          <p>Loading tasks...</p>
+          <p>Memuat tugas...</p>
         </div>
       </div>
     );
@@ -239,7 +269,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Task Manager
+            Tugas
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-300">
             {format(selectedDate, "d MMMM yyyy", { locale: id })}
@@ -249,7 +279,7 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
           ref={buttonRef}
           className="p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors cursor-pointer"
           onClick={togglePopup}
-          aria-label="Add Task"
+          aria-label="Tambah Tugas"
         >
           <CirclePlus className="h-6 w-6" />
         </button>
@@ -304,7 +334,9 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">
                   <p>Undangan: {task.invitee}</p>
-                  <p>Due: {format(new Date(task.due_date), "yyyy-MM-dd")}</p>
+                  <p>
+                    Jatuh Tempo: {format(new Date(task.due_date), "yyyy-MM-dd")}
+                  </p>
                 </div>
               </div>
             ))}
@@ -414,6 +446,40 @@ const TaskManager = ({ selectedDate }: { selectedDate: Date }) => {
           </div>,
           document.body
         )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                Hapus Tugas
+              </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2 text-sm text-gray-600 dark:text-gray-400">
+              Apakah Anda yakin ingin menghapus tugas ini? Tindakan ini tidak
+              dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <button
+              onClick={handleCancelDelete}
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
+            >
+              Hapus
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

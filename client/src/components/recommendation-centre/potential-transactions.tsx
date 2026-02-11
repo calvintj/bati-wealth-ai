@@ -4,16 +4,12 @@ import { useState } from "react";
 import {
   Download,
   ExternalLink,
-  Pencil,
   CheckCircle2,
   Calendar,
 } from "lucide-react";
 import usePotentialTransaction from "../../hooks/recommendation-centre/use-potential-transaction";
 import { exportToCSV } from "@/utils/csv-export";
 import Link from "next/link";
-import CustomerEditModal from "@/components/dashboard-overview/customer-edit-modal";
-import { useCustomerList } from "@/hooks/customer-mapping/use-customer-list";
-import { CertainCustomerList } from "@/types/page/overview";
 import { usePostTask } from "@/hooks/recommendation-centre/use-task-manager";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -21,10 +17,6 @@ import { useToast } from "@/hooks/use-toast";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 
 export default function OwnedProductTable() {
-  const [editingCustomerId, setEditingCustomerId] = useState<string | null>(
-    null
-  );
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [profitTaken, setProfitTaken] = useState<Set<string>>(new Set());
   const [appointmentCreated, setAppointmentCreated] = useState<Set<string>>(
     new Set()
@@ -33,20 +25,10 @@ export default function OwnedProductTable() {
   // Hooks
   const { data, isLoading, error } = usePotentialTransaction();
   const potentialTransactions = data?.potential_transaction || [];
-  const customerList = useCustomerList();
   const { mutateAsync: createTask } = usePostTask();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-
-  // Get permissions for recommendation-centre page
-  const { canUpdate, canAdd } = usePagePermissions();
-
-  // Find customer data for editing
-  const editingCustomer = editingCustomerId
-    ? (Array.isArray(customerList) ? customerList : []).find(
-        (c: any) => String(c["Customer ID"]) === String(editingCustomerId)
-      )
-    : null;
+  const { canView } = usePagePermissions();
 
   const handleExport = () => {
     const exportData = potentialTransactions.map((t) => ({
@@ -56,11 +38,6 @@ export default function OwnedProductTable() {
       Status: t.profit > 0 ? "Ambil Profit" : "Janji Temu",
     }));
     exportToCSV(exportData, "potential_transactions");
-  };
-
-  const handleEditCustomer = (customerId: string) => {
-    setEditingCustomerId(customerId);
-    setIsEditModalOpen(true);
   };
 
   // Handle "Ambil Profit" click
@@ -121,25 +98,6 @@ export default function OwnedProductTable() {
     }
   };
 
-  // Convert customer to CertainCustomerList format
-  const customerForEdit = editingCustomer
-    ? ({
-        "Customer ID": editingCustomer["Customer ID"],
-        "Risk Profile": editingCustomer["Risk Profile"] || "",
-        "AUM Label": editingCustomer["AUM Label"] || "",
-        Propensity: editingCustomer["Propensity"] || "",
-        "Priority / Private": editingCustomer["Priority / Private"] || "",
-        "Customer Type": editingCustomer["Customer Type"] || "",
-        Pekerjaan: editingCustomer["Pekerjaan"] || "",
-        "Status Nikah": editingCustomer["Status Nikah"] || "",
-        Usia: editingCustomer["Usia"] || 0,
-        "Annual Income": editingCustomer["Annual Income"] || 0,
-        "Total FUM": editingCustomer["Total FUM"] || 0,
-        "Total AUM": editingCustomer["Total AUM"] || 0,
-        "Total FBI": editingCustomer["Total FBI"] || 0,
-      } as CertainCustomerList)
-    : null;
-
   if (isLoading) {
     return (
       <div className="p-4 flex items-center justify-center h-[310px]">
@@ -172,7 +130,7 @@ export default function OwnedProductTable() {
               title="Export to CSV"
             >
               <Download size={14} />
-              <span>Export</span>
+              <span>Unduh</span>
             </button>
           )}
         </div>
@@ -184,7 +142,7 @@ export default function OwnedProductTable() {
                 <th className="py-2">Nama Produk</th>
                 <th className="py-2">Untung/Rugi (%)</th>
                 <th className="py-2">Aksi</th>
-                <th className="py-2">Detail</th>
+                <th className="py-2">Info</th>
               </tr>
             </thead>
             <tbody className="divide-y-2 divide-gray-900">
@@ -290,23 +248,24 @@ export default function OwnedProductTable() {
                       )}
                     </div>
                   </td>
-                  <td className="p-2">
-                    <div className="flex justify-center items-center gap-2">
-                      <button
-                        onClick={() => handleEditCustomer(product.id_nasabah)}
-                        className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                        title="Edit customer"
-                      >
-                        <Pencil size={14} />
-                      </button>
+                  <td className="py-2">
+                    {canView ? (
                       <Link
                         href={`/customer-details?customerID=${product.id_nasabah}`}
-                        className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                        title="View customer details"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#01ACD2] hover:bg-[#0199b8] text-white rounded-md transition-colors text-xs"
                       >
-                        <ExternalLink size={14} />
+                        Profil
+                        <ExternalLink size={12} />
                       </Link>
-                    </div>
+                    ) : (
+                      <button
+                        disabled
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-400 text-white rounded-md cursor-not-allowed text-xs opacity-50"
+                      >
+                        Profil
+                        <ExternalLink size={12} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -314,18 +273,6 @@ export default function OwnedProductTable() {
           </table>
         </div>
       </div>
-
-      {/* Edit Modal */}
-      {customerForEdit && (
-        <CustomerEditModal
-          customer={customerForEdit}
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setEditingCustomerId(null);
-          }}
-        />
-      )}
     </>
   );
 }

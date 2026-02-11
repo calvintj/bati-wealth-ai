@@ -242,7 +242,8 @@ const CustomerListTable = ({ customerRisk }: { customerRisk: string }) => {
                     <button
                       onClick={() => handleEdit(row)}
                       className="p-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
-                      title="Edit Customer"
+                      title="Ubah nasabah"
+                      aria-label="Ubah nasabah"
                     >
                       <Pencil size={16} />
                     </button>

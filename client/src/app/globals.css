@@ -126,3 +126,75 @@
   width: 20px !important;
   height: 20px !important;
 }
+
+/* Sonner Toast Custom Styles - Success (Green) */
+[data-sonner-toast][data-type="success"] {
+  background-color: #22c55e !important; /* green-500 */
+  border-color: #16a34a !important; /* green-600 */
+}
+
+[data-sonner-toast][data-type="success"] [data-title],
+[data-sonner-toast][data-type="success"] [data-description] {
+  color: white !important;
+}
+
+/* Sonner Toast Custom Styles - Error (Red) */
+[data-sonner-toast][data-type="error"] {
+  background-color: #ef4444 !important; /* red-500 */
+  border-color: #dc2626 !important; /* red-600 */
+}
+
+[data-sonner-toast][data-type="error"] [data-title],
+[data-sonner-toast][data-type="error"] [data-description] {
+  color: white !important;
+}
+
+/* Dark mode styles */
+.dark [data-sonner-toast][data-type="success"] {
+  background-color: #16a34a !important; /* green-600 */
+  border-color: #15803d !important; /* green-700 */
+}
+
+.dark [data-sonner-toast][data-type="error"] {
+  background-color: #dc2626 !important; /* red-600 */
+  border-color: #b91c1c !important; /* red-700 */
+}
+
+/* Radix UI Toast Custom Styles - Success (Green) */
+/* Target toasts with green background (default and success variants) */
+.group.bg-green-500 {
+  background-color: #22c55e !important; /* green-500 */
+  border-color: #16a34a !important; /* green-600 */
+}
+
+.group.bg-green-500,
+.group.bg-green-500 * {
+  color: white !important;
+}
+
+/* Radix UI Toast Custom Styles - Error (Red) */
+/* Target toasts with red background (destructive variant) */
+.group.bg-red-500,
+.group.destructive {
+  background-color: #ef4444 !important; /* red-500 */
+  border-color: #dc2626 !important; /* red-600 */
+}
+
+.group.bg-red-500,
+.group.bg-red-500 *,
+.group.destructive,
+.group.destructive * {
+  color: white !important;
+}
+
+/* Dark mode for Radix UI toasts */
+.dark .group.bg-green-500 {
+  background-color: #16a34a !important; /* green-600 */
+  border-color: #15803d !important; /* green-700 */
+}
+
+.dark .group.bg-red-500,
+.dark .group.destructive {
+  background-color: #dc2626 !important; /* red-600 */
+  border-color: #b91c1c !important; /* red-700 */
+}

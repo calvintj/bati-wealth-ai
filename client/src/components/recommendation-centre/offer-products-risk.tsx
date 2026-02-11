@@ -4,10 +4,12 @@ import { Download, ExternalLink } from "lucide-react";
 import useOfferProductRisk from "../../hooks/recommendation-centre/use-offer-product-risk";
 import Link from "next/link";
 import { exportToCSV } from "@/utils/csv-export";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 
 export default function OfferProductRisk() {
   const { data, isLoading, error } = useOfferProductRisk();
   const offerProductRisk = data?.offer_product_risk || [];
+  const { canView } = usePagePermissions();
 
   const handleExport = () => {
     const exportData = offerProductRisk.map((product) => {
@@ -58,7 +60,7 @@ export default function OfferProductRisk() {
             title="Export to CSV"
           >
             <Download size={14} />
-            <span>Export</span>
+            <span>Unduh</span>
           </button>
         )}
       </div>
@@ -110,13 +112,23 @@ export default function OfferProductRisk() {
                   </div>
                 </td>
                 <td className="py-2">
-                  <Link
-                    href={`/customer-details?customerID=${product.bp_number_wm_core}`}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#01ACD2] hover:bg-[#0199b8] text-white rounded-md transition-colors text-xs"
-                  >
-                    Profil
-                    <ExternalLink size={12} />
-                  </Link>
+                  {canView ? (
+                    <Link
+                      href={`/customer-details?customerID=${product.bp_number_wm_core}`}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#01ACD2] hover:bg-[#0199b8] text-white rounded-md transition-colors text-xs"
+                    >
+                      Profil
+                      <ExternalLink size={12} />
+                    </Link>
+                  ) : (
+                    <button
+                      disabled
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-400 text-white rounded-md cursor-not-allowed text-xs opacity-50"
+                    >
+                      Profil
+                      <ExternalLink size={12} />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

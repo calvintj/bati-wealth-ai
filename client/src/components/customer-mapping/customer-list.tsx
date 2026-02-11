@@ -248,7 +248,8 @@ const CustomerListTable = ({ propensity, aum }: CustomerListTableProps) => {
                     <button
                       onClick={() => handleEdit(row)}
                       className="cursor-pointer p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                      title="Edit customer"
+                      title="Ubah nasabah"
+                      aria-label="Ubah nasabah"
                     >
                       <Pencil size={16} />
                     </button>

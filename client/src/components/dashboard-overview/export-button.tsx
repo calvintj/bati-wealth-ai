@@ -38,7 +38,7 @@ export default function ExportButton({ customers }: ExportButtonProps) {
       title="Export to CSV"
     >
       <Download size={18} />
-      <span>Export CSV</span>
+      <span>Unduh CSV</span>
     </button>
   );
 }

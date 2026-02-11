@@ -230,8 +230,8 @@ export default function CustomerDetailsPage() {
                   <button
                     onClick={handleEditClick}
                     className="p-1.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 flex-shrink-0"
-                    title="Edit customer"
-                    aria-label="Edit customer information"
+                    title="Ubah informasi nasabah"
+                    aria-label="Ubah informasi nasabah"
                   >
                     <Pencil size={16} />
                   </button>
@@ -277,7 +277,7 @@ export default function CustomerDetailsPage() {
                 <div className="text-center py-4">
                   <div className="animate-pulse flex flex-col items-center text-gray-600 dark:text-gray-300">
                     <div className="h-6 w-6 rounded-full border-4 border-t-blue-500 border-b-gray-200 border-l-gray-200 border-r-gray-200 animate-spin mb-2"></div>
-                    <p className="text-xs">Loading...</p>
+                    <p className="text-xs">Memuat...</p>
                   </div>
                 </div>
               ) : data ? (

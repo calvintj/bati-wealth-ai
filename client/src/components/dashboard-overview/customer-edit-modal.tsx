@@ -176,7 +176,7 @@ export default function CustomerEditModal({
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-2xl p-6 m-4 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
-            Edit Customer: {customer["Customer ID"]}
+            Ubah Nasabah: {customer["Customer ID"]}
           </h2>
           <button
             onClick={onClose}
@@ -191,7 +191,7 @@ export default function CustomerEditModal({
             {/* Risk Profile */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Risk Profile
+                Profil Resiko
               </label>
               <select
                 name="risk_profile"
@@ -199,7 +199,7 @@ export default function CustomerEditModal({
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               >
-                <option value="">Select Risk Profile</option>
+                <option value="">Pilih Profil Resiko</option>
                 {RISK_PROFILES.map((profile) => (
                   <option key={profile} value={profile}>
                     {profile}
@@ -211,7 +211,7 @@ export default function CustomerEditModal({
             {/* AUM Label */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                AUM Label
+                Label AUM
               </label>
               <select
                 name="aum_label"
@@ -219,7 +219,7 @@ export default function CustomerEditModal({
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               >
-                <option value="">Select AUM Label</option>
+                <option value="">Pilih Label AUM</option>
                 {AUM_LABEL_OPTIONS.map((option) => (
                   <option key={option} value={option}>
                     {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -239,7 +239,7 @@ export default function CustomerEditModal({
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               >
-                <option value="">Select Propensity</option>
+                <option value="">Pilih Propensity</option>
                 {PROPENSITY_OPTIONS.map((option) => (
                   <option key={option} value={option}>
                     {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -259,7 +259,7 @@ export default function CustomerEditModal({
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               >
-                <option value="">Select Status</option>
+                <option value="">Pilih Status</option>
                 {PRIORITY_OPTIONS.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -271,7 +271,7 @@ export default function CustomerEditModal({
             {/* Customer Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Customer Type
+                Tipe Nasabah
               </label>
               <input
                 type="text"
@@ -279,14 +279,14 @@ export default function CustomerEditModal({
                 value={formData.customer_type}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                placeholder="Customer Type"
+                placeholder="Tipe Nasabah"
               />
             </div>
 
             {/* Occupation */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Occupation (Pekerjaan)
+                Pekerjaan
               </label>
               <input
                 type="text"
@@ -294,14 +294,14 @@ export default function CustomerEditModal({
                 value={formData.pekerjaan}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                placeholder="Occupation"
+                placeholder="Pekerjaan"
               />
             </div>
 
             {/* Marital Status */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Marital Status (Status Nikah)
+                Status Nikah
               </label>
               <select
                 name="status_nikah"
@@ -309,7 +309,7 @@ export default function CustomerEditModal({
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               >
-                <option value="">Select Marital Status</option>
+                <option value="">Pilih Status Nikah</option>
                 {MARITAL_STATUS_OPTIONS.map((status) => (
                   <option key={status} value={status}>
                     {status}
@@ -321,7 +321,7 @@ export default function CustomerEditModal({
             {/* Age */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Age (Usia)
+                Usia
               </label>
               <input
                 type="number"
@@ -329,7 +329,7 @@ export default function CustomerEditModal({
                 value={formData.usia}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                placeholder="Age"
+                placeholder="Usia"
                 min="0"
                 max="150"
               />
@@ -338,7 +338,7 @@ export default function CustomerEditModal({
             {/* Annual Income */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Annual Income
+                Pendapatan Tahunan
               </label>
               <input
                 type="number"
@@ -346,7 +346,7 @@ export default function CustomerEditModal({
                 value={formData.annual_income}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                placeholder="Annual Income"
+                placeholder="Pendapatan Tahunan"
                 min="0"
                 step="0.01"
               />
@@ -360,14 +360,14 @@ export default function CustomerEditModal({
               className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600"
               disabled={isPending}
             >
-              Cancel
+              Batal
             </button>
             <button
               type="submit"
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isPending}
             >
-              {isPending ? "Saving..." : "Save Changes"}
+              {isPending ? "Menyimpan..." : "Simpan Perubahan"}
             </button>
           </div>
         </form>

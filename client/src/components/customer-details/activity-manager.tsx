@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { CirclePlus, Trash2, Pencil, Download } from "lucide-react";
+import {
+  CirclePlus,
+  Trash2,
+  Pencil,
+  Download,
+  AlertTriangle,
+} from "lucide-react";
 import {
   useGetActivity,
   usePostActivity,
@@ -10,6 +16,15 @@ import {
 import { Activity, ActivityResponse } from "@/types/page/customer-details";
 import { exportToCSV } from "@/utils/csv-export";
 import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const ActivityManager = ({ customerID }: { customerID: string }) => {
   const {
@@ -49,6 +64,8 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
   // Add state to track if we're editing
   const [isEditing, setIsEditing] = useState(false);
   const [editingActivityId, setEditingActivityId] = useState<string>("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [activityToDelete, setActivityToDelete] = useState<string | null>(null);
 
   // Add a function to update popup position
   const updatePopupPosition = () => {
@@ -131,16 +148,36 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
     setShowPopup(true);
   };
 
-  const deleteActivity = async (id: string) => {
-    deleteData(id, {
+  const handleDelete = (id: string) => {
+    setActivityToDelete(id);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!activityToDelete) return;
+
+    deleteData(activityToDelete, {
       onSuccess: () => {
         refetch();
+        toast.success("Aktivitas berhasil dihapus", {
+          description: "Aktivitas telah dihapus dari sistem",
+          duration: 3000,
+        });
+        setShowDeleteDialog(false);
+        setActivityToDelete(null);
       },
       onError: (error: any) => {
-        // Error will be handled by API interceptor, but we can add additional handling here if needed
+        // Error will be handled by API interceptor
         console.error("Failed to delete activity:", error);
+        setShowDeleteDialog(false);
+        setActivityToDelete(null);
       },
     });
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setActivityToDelete(null);
   };
 
   const handleExport = () => {
@@ -160,22 +197,22 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <h2 className="text-lg font-semibold">Aktivitas</h2>
         <div className="flex items-center gap-2">
-          {localActivity.length > 0 && (
+          {/* {localActivity.length > 0 && (
             <button
               onClick={handleExport}
               className="flex items-center gap-1 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-xs"
-              title="Export to CSV"
+              title="Ekspor ke CSV"
             >
               <Download size={14} />
-              <span>Export</span>
+              <span>Ekspor</span>
             </button>
-          )}
+          )} */}
           <button
             ref={buttonRef}
             onClick={togglePopup}
             className="text-2xl text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300 cursor-pointer transition-colors"
-            title={isEditing ? "Edit Activity" : "Add Activity"}
-            aria-label={isEditing ? "Edit Activity" : "Add Activity"}
+            title={isEditing ? "Edit Aktivitas" : "Tambah Aktivitas"}
+            aria-label={isEditing ? "Edit Aktivitas" : "Tambah Aktivitas"}
           >
             <CirclePlus />
           </button>
@@ -186,7 +223,7 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
       <div className="flex-1 overflow-y-auto min-h-0">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <p>Loading...</p>
+            <p>Memuat...</p>
           </div>
         ) : error ? (
           <div className="flex items-center justify-center h-full">
@@ -220,16 +257,16 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
                   <button
                     className="text-gray-600 dark:text-gray-100 hover:text-gray-800 dark:hover:text-gray-300 cursor-pointer transition-colors"
                     onClick={() => handleEdit(activity)}
-                    title="Edit activity"
-                    aria-label="Edit activity"
+                    title="Edit aktivitas"
+                    aria-label="Edit aktivitas"
                   >
                     <Pencil size={16} />
                   </button>
                   <button
                     className="text-gray-600 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400 cursor-pointer transition-colors"
-                    onClick={() => deleteActivity(activity.id)}
-                    title="Delete activity"
-                    aria-label="Delete activity"
+                    onClick={() => handleDelete(activity.id)}
+                    title="Hapus aktivitas"
+                    aria-label="Hapus aktivitas"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -308,6 +345,40 @@ const ActivityManager = ({ customerID }: { customerID: string }) => {
           </div>,
           document.body
         )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                Hapus Aktivitas
+              </DialogTitle>
+            </div>
+            <DialogDescription className="pt-2 text-sm text-gray-600 dark:text-gray-400">
+              Apakah Anda yakin ingin menghapus aktivitas ini? Tindakan ini
+              tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <button
+              onClick={handleCancelDelete}
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
+            >
+              Hapus
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

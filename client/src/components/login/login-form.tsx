@@ -44,6 +44,7 @@ const LoginForm: React.FC = () => {
         toast({
           title: "Berhasil",
           description: "Login berhasil! Mengalihkan...",
+          variant: "success",
         });
       }
       // Error toast will be shown via useEffect when error state changes

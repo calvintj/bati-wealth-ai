@@ -80,8 +80,8 @@ async def api_chat(request: ChatRequest):
     )
     messages = default_messages + messages
 
-    # Call DeepInfra API
-    logger.info("Calling DeepInfra API for tool selection")
+    # Call OpenRouter API
+    logger.info("Calling OpenRouter API for tool selection")
     try:
         response_tool_call = client.chat.completions.create(
             model="openai/gpt-oss-120b",
@@ -89,9 +89,9 @@ async def api_chat(request: ChatRequest):
             tools=tools,  # Use function calling
             temperature=0.3,
         )
-        logger.info("DeepInfra API tool call response received")
+        logger.info("OpenRouter API tool call response received")
     except Exception as e:
-        logger.error(f"Error calling DeepInfra API for tool selection: {e}")
+        logger.error(f"Error calling OpenRouter API for tool selection: {e}")
         raise
 
     # Extract tool calls (function calling)
@@ -116,7 +116,7 @@ async def api_chat(request: ChatRequest):
                         int(customer_id), request.query
                     )
                     msg = [{"role": "user", "content": prompt}]
-                    logger.info("Calling DeepInfra API for allocation parsing")
+                    logger.info("Calling OpenRouter API for allocation parsing")
                     try:
                         # Try structured output first
                         response_reallocation = client.beta.chat.completions.parse(
@@ -189,7 +189,7 @@ async def api_chat(request: ChatRequest):
                 logger.info(f"Function '{function_name}' executed successfully")
             else:
                 logger.warning("Function requires customer_id but none provided")
-                return PlainTextResponse("Please provide a customer ID.")
+                return PlainTextResponse("Tolong masukkan ID nasabah.")
 
         # For function that requires SQL syntax
         elif function_name in [
@@ -199,8 +199,8 @@ async def api_chat(request: ChatRequest):
             logger.info(f"Generating SQL syntax using function: {function_name}")
             sql_generation_prompt = function_map[function_name](request.query)
 
-            # Generate SQL query using DeepInfra
-            logger.info("Calling DeepInfra API for SQL generation")
+            # Generate SQL query using OpenRouter
+            logger.info("Calling OpenRouter API for SQL generation")
             try:
                 # Try structured output first
                 query_response = client.beta.chat.completions.parse(
@@ -275,8 +275,8 @@ async def api_chat(request: ChatRequest):
         logger.info("Starting streaming response generation")
 
         def data_generator():
-            # Call the DeepInfra API
-            logger.info("Calling DeepInfra API for streaming chat response")
+            # Call the OpenRouter API
+            logger.info("Calling OpenRouter API for streaming chat response")
             try:
                 response = client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -304,7 +304,7 @@ async def api_chat(request: ChatRequest):
 
     except Exception as e:
         # Log the error for debugging purposes
-        logger.error(f"Error calling DeepInfra API: {e}", exc_info=True)
+        logger.error(f"Error calling OpenRouter API: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 

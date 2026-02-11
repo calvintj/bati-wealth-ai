@@ -16,6 +16,7 @@ import {
   ScrollText,
   Lock,
   Save,
+  AlertTriangle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import api from "@/services/api";
@@ -25,8 +26,19 @@ import { UserNav } from "@/components/ui/user-nav";
 import { useTheme } from "next-themes";
 import { ColorModeToggle } from "@/components/chatbot/color-mode-toggle";
 import { usePermissions } from "@/hooks/permissions/use-permissions";
-import type { UserWithPermissions, Page } from "@/services/permissions/permissions-api";
+import type {
+  UserWithPermissions,
+  Page,
+} from "@/services/permissions/permissions-api";
 import { permissionsService } from "@/services/permissions/permissions-api";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ApiErrorResponse {
   response?: {
@@ -62,6 +74,8 @@ const AdminPage = () => {
     email: "",
     newPassword: "",
   });
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   // Permission management state
   const [selectedUser, setSelectedUser] = useState<number | null>(null);
@@ -113,7 +127,7 @@ const AdminPage = () => {
     if (typeof window !== "undefined" && (window as any).__adminRouteBlocked) {
       return; // Don't make API calls if route is blocked
     }
-    
+
     const userStr = localStorage.getItem("user");
     if (userStr) {
       try {
@@ -132,7 +146,10 @@ const AdminPage = () => {
 
   // Initialize default permissions when pages are loaded
   useEffect(() => {
-    if (pages.length > 0 && Object.keys(defaultPermissionChanges).length === 0) {
+    if (
+      pages.length > 0 &&
+      Object.keys(defaultPermissionChanges).length === 0
+    ) {
       const defaults: Record<
         number,
         {
@@ -144,7 +161,12 @@ const AdminPage = () => {
       > = {};
       pages.forEach((page) => {
         // Only View is checked by default for all pages
-        defaults[page.page_id] = { can_view: true, can_add: false, can_update: false, can_delete: false };
+        defaults[page.page_id] = {
+          can_view: true,
+          can_add: false,
+          can_update: false,
+          can_delete: false,
+        };
       });
       setDefaultPermissionChanges(defaults);
     }
@@ -157,26 +179,41 @@ const AdminPage = () => {
       setUsers(response.data);
     } catch (error: unknown) {
       const apiError = error as ApiErrorResponse;
-      toast.error(apiError.response?.data?.error || "Failed to fetch users");
+      toast.error(
+        apiError.response?.data?.error || "Gagal mengambil data pengguna"
+      );
     }
   };
 
-  const handleDeleteUser = async (rmNumber: string) => {
+  const handleDeleteUser = (rmNumber: string) => {
     if (!rmNumber) {
-      toast.error("Invalid RM Number");
+      toast.error("Nomor RM tidak valid");
       return;
     }
+    setUserToDelete(rmNumber);
+    setShowDeleteDialog(true);
+  };
 
-    if (!confirm("Are you sure you want to delete this user?")) return;
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
 
     try {
-      await api.delete(`/auth/users/${rmNumber}`);
-      toast.success("User deleted successfully");
+      await api.delete(`/auth/users/${userToDelete}`);
+      toast.success("Pengguna berhasil dihapus");
       fetchUsers();
+      setShowDeleteDialog(false);
+      setUserToDelete(null);
     } catch (error: unknown) {
       const apiError = error as ApiErrorResponse;
-      toast.error(apiError.response?.data?.error || "Failed to delete user");
+      toast.error(apiError.response?.data?.error || "Gagal menghapus pengguna");
+      setShowDeleteDialog(false);
+      setUserToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setUserToDelete(null);
   };
 
   const handleInputChange = (
@@ -213,12 +250,12 @@ const AdminPage = () => {
         role: formData.role,
         rm_number: formData.rm_number,
       });
-      toast.success("User created successfully");
+      toast.success("Pengguna berhasil dibuat");
       setShowUserForm(false);
       setFormData({ email: "", password: "", role: "user", rm_number: "" });
     } catch (error: unknown) {
       const apiError = error as ApiErrorResponse;
-      toast.error(apiError.response?.data?.error || "Failed to create user");
+      toast.error(apiError.response?.data?.error || "Gagal membuat pengguna");
     } finally {
       setIsLoading(false);
     }
@@ -227,7 +264,7 @@ const AdminPage = () => {
   const handleUpdateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.rm_number) {
-      toast.error("RM Number is required");
+      toast.error("Nomor RM wajib diisi");
       return;
     }
     setIsLoading(true);
@@ -236,13 +273,15 @@ const AdminPage = () => {
         email: formData.email,
         role: formData.role,
       });
-      toast.success("User updated successfully");
+      toast.success("Pengguna berhasil diperbarui");
       setShowUserForm(false);
       setFormData({ email: "", password: "", role: "user", rm_number: "" });
       fetchUsers();
     } catch (error: unknown) {
       const apiError = error as ApiErrorResponse;
-      toast.error(apiError.response?.data?.error || "Failed to update user");
+      toast.error(
+        apiError.response?.data?.error || "Gagal memperbarui pengguna"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -256,13 +295,13 @@ const AdminPage = () => {
         email: passwordData.email,
         newPassword: passwordData.newPassword,
       });
-      toast.success("Password updated successfully");
+      toast.success("Kata sandi berhasil diperbarui");
       setShowPasswordForm(false);
       setPasswordData({ email: "", newPassword: "" });
     } catch (error: unknown) {
       const apiError = error as ApiErrorResponse;
       toast.error(
-        apiError.response?.data?.error || "Failed to update password"
+        apiError.response?.data?.error || "Gagal memperbarui kata sandi"
       );
     } finally {
       setIsLoading(false);
@@ -272,12 +311,12 @@ const AdminPage = () => {
   // Permission management handlers
   const handleSelectUserForPermissions = (rm_account_id: number) => {
     setSelectedUser(rm_account_id);
-    
+
     // Initialize permission changes with current permissions
     const user = usersWithPermissions.find(
       (u) => u.rm_account_id === rm_account_id
     );
-    
+
     const changes: Record<
       number,
       {
@@ -287,7 +326,7 @@ const AdminPage = () => {
         can_delete: boolean;
       }
     > = {};
-    
+
     if (user && user.permissions) {
       user.permissions.forEach((perm) => {
         changes[perm.page_id] = {
@@ -298,7 +337,7 @@ const AdminPage = () => {
         };
       });
     }
-    
+
     // Add pages that don't have permissions yet (default to all false)
     pages.forEach((page) => {
       if (!changes[page.page_id]) {
@@ -310,7 +349,7 @@ const AdminPage = () => {
         };
       }
     });
-    
+
     setPermissionChanges(changes);
     setShowPermissionsForm(true);
   };
@@ -368,11 +407,11 @@ const AdminPage = () => {
       );
 
       await bulkUpdateUserPermissions(selectedUser, permissionsArray);
-      toast.success("Permissions saved successfully");
+      toast.success("Izin berhasil disimpan");
       await fetchUsersWithPermissions();
     } catch (error) {
       console.error("Error saving permissions:", error);
-      toast.error("Failed to save permissions");
+      toast.error("Gagal menyimpan izin");
     } finally {
       setIsLoading(false);
     }
@@ -388,7 +427,7 @@ const AdminPage = () => {
             width={100}
             height={30}
           />
-          <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Halaman Admin</h1>
           <div className="flex items-center space-x-4 pb-2">
             <ColorModeToggle />
             <div className="flex items-center space-x-4">
@@ -410,7 +449,7 @@ const AdminPage = () => {
                 <div className="flex items-center space-x-4">
                   <Users className="h-8 w-8 text-blue-600" />
                   <h2 className="text-xl font-semibold text-black dark:text-white">
-                    User Management
+                    Manajemen Pengguna
                   </h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -428,7 +467,7 @@ const AdminPage = () => {
                     }}
                     className="flex items-center px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 cursor-pointer text-sm sm:text-base"
                   >
-                    <Plus className="h-4 w-4 mr-1" /> Create User
+                    <Plus className="h-4 w-4 mr-1" /> Buat Pengguna
                   </button>
                   <button
                     onClick={() => {
@@ -439,7 +478,7 @@ const AdminPage = () => {
                     }}
                     className="flex items-center px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 cursor-pointer text-sm sm:text-base"
                   >
-                    <Edit className="h-4 w-4 mr-1" /> Update User
+                    <Edit className="h-4 w-4 mr-1" /> Perbarui Pengguna
                   </button>
                   <button
                     onClick={() => {
@@ -448,7 +487,7 @@ const AdminPage = () => {
                     }}
                     className="flex items-center px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 cursor-pointer text-sm sm:text-base"
                   >
-                    <Key className="h-4 w-4 mr-1" /> Change Password
+                    <Key className="h-4 w-4 mr-1" /> Ubah Kata Sandi
                   </button>
                 </div>
               </div>
@@ -463,16 +502,16 @@ const AdminPage = () => {
                           Email
                         </th>
                         <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                          RM Number
+                          Nomor RM
                         </th>
                         <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                          Role
+                          Peran
                         </th>
                         <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                          Created At
+                          Dibuat Pada
                         </th>
                         <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                          Actions
+                          Tindakan
                         </th>
                       </tr>
                     </thead>
@@ -531,8 +570,9 @@ const AdminPage = () => {
               {/* Pagination Controls */}
               <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-sm text-gray-700 dark:text-gray-300">
-                  Showing {startIndex + 1} to {Math.min(endIndex, users.length)}{" "}
-                  of {users.length} users
+                  Menampilkan {startIndex + 1} hingga{" "}
+                  {Math.min(endIndex, users.length)} dari {users.length}{" "}
+                  pengguna
                 </div>
                 <div className="flex flex-wrap justify-center gap-2">
                   <button
@@ -542,7 +582,7 @@ const AdminPage = () => {
                     disabled={currentPage === 1}
                     className="px-3 py-1 border dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 cursor-pointer text-sm"
                   >
-                    Previous
+                    Sebelumnya
                   </button>
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                     (page) => (
@@ -566,7 +606,7 @@ const AdminPage = () => {
                     disabled={currentPage === totalPages}
                     className="px-3 py-1 border dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 cursor-pointer text-sm"
                   >
-                    Next
+                    Selanjutnya
                   </button>
                 </div>
               </div>
@@ -577,7 +617,9 @@ const AdminPage = () => {
               <div className="mt-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                    {formMode === "create" ? "Create New User" : "Update User"}
+                    {formMode === "create"
+                      ? "Buat Pengguna Baru"
+                      : "Perbarui Pengguna"}
                   </h3>
                   <button
                     onClick={() => setShowUserForm(false)}
@@ -594,7 +636,7 @@ const AdminPage = () => {
                   <div className="grid grid-cols-1 gap-4 mb-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        RM Number
+                        Nomor RM
                       </label>
                       <input
                         type="text"
@@ -603,7 +645,7 @@ const AdminPage = () => {
                         onChange={handleInputChange}
                         placeholder="RM001"
                         pattern="RM\d{3}"
-                        title="RM number must be in format RMXXX where XXX is a 3-digit number"
+                        title="Nomor RM harus dalam format RMXXX di mana XXX adalah angka 3 digit"
                         className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         required
                       />
@@ -625,7 +667,7 @@ const AdminPage = () => {
                     {formMode === "create" && (
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Password
+                          Kata Sandi
                         </label>
                         <input
                           type="password"
@@ -639,7 +681,7 @@ const AdminPage = () => {
                     )}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Role
+                        Peran
                       </label>
                       <select
                         name="role"
@@ -647,7 +689,7 @@ const AdminPage = () => {
                         onChange={handleInputChange}
                         className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       >
-                        <option value="user">User</option>
+                        <option value="user">Pengguna</option>
                         <option value="admin">Admin</option>
                       </select>
                     </div>
@@ -659,10 +701,10 @@ const AdminPage = () => {
                       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600 cursor-pointer"
                     >
                       {isLoading
-                        ? "Processing..."
+                        ? "Memproses..."
                         : formMode === "create"
-                        ? "Create User"
-                        : "Update User"}
+                        ? "Buat Pengguna"
+                        : "Perbarui Pengguna"}
                     </button>
                   </div>
                 </form>
@@ -675,11 +717,11 @@ const AdminPage = () => {
                 <div className="flex items-center space-x-4">
                   <Settings className="h-8 w-8 text-blue-600" />
                   <h2 className="text-xl font-semibold text-black dark:text-white">
-                    Default Page Permissions (All RM Users)
+                    Izin Halaman Default (Semua Pengguna RM)
                   </h2>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Set default permissions that apply to all RM users
+                  Tetapkan izin default yang berlaku untuk semua pengguna RM
                 </p>
               </div>
 
@@ -689,27 +731,33 @@ const AdminPage = () => {
                     <thead className="bg-gray-100 dark:bg-gray-700">
                       <tr>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                          Page
+                          Halaman
                         </th>
                         <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                          View
+                          Lihat
                         </th>
                         <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                          Add
+                          Tambah
                         </th>
                         <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                          Update
+                          Perbarui
                         </th>
                         <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                          Delete
+                          Hapus
                         </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-[#1D283A] divide-y divide-gray-200 dark:divide-gray-700">
                       {pages.map((page) => {
                         // Default permissions: only View is checked
-                        const defaults = { can_view: true, can_add: false, can_update: false, can_delete: false };
-                        const pageDefaults = defaultPermissionChanges[page.page_id] || defaults;
+                        const defaults = {
+                          can_view: true,
+                          can_add: false,
+                          can_update: false,
+                          can_delete: false,
+                        };
+                        const pageDefaults =
+                          defaultPermissionChanges[page.page_id] || defaults;
 
                         return (
                           <tr key={page.page_id}>
@@ -806,7 +854,9 @@ const AdminPage = () => {
                       try {
                         setIsLoading(true);
                         const permissionsArray = pages.map((page) => {
-                          const defaults = defaultPermissionChanges[page.page_id] || {
+                          const defaults = defaultPermissionChanges[
+                            page.page_id
+                          ] || {
                             can_view: false,
                             can_add: false,
                             can_update: false,
@@ -824,12 +874,19 @@ const AdminPage = () => {
                             ...defaults,
                           };
                         });
-                        await permissionsService.applyDefaultPermissionsToAllRM(permissionsArray);
-                        toast.success("Default permissions applied to all RM users successfully");
+                        await permissionsService.applyDefaultPermissionsToAllRM(
+                          permissionsArray
+                        );
+                        toast.success(
+                          "Izin default berhasil diterapkan ke semua pengguna RM"
+                        );
                         fetchUsersWithPermissions();
                       } catch (error: unknown) {
                         const apiError = error as ApiErrorResponse;
-                        toast.error(apiError.response?.data?.error || "Failed to apply default permissions");
+                        toast.error(
+                          apiError.response?.data?.error ||
+                            "Gagal menerapkan izin default"
+                        );
                       } finally {
                         setIsLoading(false);
                       }
@@ -839,8 +896,8 @@ const AdminPage = () => {
                   >
                     <Save className="h-4 w-4 mr-2" />
                     {isLoading || permissionsLoading
-                      ? "Applying..."
-                      : "Apply to All RM Users"}
+                      ? "Menerapkan..."
+                      : "Terapkan ke Semua Pengguna RM"}
                   </button>
                 </div>
               </div>
@@ -852,18 +909,18 @@ const AdminPage = () => {
                 <div className="flex items-center space-x-4">
                   <Lock className="h-8 w-8 text-orange-600" />
                   <h2 className="text-xl font-semibold text-black dark:text-white">
-                    Individual User Permission Management
+                    Manajemen Izin Pengguna Individu
                   </h2>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Manage permissions for specific users
+                  Kelola izin untuk pengguna tertentu
                 </p>
               </div>
 
               {/* User Selection */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Select User to Manage Permissions
+                  Pilih Pengguna untuk Mengelola Izin
                 </label>
                 <select
                   value={selectedUser || ""}
@@ -877,7 +934,7 @@ const AdminPage = () => {
                   }}
                   className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="">-- Select a user --</option>
+                  <option value="">-- Pilih pengguna --</option>
                   {usersWithPermissions.map((user) => (
                     <option key={user.rm_account_id} value={user.rm_account_id}>
                       {user.email} ({user.rm_number})
@@ -891,7 +948,7 @@ const AdminPage = () => {
                 <div className="mt-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      Edit Permissions for{" "}
+                      Edit Izin untuk{" "}
                       {
                         usersWithPermissions.find(
                           (u) => u.rm_account_id === selectedUser
@@ -916,19 +973,19 @@ const AdminPage = () => {
                       <thead className="bg-gray-100 dark:bg-gray-700">
                         <tr>
                           <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                            Page
+                            Halaman
                           </th>
                           <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                            View
+                            Lihat
                           </th>
                           <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                            Add
+                            Tambah
                           </th>
                           <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                            Update
+                            Perbarui
                           </th>
                           <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">
-                            Delete
+                            Hapus
                           </th>
                         </tr>
                       </thead>
@@ -1041,8 +1098,8 @@ const AdminPage = () => {
                     >
                       <Save className="h-4 w-4 mr-2" />
                       {isLoading || permissionsLoading
-                        ? "Saving..."
-                        : "Save Permissions"}
+                        ? "Menyimpan..."
+                        : "Simpan Izin"}
                     </button>
                   </div>
                 </div>
@@ -1054,7 +1111,7 @@ const AdminPage = () => {
               <div className="mt-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                    Change Password
+                    Ubah Kata Sandi
                   </h3>
                   <button
                     onClick={() => setShowPasswordForm(false)}
@@ -1080,7 +1137,7 @@ const AdminPage = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        New Password
+                        Kata Sandi Baru
                       </label>
                       <input
                         type="password"
@@ -1098,7 +1155,7 @@ const AdminPage = () => {
                       disabled={isLoading}
                       className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 dark:bg-green-500 dark:hover:bg-green-600 cursor-pointer"
                     >
-                      {isLoading ? "Processing..." : "Update Password"}
+                      {isLoading ? "Memproses..." : "Perbarui Kata Sandi"}
                     </button>
                   </div>
                 </form>
@@ -1214,6 +1271,40 @@ const AdminPage = () => {
             </div> */}
           </div>
         </main>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+                  <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                </div>
+                <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Hapus Pengguna
+                </DialogTitle>
+              </div>
+              <DialogDescription className="pt-2 text-sm text-gray-600 dark:text-gray-400">
+                Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini
+                tidak dapat dibatalkan.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <button
+                onClick={handleCancelDelete}
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors"
+              >
+                Hapus
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </ProtectedRoute>
   );

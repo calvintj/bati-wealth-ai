@@ -5,10 +5,12 @@ import { Download, ExternalLink } from "lucide-react";
 import { useLastTransaction } from "../../hooks/recommendation-centre/use-last-transactions";
 import { exportToCSV } from "@/utils/csv-export";
 import Link from "next/link";
+import { usePagePermissions } from "@/hooks/permissions/use-page-permissions";
 
 export default function LastTransactionComponent() {
   const { data, isLoading, error } = useLastTransaction();
   const transactions = data?.last_transaction || [];
+  const { canView } = usePagePermissions();
 
   const currentDate = useMemo(() => {
     const today = new Date();
@@ -64,7 +66,7 @@ export default function LastTransactionComponent() {
             title="Export to CSV"
           >
             <Download size={16} />
-            <span>Export</span>
+            <span>Unduh</span>
           </button>
         )}
       </div>
@@ -81,7 +83,7 @@ export default function LastTransactionComponent() {
                 <th className="py-2">Kode</th>
                 <th className="py-2">Jumlah</th>
                 <th className="py-2">Aksi</th>
-                <th className="py-2">Detail</th>
+                <th className="py-2">Info</th>
               </tr>
             </thead>
             <tbody>
@@ -98,13 +100,23 @@ export default function LastTransactionComponent() {
                     </span>
                   </td>
                   <td className="py-2">
-                    <Link
-                      href={`/customer-details?customerID=${transaction.bp_number_wm_core}`}
-                      className="inline-flex items-center gap-1 px-2 py-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors text-xs"
-                    >
-                      Lihat
-                      <ExternalLink size={12} />
-                    </Link>
+                    {canView ? (
+                      <Link
+                        href={`/customer-details?customerID=${transaction.bp_number_wm_core}`}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#01ACD2] hover:bg-[#0199b8] text-white rounded-md transition-colors text-xs"
+                      >
+                        Profil
+                        <ExternalLink size={12} />
+                      </Link>
+                    ) : (
+                      <button
+                        disabled
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-400 text-white rounded-md cursor-not-allowed text-xs opacity-50"
+                      >
+                        Profil
+                        <ExternalLink size={12} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
