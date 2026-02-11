@@ -2,6 +2,8 @@
 
 A comprehensive wealth management platform consisting of a Next.js frontend, Express.js backend, and FastAPI service for AI-powered portfolio management.
 
+> **📦 Important:** This repository does not include the required database SQL file and FastAPI data files due to their large size. These files must be downloaded from OneDrive before setting up the application. See the [Required Files](#required-files) section below for download instructions.
+
 ## Project Structure
 
 ```
@@ -23,7 +25,11 @@ Before starting, ensure you have the following installed:
 
 ## Required Files
 
-**⚠️ Important:** The following files are required for the application to work:
+**⚠️ Important:** The following files are required for the application to work. These files are **not included in the repository** due to their large size and are available for download from OneDrive.
+
+### Download Required Files
+
+**All required files are available on OneDrive. Please download them before proceeding:**
 
 1. **Database SQL files:**
    - `server/db-data/bati_wealthai_db.sql` - **REQUIRED** - Complete database schema and data for Express server
@@ -36,6 +42,27 @@ Before starting, ensure you have the following installed:
    - `Master_Data_for_RM_Tableau_usd.csv` - Required for FastAPI functions
    - `optimized_allocation_usd.csv` - Required for FastAPI functions
 
+**OneDrive Link:** [Download Required Files](https://onedrive.live.com/) *(Please contact the development team for the OneDrive link)*
+
+### File Placement After Download
+
+After downloading from OneDrive, place the files in the following locations:
+
+```
+wealth-ai/
+├── server/
+│   └── db-data/
+│       ├── bati_wealthai_db.sql          ← Place SQL file here
+│       └── user_permissions_tables.sql   ← Place permissions file here
+└── fastapi/
+    └── data/                              ← Create this directory if it doesn't exist
+        ├── product_data.xlsx              ← Place all 5 files here
+        ├── historical_transaction_usd.csv
+        ├── Mutual_Fund_Data.xlsx
+        ├── Master_Data_for_RM_Tableau_usd.csv
+        └── optimized_allocation_usd.csv
+```
+
 **Note:** The `fastapi/data/` directory is gitignored. Ensure all 5 files are present before starting FastAPI, otherwise it will crash on startup.
 
 ## Quick Start
@@ -46,6 +73,25 @@ Before starting, ensure you have the following installed:
 git clone <repository-url>
 cd wealth-ai
 ```
+
+### 1.5. Download Required Files from OneDrive
+
+**⚠️ IMPORTANT:** Before proceeding, download the required files from OneDrive and place them in the correct locations:
+
+1. **Download database SQL files:**
+   - `bati_wealthai_db.sql` → Place in `server/db-data/`
+   - `user_permissions_tables.sql` → Place in `server/db-data/` (optional)
+
+2. **Download FastAPI data files** (all 5 files):
+   - Create `fastapi/data/` directory if it doesn't exist
+   - Place all 5 files in `fastapi/data/`:
+     - `product_data.xlsx`
+     - `historical_transaction_usd.csv`
+     - `Mutual_Fund_Data.xlsx`
+     - `Master_Data_for_RM_Tableau_usd.csv`
+     - `optimized_allocation_usd.csv`
+
+**OneDrive Link:** [Download Required Files](https://onedrive.live.com/) *(Please contact the development team for the OneDrive link)*
 
 ### 2. Database Setup
 
@@ -252,7 +298,7 @@ After importing the SQL file, you need to create these tables for FastAPI:
    
    **⚠️ Important:** All 5 files are required. FastAPI will crash on startup if any are missing because `functions.py` loads them when imported.
    
-   **Note:** The `fastapi/data/` directory is gitignored, so you'll need to obtain these files separately if they're not in your repository.
+   **Note:** The `fastapi/data/` directory is gitignored. Download these files from OneDrive and place them in `fastapi/data/` directory before proceeding.
 
 2. Navigate to the FastAPI directory:
    ```bash
@@ -586,7 +632,7 @@ If the database is empty or missing tables:
    
    **⚠️ Critical:** FastAPI will crash on startup if any file is missing because `functions.py` loads all files when imported.
    
-   **Note:** The `fastapi/data/` directory is gitignored. You'll need to obtain these files separately if they're not available in your local setup.
+   **Note:** The `fastapi/data/` directory is gitignored. Download these files from OneDrive and place them in `fastapi/data/` directory before starting FastAPI.
 
 ### FastAPI Import Errors
 
@@ -642,34 +688,46 @@ psql -U postgres -d wealth_platform -f server/db-data/user_permissions_tables.sq
 
 ## Submission Package Structure
 
-If you're setting up from a submission package (zip file), ensure the following structure:
+**Note:** The repository does not include the required database and data files due to their large size. These files are available for download from OneDrive.
 
-```
-wealth-ai/
-├── README.md                          # This file
-├── client/                            # Next.js frontend
-├── server/
-│   └── db-data/
-│       ├── bati_wealthai_db.sql      # ⚠️ REQUIRED: Main database SQL file
-│       └── user_permissions_tables.sql # Optional: Permissions tables (separate file)
-├── fastapi/
-│   └── data/                          # ⚠️ REQUIRED: All 5 files must be here
-│       ├── product_data.xlsx
-│       ├── historical_transaction_usd.csv
-│       ├── Mutual_Fund_Data.xlsx
-│       ├── Master_Data_for_RM_Tableau_usd.csv
-│       └── optimized_allocation_usd.csv
-└── ... (other project files)
-```
+### Initial Setup Steps:
 
-**Setup Steps:**
-1. Extract the zip file
-2. Follow the [Database Setup](#2-database-setup) section above
-3. Import `server/db-data/bati_wealthai_db.sql` into PostgreSQL
-4. Ensure all 5 files are in `fastapi/data/` directory
-5. Run `python fastapi/init-db.py` to create FastAPI tables
-6. Configure environment variables (see [Environment Configuration](#3-environment-configuration))
-7. Install dependencies and start services (see [Starting the Services](#starting-the-services))
+1. **Clone or extract the repository:**
+   ```bash
+   git clone <repository-url>
+   cd wealth-ai
+   ```
+
+2. **Download required files from OneDrive:**
+   - Download `bati_wealthai_db.sql` and place it in `server/db-data/`
+   - Download `user_permissions_tables.sql` and place it in `server/db-data/` (optional)
+   - Download all 5 FastAPI data files and place them in `fastapi/data/` directory
+
+3. **Verify file structure:**
+   ```
+   wealth-ai/
+   ├── README.md                          # This file
+   ├── client/                            # Next.js frontend
+   ├── server/
+   │   └── db-data/
+   │       ├── bati_wealthai_db.sql      # ⚠️ REQUIRED: Download from OneDrive
+   │       └── user_permissions_tables.sql # Optional: Download from OneDrive
+   ├── fastapi/
+   │   └── data/                          # ⚠️ REQUIRED: Download all 5 files from OneDrive
+   │       ├── product_data.xlsx
+   │       ├── historical_transaction_usd.csv
+   │       ├── Mutual_Fund_Data.xlsx
+   │       ├── Master_Data_for_RM_Tableau_usd.csv
+   │       └── optimized_allocation_usd.csv
+   └── ... (other project files)
+   ```
+
+4. **Follow the setup instructions:**
+   - Follow the [Database Setup](#2-database-setup) section above
+   - Import `server/db-data/bati_wealthai_db.sql` into PostgreSQL
+   - Run `python fastapi/init-db.py` to create FastAPI tables
+   - Configure environment variables (see [Environment Configuration](#3-environment-configuration))
+   - Install dependencies and start services (see [Starting the Services](#starting-the-services))
 
 ## Additional Resources
 
